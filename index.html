@@ -3,332 +3,157 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>أتعلم القراءة</title>
+  <title>تعلم القراءة للأطفال</title>
 
   <style>
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
     }
 
     body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f4f7fb;
-      color: #222;
+      background: linear-gradient(135deg, #e8f7ff, #fff8df);
+      min-height: 100vh;
+      text-align: center;
+      color: #333;
     }
 
     header {
-      text-align: center;
-      background: white;
+      background: #4a90e2;
+      color: white;
       padding: 25px 15px;
-      border-bottom: 1px solid #ddd;
+      border-radius: 0 0 30px 30px;
     }
 
-    .logo {
-      font-size: 55px;
+    header h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
     }
 
-    h1 {
-      margin: 8px 0;
-      font-size: 32px;
+    header p {
+      font-size: 16px;
     }
 
-    .subtitle {
-      color: #666;
+    .container {
+      max-width: 600px;
+      margin: 25px auto;
+      padding: 15px;
     }
 
-    .stars {
-      margin-top: 12px;
-      font-size: 20px;
-      font-weight: bold;
-    }
-
-    main {
-      max-width: 900px;
-      margin: auto;
+    .welcome {
+      background: white;
       padding: 20px;
+      border-radius: 20px;
+      margin-bottom: 25px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
     }
 
-    h2 {
-      text-align: center;
-      margin: 25px 0 15px;
+    .welcome h2 {
+      color: #4a90e2;
+      margin-bottom: 10px;
     }
 
     .languages {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
+      grid-template-columns: 1fr;
+      gap: 18px;
     }
 
-    button {
-      font-family: inherit;
-      cursor: pointer;
-    }
-
-    .language {
-      background: white;
-      border: 2px solid #ddd;
-      border-radius: 18px;
-      padding: 15px 5px;
-      font-size: 17px;
-    }
-
-    .language.active {
-      border-color: #4f7cff;
-      background: #eef3ff;
-    }
-
-    .menu {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-
-    .menu-button {
-      background: white;
+    .language-btn {
       border: none;
-      border-radius: 20px;
-      padding: 20px 10px;
-      min-height: 120px;
-      font-size: 17px;
+      border-radius: 22px;
+      padding: 25px 15px;
+      font-size: 23px;
       font-weight: bold;
-      box-shadow: 0 3px 10px #00000012;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+      transition: transform 0.2s;
     }
 
-    .menu-button:hover {
-      transform: translateY(-2px);
+    .language-btn:active {
+      transform: scale(0.96);
     }
 
-    .icon {
+    .arabic {
+      background: #e85d75;
+    }
+
+    .french {
+      background: #4a90e2;
+    }
+
+    .english {
+      background: #58b368;
+    }
+
+    .emoji {
       display: block;
       font-size: 40px;
       margin-bottom: 8px;
     }
 
-    .welcome {
-      background: white;
-      border-radius: 20px;
+    footer {
+      margin-top: 35px;
       padding: 20px;
-      margin-top: 20px;
-      text-align: center;
-    }
-
-    @media (min-width: 650px) {
-      .menu {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-
-    @media (max-width: 400px) {
-      .languages {
-        grid-template-columns: 1fr;
-      }
+      color: #777;
+      font-size: 14px;
     }
   </style>
 </head>
 
 <body>
 
-<header>
+  <header>
+    <h1>🌟 تعلم القراءة 🌟</h1>
+    <p>تعلم الحروف بطريقة ممتعة وتفاعلية</p>
+  </header>
 
-  <div class="logo">📚✨</div>
+  <main class="container">
 
-  <h1>أتعلم القراءة</h1>
+    <section class="welcome">
+      <h2>مرحباً بك! 👋</h2>
+      <p>اختر اللغة التي تريد أن تتعلم حروفها</p>
+    </section>
 
-  <p class="subtitle">
-    رحلة ممتعة لتعلم القراءة
-  </p>
+    <section class="languages">
 
-  <div class="stars">
-    ⭐ <span id="stars">0</span> نجمة
-  </div>
+      <button class="language-btn arabic" onclick="openLanguage('العربية')">
+        <span class="emoji">🇲🇦</span>
+        حروف الهجاء
+        <br>
+        العربية
+      </button>
 
-</header>
+      <button class="language-btn french" onclick="openLanguage('français')">
+        <span class="emoji">🇫🇷</span>
+        Lettres
+        <br>
+        Françaises
+      </button>
 
-<main>
+      <button class="language-btn english" onclick="openLanguage('english')">
+        <span class="emoji">🇬🇧</span>
+        English
+        <br>
+        Letters
+      </button>
 
-  <h2>🌍 اختر لغة التعلم</h2>
+    </section>
 
-  <div class="languages">
+  </main>
 
-    <button class="language active" data-lang="ar">
-      🇲🇦<br>العربية
-    </button>
+  <footer>
+    © 2026 تعلم القراءة للأطفال
+  </footer>
 
-    <button class="language" data-lang="fr">
-      🇫🇷<br>Français
-    </button>
-
-    <button class="language" data-lang="en">
-      🇬🇧<br>English
-    </button>
-
-  </div>
-
-
-  <h2>🎓 رحلة التعلم</h2>
-
-  <div class="menu">
-
-    <button class="menu-button" data-section="letters">
-      <span class="icon">🔤</span>
-      الحروف
-    </button>
-
-    <button class="menu-button" data-section="harakat">
-      <span class="icon">✨</span>
-      الحركات
-    </button>
-
-    <button class="menu-button" data-section="syllables">
-      <span class="icon">🧩</span>
-      المقاطع
-    </button>
-
-    <button class="menu-button" data-section="words">
-      <span class="icon">📖</span>
-      الكلمات
-    </button>
-
-    <button class="menu-button" data-section="sentences">
-      <span class="icon">💬</span>
-      الجمل
-    </button>
-
-    <button class="menu-button" data-section="stories">
-      <span class="icon">📚</span>
-      القصص
-    </button>
-
-    <button class="menu-button" data-section="games">
-      <span class="icon">🎮</span>
-      الألعاب
-    </button>
-
-    <button class="menu-button" data-section="progress">
-      <span class="icon">⭐</span>
-      تقدمي
-    </button>
-
-  </div>
-
-
-  <div class="welcome" id="message">
-
-    <h3>مرحبًا! 🌟</h3>
-
-    <p>
-      اختر اللغة ثم ابدأ رحلة تعلم القراءة.
-    </p>
-
-  </div>
-
-</main>
-
-
-<script>
-
-  let language = "ar";
-
-  let stars = 0;
-
-
-  const messages = {
-
-    ar: {
-      letters: "الحروف",
-      harakat: "الحركات",
-      syllables: "المقاطع",
-      words: "الكلمات",
-      sentences: "الجمل",
-      stories: "القصص",
-      games: "الألعاب",
-      progress: "تقدمي"
-    },
-
-    fr: {
-      letters: "Lettres",
-      harakat: "Sons",
-      syllables: "Syllabes",
-      words: "Mots",
-      sentences: "Phrases",
-      stories: "Histoires",
-      games: "Jeux",
-      progress: "Progression"
-    },
-
-    en: {
-      letters: "Letters",
-      harakat: "Sounds",
-      syllables: "Syllables",
-      words: "Words",
-      sentences: "Sentences",
-      stories: "Stories",
-      games: "Games",
-      progress: "Progress"
+  <script>
+    function openLanguage(language) {
+      alert("سنبدأ قريباً بتعلم حروف " + language + " 🎉");
     }
-
-  };
-
-
-  document.querySelectorAll(".language").forEach(button => {
-
-    button.addEventListener("click", function() {
-
-      language = this.dataset.lang;
-
-      document.querySelectorAll(".language")
-        .forEach(b => b.classList.remove("active"));
-
-      this.classList.add("active");
-
-      if (language === "ar") {
-
-        document.getElementById("message").innerHTML =
-          "<h3>مرحبًا! 🌟</h3>" +
-          "<p>اختر نشاطًا للبدء.</p>";
-
-      } else if (language === "fr") {
-
-        document.getElementById("message").innerHTML =
-          "<h3>Bienvenue ! 🌟</h3>" +
-          "<p>Choisis une activité pour commencer.</p>";
-
-      } else {
-
-        document.getElementById("message").innerHTML =
-          "<h3>Welcome! 🌟</h3>" +
-          "<p>Choose an activity to start.</p>";
-
-      }
-
-    });
-
-  });
-
-
-  document.querySelectorAll(".menu-button").forEach(button => {
-
-    button.addEventListener("click", function() {
-
-      const section = this.dataset.section;
-
-      stars++;
-
-      document.getElementById("stars").textContent = stars;
-
-      const title = messages[language][section];
-
-      document.getElementById("message").innerHTML =
-        "<h3>📚 " + title + "</h3>" +
-        "<p>سيتم فتح هذا القسم في المرحلة القادمة.</p>";
-
-    });
-
-  });
-
-</script>
+  </script>
 
 </body>
 </html>
