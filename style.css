@@ -1,1 +1,204 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f8ff;
+    color: #222;
+    text-align: center;
+    min-height: 100vh;
+}
+
+header {
+    background: linear-gradient(135deg, #4facfe, #00c6ff);
+    color: white;
+    padding: 25px 15px;
+    border-radius: 0 0 25px 25px;
+}
+
+header h1 {
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+header p {
+    font-size: 17px;
+}
+
+.container {
+    width: 95%;
+    max-width: 1000px;
+    margin: 25px auto;
+}
+
+.home-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+    margin-top: 25px;
+}
+
+.main-button {
+    border: none;
+    border-radius: 20px;
+    padding: 25px 15px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.main-button:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.arabic {
+    background: #16a085;
+}
+
+.french {
+    background: #3498db;
+}
+
+.english {
+    background: #9b59b6;
+}
+
+.games {
+    background: #e67e22;
+}
+
+.quizzes {
+    background: #e74c3c;
+}
+
+.section-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+    margin-top: 25px;
+}
+
+.section-card {
+    background: white;
+    border-radius: 18px;
+    padding: 25px 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border: 2px solid #e8eef7;
+}
+
+.section-card h2 {
+    margin-bottom: 12px;
+    font-size: 21px;
+}
+
+.section-card p {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.open-button {
+    display: inline-block;
+    border: none;
+    background: #4facfe;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.open-button:hover {
+    opacity: 0.85;
+}
+
+.back-button {
+    display: inline-block;
+    margin-top: 25px;
+    background: #34495e;
+    color: white;
+    text-decoration: none;
+    padding: 12px 25px;
+    border-radius: 12px;
+}
+
+.content-box {
+    background: white;
+    border-radius: 20px;
+    padding: 25px;
+    margin-top: 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.content-box h2 {
+    margin-bottom: 15px;
+}
+
+.letter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(75px, 1fr));
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.letter {
+    background: #ffffff;
+    border: 2px solid #dce7f5;
+    border-radius: 15px;
+    padding: 18px 8px;
+    font-size: 32px;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.letter:hover {
+    transform: scale(1.05);
+    background: #eef7ff;
+}
+
+.game-card,
+.quiz-card {
+    background: white;
+    border-radius: 20px;
+    padding: 25px;
+    margin-top: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+footer {
+    margin-top: 40px;
+    padding: 20px;
+    background: #2c3e50;
+    color: white;
+}
+
+@media (max-width: 600px) {
+    header h1 {
+        font-size: 25px;
+    }
+
+    header p {
+        font-size: 15px;
+    }
+
+    .main-button {
+        font-size: 18px;
+        min-height: 85px;
+    }
+
+    .letter {
+        font-size: 27px;
+    }
+}
