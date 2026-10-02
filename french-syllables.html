@@ -1,1 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les syllabes</title>
+    <link rel="stylesheet" href="style.css">
+</head>
 
+<body>
+
+<header>
+    <h1>🧩 Les syllabes</h1>
+    <p>Apprends à former des syllabes.</p>
+</header>
+
+<main class="container">
+
+    <div class="content-box">
+
+        <h2>🔤 Syllabes simples</h2>
+
+        <div class="letter-grid">
+
+            <button class="letter" onclick="speak('ba')">ba</button>
+            <button class="letter" onclick="speak('be')">be</button>
+            <button class="letter" onclick="speak('bi')">bi</button>
+            <button class="letter" onclick="speak('bo')">bo</button>
+            <button class="letter" onclick="speak('bu')">bu</button>
+
+            <button class="letter" onclick="speak('ma')">ma</button>
+            <button class="letter" onclick="speak('me')">me</button>
+            <button class="letter" onclick="speak('mi')">mi</button>
+            <button class="letter" onclick="speak('mo')">mo</button>
+            <button class="letter" onclick="speak('mu')">mu</button>
+
+        </div>
+
+    </div>
+
+    <div class="content-box">
+
+        <h2>📚 Former un mot</h2>
+
+        <p style="font-size: 28px;">
+            ma + man = maman
+        </p>
+
+        <button class="open-button" onclick="speak('maman')">
+            🔊 Écouter
+        </button>
+
+    </div>
+
+    <a href="french.html" class="back-button">
+        ↩️ Retour au français
+    </a>
+
+</main>
+
+<script>
+function speak(text) {
+
+    if ("speechSynthesis" in window) {
+
+        speechSynthesis.cancel();
+
+        const speech = new SpeechSynthesisUtterance(text);
+
+        speech.lang = "fr-FR";
+        speech.rate = 0.75;
+
+        speechSynthesis.speak(speech);
+    }
+}
+</script>
+
+</body>
+  </html>
