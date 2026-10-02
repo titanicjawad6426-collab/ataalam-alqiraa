@@ -1,1 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Exercises</title>
+    <link rel="stylesheet" href="style.css">
+</head>
 
+<body>
+
+<header>
+    <h1>✏️ English Exercises</h1>
+    <p>Test what you have learned.</p>
+</header>
+
+<main class="container">
+
+    <div class="content-box">
+
+        <h2>🔤 Exercise 1</h2>
+
+        <p style="font-size: 24px;">
+            Which letter starts the word "Apple"?
+        </p>
+
+        <div class="letter-grid">
+
+            <button class="letter" onclick="checkAnswer('A')">
+                A
+            </button>
+
+            <button class="letter" onclick="checkAnswer('B')">
+                B
+            </button>
+
+            <button class="letter" onclick="checkAnswer('C')">
+                C
+            </button>
+
+        </div>
+
+        <h2 id="result" style="margin-top: 25px;"></h2>
+
+    </div>
+
+    <a href="english.html" class="back-button">
+        ↩️ Back to English
+    </a>
+
+</main>
+
+<script>
+function checkAnswer(answer) {
+
+    const result = document.getElementById("result");
+
+    if (answer === "A") {
+
+        result.textContent = "🎉 Correct! Well done!";
+
+    } else {
+
+        result.textContent = "💡 Try again!";
+    }
+}
+</script>
+
+</body>
+</html>
