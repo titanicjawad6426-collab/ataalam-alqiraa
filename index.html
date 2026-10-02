@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>تعلم القراءة للأطفال</title>
 
   <style>
@@ -32,12 +33,8 @@
       margin-bottom: 8px;
     }
 
-    header p {
-      font-size: 16px;
-    }
-
     .container {
-      max-width: 600px;
+      max-width: 700px;
       margin: 25px auto;
       padding: 15px;
     }
@@ -48,11 +45,6 @@
       border-radius: 20px;
       margin-bottom: 25px;
       box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-    }
-
-    .welcome h2 {
-      color: #4a90e2;
-      margin-bottom: 10px;
     }
 
     .languages {
@@ -70,11 +62,6 @@
       color: white;
       cursor: pointer;
       box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-      transition: transform 0.2s;
-    }
-
-    .language-btn:active {
-      transform: scale(0.96);
     }
 
     .arabic {
@@ -95,11 +82,55 @@
       margin-bottom: 8px;
     }
 
+    .letters-page {
+      display: none;
+    }
+
+    .letters {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .letter {
+      background: white;
+      border: none;
+      border-radius: 18px;
+      padding: 18px 5px;
+      font-size: 38px;
+      font-weight: bold;
+      color: #4a90e2;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+      cursor: pointer;
+    }
+
+    .letter:active {
+      transform: scale(0.92);
+    }
+
+    .back {
+      margin-top: 25px;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 15px;
+      background: #555;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
     footer {
-      margin-top: 35px;
+      margin-top: 30px;
       padding: 20px;
       color: #777;
       font-size: 14px;
+    }
+
+    @media (max-width: 400px) {
+      .letters {
+        grid-template-columns: repeat(3, 1fr);
+      }
     }
   </style>
 </head>
@@ -108,10 +139,12 @@
 
   <header>
     <h1>🌟 تعلم القراءة 🌟</h1>
-    <p>تعلم الحروف بطريقة ممتعة وتفاعلية</p>
+    <p>تعلم الحروف بطريقة ممتعة</p>
   </header>
 
-  <main class="container">
+  <!-- الصفحة الرئيسية -->
+
+  <main class="container" id="homePage">
 
     <section class="welcome">
       <h2>مرحباً بك! 👋</h2>
@@ -120,21 +153,21 @@
 
     <section class="languages">
 
-      <button class="language-btn arabic" onclick="openLanguage('العربية')">
+      <button class="language-btn arabic" onclick="showArabic()">
         <span class="emoji">🇲🇦</span>
         حروف الهجاء
         <br>
         العربية
       </button>
 
-      <button class="language-btn french" onclick="openLanguage('français')">
+      <button class="language-btn french" onclick="comingSoon('الفرنسية')">
         <span class="emoji">🇫🇷</span>
         Lettres
         <br>
         Françaises
       </button>
 
-      <button class="language-btn english" onclick="openLanguage('english')">
+      <button class="language-btn english" onclick="comingSoon('الإنجليزية')">
         <span class="emoji">🇬🇧</span>
         English
         <br>
@@ -145,14 +178,99 @@
 
   </main>
 
+  <!-- صفحة الحروف العربية -->
+
+  <main class="container letters-page" id="arabicPage">
+
+    <section class="welcome">
+      <h2>🇲🇦 الحروف العربية</h2>
+      <p>اضغط على أي حرف لسماع نطقه 🔊</p>
+    </section>
+
+    <section class="letters">
+
+      <button class="letter" onclick="speak('ألف')">أ</button>
+      <button class="letter" onclick="speak('باء')">ب</button>
+      <button class="letter" onclick="speak('تاء')">ت</button>
+      <button class="letter" onclick="speak('ثاء')">ث</button>
+
+      <button class="letter" onclick="speak('جيم')">ج</button>
+      <button class="letter" onclick="speak('حاء')">ح</button>
+      <button class="letter" onclick="speak('خاء')">خ</button>
+      <button class="letter" onclick="speak('دال')">د</button>
+
+      <button class="letter" onclick="speak('ذال')">ذ</button>
+      <button class="letter" onclick="speak('راء')">ر</button>
+      <button class="letter" onclick="speak('زاي')">ز</button>
+      <button class="letter" onclick="speak('سين')">س</button>
+
+      <button class="letter" onclick="speak('شين')">ش</button>
+      <button class="letter" onclick="speak('صاد')">ص</button>
+      <button class="letter" onclick="speak('ضاد')">ض</button>
+      <button class="letter" onclick="speak('طاء')">ط</button>
+
+      <button class="letter" onclick="speak('ظاء')">ظ</button>
+      <button class="letter" onclick="speak('عين')">ع</button>
+      <button class="letter" onclick="speak('غين')">غ</button>
+      <button class="letter" onclick="speak('فاء')">ف</button>
+
+      <button class="letter" onclick="speak('قاف')">ق</button>
+      <button class="letter" onclick="speak('كاف')">ك</button>
+      <button class="letter" onclick="speak('لام')">ل</button>
+      <button class="letter" onclick="speak('ميم')">م</button>
+
+      <button class="letter" onclick="speak('نون')">ن</button>
+      <button class="letter" onclick="speak('هاء')">ه</button>
+      <button class="letter" onclick="speak('واو')">و</button>
+      <button class="letter" onclick="speak('ياء')">ي</button>
+
+    </section>
+
+    <button class="back" onclick="goHome()">⬅️ العودة للرئيسية</button>
+
+  </main>
+
   <footer>
     © 2026 تعلم القراءة للأطفال
   </footer>
 
   <script>
-    function openLanguage(language) {
-      alert("سنبدأ قريباً بتعلم حروف " + language + " 🎉");
+
+    function showArabic() {
+      document.getElementById("homePage").style.display = "none";
+      document.getElementById("arabicPage").style.display = "block";
     }
+
+    function goHome() {
+      document.getElementById("arabicPage").style.display = "none";
+      document.getElementById("homePage").style.display = "block";
+    }
+
+    function speak(text) {
+
+      if ("speechSynthesis" in window) {
+
+        window.speechSynthesis.cancel();
+
+        const voice = new SpeechSynthesisUtterance(text);
+
+        voice.lang = "ar-SA";
+        voice.rate = 0.7;
+        voice.pitch = 1.1;
+
+        window.speechSynthesis.speak(voice);
+
+      } else {
+
+        alert("عذراً، المتصفح لا يدعم النطق الصوتي.");
+
+      }
+    }
+
+    function comingSoon(language) {
+      alert("قسم " + language + " سيتم إضافته قريباً 🎉");
+    }
+
   </script>
 
 </body>
