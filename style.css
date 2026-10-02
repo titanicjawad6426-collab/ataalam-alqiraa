@@ -202,3 +202,53 @@ footer {
         font-size: 27px;
     }
 }
+.language-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.language-button {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 18px 10px;
+    border: none;
+    border-radius: 15px;
+    background: #f1f5f9;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    overflow: hidden;
+    word-break: break-word;
+}
+
+.language-button span {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    text-align: center;
+}
+
+.language-button:hover {
+    transform: scale(1.03);
+}
+
+@media (max-width: 600px) {
+
+    .language-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .language-button {
+        min-height: 70px;
+        flex-direction: row;
+        font-size: 20px;
+    }
+}
