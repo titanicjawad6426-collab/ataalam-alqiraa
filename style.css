@@ -287,3 +287,117 @@ footer {
     }
 
         }
+/* =========================
+   بطاقات التطبيق المربعة
+========================= */
+
+.app-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+.app-card {
+    aspect-ratio: 1 / 1;
+    width: 100%;
+    box-sizing: border-box;
+
+    border: 2px solid #e2e8f0;
+    border-radius: 20px;
+
+    background: #ffffff;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    padding: 15px;
+
+    font-size: 18px;
+    font-weight: bold;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.app-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 7px 18px rgba(0, 0, 0, 0.10);
+}
+
+.app-card:active {
+    transform: scale(0.96);
+}
+
+.app-card .card-icon {
+    font-size: 42px;
+    margin-bottom: 12px;
+}
+
+.app-card .card-title {
+    font-size: 18px;
+    line-height: 1.4;
+}
+
+/* ألوان البطاقات */
+
+.app-card:nth-child(1) {
+    background: #fff7ed;
+}
+
+.app-card:nth-child(2) {
+    background: #eff6ff;
+}
+
+.app-card:nth-child(3) {
+    background: #f0fdf4;
+}
+
+.app-card:nth-child(4) {
+    background: #fefce8;
+}
+
+.app-card:nth-child(5) {
+    background: #faf5ff;
+}
+
+.app-card:nth-child(6) {
+    background: #fff1f2;
+}
+
+
+/* الهاتف */
+
+@media (max-width: 600px) {
+
+    .app-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        padding: 0 5px;
+    }
+
+    .app-card {
+        border-radius: 16px;
+        padding: 10px;
+    }
+
+    .app-card .card-icon {
+        font-size: 34px;
+        margin-bottom: 8px;
+    }
+
+    .app-card .card-title {
+        font-size: 15px;
+    }
+    }
