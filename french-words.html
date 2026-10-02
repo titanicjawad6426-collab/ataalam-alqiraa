@@ -1,1 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les mots français</title>
+    <link rel="stylesheet" href="style.css">
+</head>
 
+<body>
+
+<header>
+    <h1>📝 Les mots français</h1>
+    <p>Apprends de nouveaux mots avec les images.</p>
+</header>
+
+<main class="container">
+
+    <div class="content-box">
+
+        <h2>📚 Mots faciles</h2>
+
+        <div class="letter-grid">
+
+            <button class="letter" onclick="speakWord('chat')">
+                🐱<br>
+                chat
+            </button>
+
+            <button class="letter" onclick="speakWord('chien')">
+                🐶<br>
+                chien
+            </button>
+
+            <button class="letter" onclick="speakWord('maison')">
+                🏠<br>
+                maison
+            </button>
+
+            <button class="letter" onclick="speakWord('livre')">
+                📖<br>
+                livre
+            </button>
+
+            <button class="letter" onclick="speakWord('soleil')">
+                ☀️<br>
+                soleil
+            </button>
+
+            <button class="letter" onclick="speakWord('école')">
+                🏫<br>
+                école
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="content-box">
+
+        <h2>🔊 Écoute</h2>
+
+        <p id="selected-word">
+            Choisis un mot 👆
+        </p>
+
+    </div>
+
+    <a href="french.html" class="back-button">
+        ↩️ Retour au français
+    </a>
+
+</main>
+
+<script>
+function speakWord(word) {
+
+    document.getElementById("selected-word").textContent =
+        "🔊 " + word;
+
+    if ("speechSynthesis" in window) {
+
+        speechSynthesis.cancel();
+
+        const speech = new SpeechSynthesisUtterance(word);
+
+        speech.lang = "fr-FR";
+        speech.rate = 0.75;
+        speech.pitch = 1;
+
+        speechSynthesis.speak(speech);
+    }
+}
+</script>
+
+</body>
+</html>
