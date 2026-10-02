@@ -1,397 +1,350 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>تعلم القراءة للأطفال</title>
+<title>تعلم القراءة للأطفال</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
 
-    body {
-      min-height: 100vh;
-      background: linear-gradient(135deg, #e8f7ff, #fff8df);
-      color: #333;
-      text-align: center;
-    }
+body {
+  min-height: 100vh;
+  background: linear-gradient(135deg,#e8f7ff,#fff8df);
+  text-align: center;
+  color: #333;
+}
 
-    header {
-      background: #4a90e2;
-      color: white;
-      padding: 25px 15px;
-      border-radius: 0 0 30px 30px;
-    }
+header {
+  background: #4a90e2;
+  color: white;
+  padding: 25px 15px;
+  border-radius: 0 0 30px 30px;
+}
 
-    header h1 {
-      font-size: 28px;
-      margin-bottom: 8px;
-    }
+header h1 {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
 
-    header p {
-      font-size: 16px;
-    }
+.container {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+}
 
-    .container {
-      max-width: 700px;
-      margin: 25px auto;
-      padding: 15px;
-    }
+.welcome {
+  background: white;
+  padding: 22px;
+  border-radius: 22px;
+  margin-bottom: 25px;
+  box-shadow: 0 5px 15px rgba(0,0,0,.08);
+}
 
-    .welcome {
-      background: white;
-      padding: 22px;
-      border-radius: 22px;
-      margin-bottom: 25px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-    }
+.welcome h2 {
+  color: #4a90e2;
+  margin-bottom: 10px;
+}
 
-    .welcome h2 {
-      color: #4a90e2;
-      margin-bottom: 10px;
-    }
+.languages {
+  display: grid;
+  gap: 18px;
+}
 
-    .languages {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 18px;
-    }
+.language-btn {
+  border: 0;
+  border-radius: 22px;
+  padding: 25px;
+  color: white;
+  font-size: 23px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 6px 12px rgba(0,0,0,.15);
+}
 
-    .language-btn {
-      border: none;
-      border-radius: 22px;
-      padding: 25px 15px;
-      font-size: 23px;
-      font-weight: bold;
-      color: white;
-      cursor: pointer;
-      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-      transition: transform 0.2s;
-    }
+.arabic {
+  background: #e85d75;
+}
 
-    .language-btn:active {
-      transform: scale(0.95);
-    }
+.french {
+  background: #4a90e2;
+}
 
-    .arabic {
-      background: #e85d75;
-    }
+.english {
+  background: #58b368;
+}
 
-    .french {
-      background: #4a90e2;
-    }
+.emoji {
+  display: block;
+  font-size: 42px;
+  margin-bottom: 8px;
+}
 
-    .english {
-      background: #58b368;
-    }
+.page {
+  display: none;
+}
 
-    .emoji {
-      display: block;
-      font-size: 42px;
-      margin-bottom: 8px;
-    }
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 15px;
+}
 
-    .page {
-      display: none;
-    }
+.card {
+  background: white;
+  border-radius: 20px;
+  padding: 18px 8px;
+  box-shadow: 0 5px 12px rgba(0,0,0,.12);
+}
 
-    .letters {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin-top: 20px;
-    }
+.letter {
+  font-size: 55px;
+  font-weight: bold;
+  color: #4a90e2;
+}
 
-    .letter {
-      background: white;
-      border: none;
-      border-radius: 18px;
-      padding: 18px 5px;
-      font-size: 40px;
-      font-weight: bold;
-      color: #4a90e2;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
-      cursor: pointer;
-      transition: transform 0.15s;
-    }
+.picture {
+  font-size: 55px;
+  margin: 10px;
+}
 
-    .letter:active {
-      transform: scale(0.9);
-    }
+.word {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
 
-    .sound-button {
-      margin-top: 20px;
-      padding: 14px 25px;
-      border: none;
-      border-radius: 18px;
-      background: #ffb52e;
-      color: white;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-    }
+.sound {
+  border: 0;
+  border-radius: 15px;
+  padding: 10px 16px;
+  background: #ffb52e;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+}
 
-    .back {
-      margin-top: 25px;
-      padding: 13px 25px;
-      border: none;
-      border-radius: 15px;
-      background: #555;
-      color: white;
-      font-size: 18px;
-      cursor: pointer;
-    }
+.back {
+  margin-top: 25px;
+  border: 0;
+  border-radius: 15px;
+  padding: 13px 25px;
+  background: #555;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+}
 
-    footer {
-      margin-top: 30px;
-      padding: 20px;
-      color: #777;
-      font-size: 14px;
-    }
+footer {
+  padding: 25px;
+  color: #777;
+}
 
-    @media (max-width: 400px) {
-      .letters {
-        grid-template-columns: repeat(3, 1fr);
-      }
+@media(max-width:550px) {
+  .cards {
+    grid-template-columns: repeat(2,1fr);
+  }
 
-      .letter {
-        font-size: 34px;
-      }
-    }
-  </style>
+  .letter {
+    font-size: 45px;
+  }
+
+  .picture {
+    font-size: 45px;
+  }
+}
+
+@media(max-width:350px) {
+  .cards {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
 </head>
 
 <body>
 
-  <header>
-    <h1>🌟 تعلم القراءة 🌟</h1>
-    <p>تعلم الحروف بطريقة ممتعة وتفاعلية</p>
-  </header>
-
-
-  <!-- الصفحة الرئيسية -->
-
-  <main class="container" id="homePage">
-
-    <section class="welcome">
-      <h2>مرحباً بك! 👋</h2>
-      <p>اختر اللغة التي تريد أن تتعلم حروفها</p>
-    </section>
-
-    <section class="languages">
-
-      <button class="language-btn arabic" onclick="showPage('arabicPage')">
-        <span class="emoji">🇲🇦</span>
-        حروف الهجاء
-        <br>
-        العربية
-      </button>
-
-      <button class="language-btn french" onclick="showPage('frenchPage')">
-        <span class="emoji">🇫🇷</span>
-        الحروف الفرنسية
-      </button>
-
-      <button class="language-btn english" onclick="showPage('englishPage')">
-        <span class="emoji">🇬🇧</span>
-        الحروف الإنجليزية
-      </button>
-
-    </section>
-
-  </main>
-
-
-  <!-- صفحة الحروف العربية -->
-
-  <main class="container page" id="arabicPage">
-
-    <section class="welcome">
-      <h2>🇲🇦 الحروف العربية</h2>
-      <p>اضغط على الحرف لسماع اسمه 🔊</p>
-    </section>
-
-    <section class="letters">
-
-      <button class="letter" onclick="speakArabic('ألف')">أ</button>
-      <button class="letter" onclick="speakArabic('باء')">ب</button>
-      <button class="letter" onclick="speakArabic('تاء')">ت</button>
-      <button class="letter" onclick="speakArabic('ثاء')">ث</button>
-
-      <button class="letter" onclick="speakArabic('جيم')">ج</button>
-      <button class="letter" onclick="speakArabic('حاء')">ح</button>
-      <button class="letter" onclick="speakArabic('خاء')">خ</button>
-      <button class="letter" onclick="speakArabic('دال')">د</button>
-
-      <button class="letter" onclick="speakArabic('ذال')">ذ</button>
-      <button class="letter" onclick="speakArabic('راء')">ر</button>
-      <button class="letter" onclick="speakArabic('زاي')">ز</button>
-      <button class="letter" onclick="speakArabic('سين')">س</button>
-
-      <button class="letter" onclick="speakArabic('شين')">ش</button>
-      <button class="letter" onclick="speakArabic('صاد')">ص</button>
-      <button class="letter" onclick="speakArabic('ضاد')">ض</button>
-      <button class="letter" onclick="speakArabic('طاء')">ط</button>
-
-      <button class="letter" onclick="speakArabic('ظاء')">ظ</button>
-      <button class="letter" onclick="speakArabic('عين')">ع</button>
-      <button class="letter" onclick="speakArabic('غين')">غ</button>
-      <button class="letter" onclick="speakArabic('فاء')">ف</button>
-
-      <button class="letter" onclick="speakArabic('قاف')">ق</button>
-      <button class="letter" onclick="speakArabic('كاف')">ك</button>
-      <button class="letter" onclick="speakArabic('لام')">ل</button>
-      <button class="letter" onclick="speakArabic('ميم')">م</button>
-
-      <button class="letter" onclick="speakArabic('نون')">ن</button>
-      <button class="letter" onclick="speakArabic('هاء')">ه</button>
-      <button class="letter" onclick="speakArabic('واو')">و</button>
-      <button class="letter" onclick="speakArabic('ياء')">ي</button>
-
-    </section>
-
-    <button class="sound-button" onclick="testArabicSound()">
-      🔊 اختبار الصوت
-    </button>
-
-    <br>
-
-    <button class="back" onclick="goHome()">
-      🏠 العودة للرئيسية
-    </button>
-
-  </main>
-
-
-  <!-- صفحة الفرنسية -->
-
-  <main class="container page" id="frenchPage">
-
-    <section class="welcome">
-      <h2>🇫🇷 الحروف الفرنسية</h2>
-      <p>سيتم إضافة الحروف الفرنسية والتدريبات هنا.</p>
-    </section>
-
-    <button class="back" onclick="goHome()">
-      🏠 العودة للرئيسية
-    </button>
-
-  </main>
-
-
-  <!-- صفحة الإنجليزية -->
-
-  <main class="container page" id="englishPage">
-
-    <section class="welcome">
-      <h2>🇬🇧 الحروف الإنجليزية</h2>
-      <p>سيتم إضافة الحروف الإنجليزية والتدريبات هنا.</p>
-    </section>
-
-    <button class="back" onclick="goHome()">
-      🏠 العودة للرئيسية
-    </button>
-
-  </main>
-
-
-  <footer>
-    © 2026 تعلم القراءة للأطفال
-  </footer>
-
-
-  <script>
-
-    /* الانتقال بين الصفحات */
-
-    function showPage(pageId) {
-
-      document.getElementById("homePage").style.display = "none";
-
-      document.getElementById("arabicPage").style.display = "none";
-      document.getElementById("frenchPage").style.display = "none";
-      document.getElementById("englishPage").style.display = "none";
-
-      document.getElementById(pageId).style.display = "block";
-    }
-
-
-    /* العودة إلى الصفحة الرئيسية */
-
-    function goHome() {
-
-      document.getElementById("arabicPage").style.display = "none";
-      document.getElementById("frenchPage").style.display = "none";
-      document.getElementById("englishPage").style.display = "none";
-
-      document.getElementById("homePage").style.display = "block";
-    }
-
-
-    /* نطق الحروف العربية */
-
-    function speakArabic(text) {
-
-      if (!("speechSynthesis" in window)) {
-
-        alert("المتصفح لا يدعم خاصية النطق الصوتي.");
-
-        return;
-      }
-
-      window.speechSynthesis.cancel();
-
-      const utterance = new SpeechSynthesisUtterance(text);
-
-      utterance.lang = "ar-SA";
-      utterance.rate = 0.65;
-      utterance.pitch = 1;
-
-      const voices = window.speechSynthesis.getVoices();
-
-      const arabicVoice = voices.find(function(voice) {
-
-        return voice.lang &&
-               voice.lang.toLowerCase().startsWith("ar");
-
-      });
-
-      if (arabicVoice) {
-        utterance.voice = arabicVoice;
-      }
-
-      window.speechSynthesis.speak(utterance);
-    }
-
-
-    /* اختبار الصوت */
-
-    function testArabicSound() {
-
-      speakArabic("مرحباً، أهلاً بك في تطبيق تعلم القراءة");
-
-    }
-
-
-    /* تحميل الأصوات */
-
-    if ("speechSynthesis" in window) {
-
-      window.speechSynthesis.onvoiceschanged = function() {
-
-        window.speechSynthesis.getVoices();
-
-      };
-
-    }
-
-  </script>
-
-</body>
-  </html>
+<header>
+<h1>🌟 تعلم القراءة 🌟</h1>
+<p>تعلم الحروف والكلمات بطريقة ممتعة</p>
+</header>
+
+
+<!-- الرئيسية -->
+
+<main class="container" id="home">
+
+<section class="welcome">
+<h2>مرحباً بك 👋</h2>
+<p>اختر اللغة التي تريد تعلمها</p>
+</section>
+
+<div class="languages">
+
+<button class="language-btn arabic"
+onclick="openPage('arabic')">
+🇲🇦<br>
+حروف الهجاء العربية
+</button>
+
+<button class="language-btn french"
+onclick="openPage('french')">
+🇫🇷<br>
+الحروف الفرنسية
+</button>
+
+<button class="language-btn english"
+onclick="openPage('english')">
+🇬🇧<br>
+الحروف الإنجليزية
+</button>
+
+</div>
+
+</main>
+
+
+<!-- العربية -->
+
+<main class="container page" id="arabic">
+
+<section class="welcome">
+<h2>🇲🇦 الحروف العربية</h2>
+<p>تعلم الحرف والكلمة</p>
+</section>
+
+<div class="cards">
+
+<div class="card">
+<div class="letter">أ</div>
+<div class="picture">🦁</div>
+<div class="word">أسد</div>
+<button class="sound" onclick="speak('ألف، أسد','ar-SA')">🔊</button>
+</div>
+
+<div class="card">
+<div class="letter">ب</div>
+<div class="picture">🦆</div>
+<div class="word">بطة</div>
+<button class="sound" onclick="speak('باء، بطة','ar-SA')">🔊</button>
+</div>
+
+<div class="card">
+<div class="letter">ت</div>
+<div class="picture">🍎</div>
+<div class="word">تفاحة</div>
+<button class="sound" onclick="speak('تاء، تفاحة','ar-SA')">🔊</button>
+</div>
+
+<div class="card">
+<div class="letter">ث</div>
+<div class="picture">🦊</div>
+<div class="word">ثعلب</div>
+<button class="sound" onclick="speak('ثاء، ثعلب','ar-SA')">🔊</button>
+</div>
+
+<div class="card">
+<div class="letter">ج</div>
+<div class="picture">🐪</div>
+<div class="word">جمل</div>
+<button class="sound" onclick="speak('جيم، جمل','ar-SA')">🔊</button>
+</div>
+
+<div class="card">
+<div class="letter">ح</div>
+<div class="picture">🐴</div>
+<div class="word">حصان</div>
+<button class="sound" onclick="speak('حاء، حصان','ar-SA')">🔊</button>
+</div>
+
+<div class="card">
+<div class="letter">خ</div>
+<div class="picture">🐑</div>
+<div class="word">خروف</div>
+<button class="sound" onclick="speak('خاء، خروف','ar-SA')">🔊</button>
+</div>
+
+<div class="card">
+<div class="letter">د</div>
+<div class="picture">🐓</div>
+<div class="word">دجاجة</div>
+<button class="sound" onclick="speak('دال، دجاجة','ar-SA')">🔊</button>
+</div>
+
+<div class="card">
+<div class="letter">ر</div>
+<div class="picture">🌹</div>
+<div class="word">وردة</div>
+<button class="sound" onclick="speak('راء، وردة','ar-SA')">🔊</button>
+</div>
+
+<div class="card">
+<div class="letter">س</div>
+<div class="picture">🐟</div>
+<div class="word">سمكة</div>
+<button class="sound" onclick="speak('سين، سمكة','ar-SA')">🔊</button>
+</div>
+
+<div class="card">
+<div class="letter">ش</div>
+<div class="picture">☀️</div>
+<div class="word">شمس</div>
+<button class="sound" onclick="speak('شين، شمس','ar-SA')">🔊</button>
+</div>
+
+<div class="card">
+<div class="letter">ص</div>
+<div class="picture">🐦</div>
+<div class="word">صقر</div>
+<button class="sound" onclick="speak('صاد، صقر','ar-SA')">🔊</button>
+</div>
+
+</div>
+
+<button class="back" onclick="goHome()">🏠 الرئيسية</button>
+
+</main>
+
+
+<!-- الفرنسية -->
+
+<main class="container page" id="french">
+
+<section class="welcome">
+<h2>🇫🇷 الحروف الفرنسية</h2>
+<p>Apprenons les lettres françaises</p>
+</section>
+
+<div class="cards">
+
+<div class="card">
+<div class="letter">A</div>
+<div class="picture">✈️</div>
+<div class="word">Avion</div>
+<button class="sound" onclick="speak('A, Avion','fr-FR')">🔊</button>
+</div>
+
+<div class="card">
+<div class="letter">B</div>
+<div class="picture">⚽</div>
+<div class="word">Ballon</div>
+<button class="sound" onclick="speak('B, Ballon','fr-FR')">🔊</button>
+</div>
+
+<div class="card">
+<div class="letter">C</div>
+<div class="picture">🐱</div>
+<div class="word">Chat</div>
+<button class="sound" onclick="speak('C, Chat','fr-FR')">🔊</button>
+</div>
+
+<div class="card">
+<div class="letter">D</div>
+<div class="picture">🐬</div>
+<div class="word">D
