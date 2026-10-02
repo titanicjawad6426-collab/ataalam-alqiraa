@@ -1,1 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Écoute et prononciation</title>
+    <link rel="stylesheet" href="style.css">
+</head>
 
+<body>
+
+<header>
+    <h1>🔊 Écoute et prononciation</h1>
+    <p>Écoute et répète les sons et les mots.</p>
+</header>
+
+<main class="container">
+
+    <div class="content-box">
+
+        <h2>🔤 Les lettres</h2>
+
+        <div class="letter-grid">
+
+            <button class="letter" onclick="speak('A')">🔊 A</button>
+            <button class="letter" onclick="speak('B')">🔊 B</button>
+            <button class="letter" onclick="speak('C')">🔊 C</button>
+            <button class="letter" onclick="speak('D')">🔊 D</button>
+            <button class="letter" onclick="speak('E')">🔊 E</button>
+            <button class="letter" onclick="speak('F')">🔊 F</button>
+            <button class="letter" onclick="speak('G')">🔊 G</button>
+            <button class="letter" onclick="speak('H')">🔊 H</button>
+
+        </div>
+
+    </div>
+
+    <div class="content-box">
+
+        <h2>📝 Les mots</h2>
+
+        <div class="letter-grid">
+
+            <button class="letter" onclick="speak('chat')">
+                🐱<br>chat
+            </button>
+
+            <button class="letter" onclick="speak('maison')">
+                🏠<br>maison
+            </button>
+
+            <button class="letter" onclick="speak('livre')">
+                📖<br>livre
+            </button>
+
+            <button class="letter" onclick="speak('école')">
+                🏫<br>école
+            </button>
+
+        </div>
+
+    </div>
+
+    <a href="french.html" class="back-button">
+        ↩️ Retour au français
+    </a>
+
+</main>
+
+<script>
+function speak(text) {
+
+    if ("speechSynthesis" in window) {
+
+        speechSynthesis.cancel();
+
+        const speech = new SpeechSynthesisUtterance(text);
+
+        speech.lang = "fr-FR";
+        speech.rate = 0.75;
+        speech.pitch = 1;
+
+        speechSynthesis.speak(speech);
+    }
+}
+</script>
+
+</body>
+  </html>
