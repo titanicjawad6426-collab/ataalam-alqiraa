@@ -1,1 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Words</title>
+    <link rel="stylesheet" href="style.css">
+</head>
 
+<body>
+
+<header>
+    <h1>📝 English Words</h1>
+    <p>Learn new words with pictures.</p>
+</header>
+
+<main class="container">
+
+    <div class="content-box">
+
+        <h2>📚 Easy Words</h2>
+
+        <div class="letter-grid">
+
+            <button class="letter" onclick="speakWord('cat')">
+                🐱<br>
+                cat
+            </button>
+
+            <button class="letter" onclick="speakWord('dog')">
+                🐶<br>
+                dog
+            </button>
+
+            <button class="letter" onclick="speakWord('house')">
+                🏠<br>
+                house
+            </button>
+
+            <button class="letter" onclick="speakWord('book')">
+                📖<br>
+                book
+            </button>
+
+            <button class="letter" onclick="speakWord('sun')">
+                ☀️<br>
+                sun
+            </button>
+
+            <button class="letter" onclick="speakWord('school')">
+                🏫<br>
+                school
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="content-box">
+
+        <h2>🔊 Listen</h2>
+
+        <p id="selected-word">
+            Choose a word 👆
+        </p>
+
+    </div>
+
+    <a href="english.html" class="back-button">
+        ↩️ Back to English
+    </a>
+
+</main>
+
+<script>
+function speakWord(word) {
+
+    document.getElementById("selected-word").textContent =
+        "🔊 " + word;
+
+    if ("speechSynthesis" in window) {
+
+        speechSynthesis.cancel();
+
+        const speech = new SpeechSynthesisUtterance(word);
+
+        speech.lang = "en-US";
+        speech.rate = 0.75;
+        speech.pitch = 1;
+
+        speechSynthesis.speak(speech);
+    }
+}
+</script>
+
+</body>
+</html>
