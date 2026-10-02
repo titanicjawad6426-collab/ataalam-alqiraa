@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>أتعلم القراءة</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      color: #222;
+    }
+
+    header {
+      text-align: center;
+      background: white;
+      padding: 25px 15px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .logo {
+      font-size: 55px;
+    }
+
+    h1 {
+      margin: 8px 0;
+      font-size: 32px;
+    }
+
+    .subtitle {
+      color: #666;
+    }
+
+    .stars {
+      margin-top: 12px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    main {
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    h2 {
+      text-align: center;
+      margin: 25px 0 15px;
+    }
+
+    .languages {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    .language {
+      background: white;
+      border: 2px solid #ddd;
+      border-radius: 18px;
+      padding: 15px 5px;
+      font-size: 17px;
+    }
+
+    .language.active {
+      border-color: #4f7cff;
+      background: #eef3ff;
+    }
+
+    .menu {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .menu-button {
+      background: white;
+      border: none;
+      border-radius: 20px;
+      padding: 20px 10px;
+      min-height: 120px;
+      font-size: 17px;
+      font-weight: bold;
+      box-shadow: 0 3px 10px #00000012;
+    }
+
+    .menu-button:hover {
+      transform: translateY(-2px);
+    }
+
+    .icon {
+      display: block;
+      font-size: 40px;
+      margin-bottom: 8px;
+    }
+
+    .welcome {
+      background: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    @media (min-width: 650px) {
+      .menu {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 400px) {
+      .languages {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+
+  <div class="logo">📚✨</div>
+
+  <h1>أتعلم القراءة</h1>
+
+  <p class="subtitle">
+    رحلة ممتعة لتعلم القراءة
+  </p>
+
+  <div class="stars">
+    ⭐ <span id="stars">0</span> نجمة
+  </div>
+
+</header>
+
+<main>
+
+  <h2>🌍 اختر لغة التعلم</h2>
+
+  <div class="languages">
+
+    <button class="language active" data-lang="ar">
+      🇲🇦<br>العربية
+    </button>
+
+    <button class="language" data-lang="fr">
+      🇫🇷<br>Français
+    </button>
+
+    <button class="language" data-lang="en">
+      🇬🇧<br>English
+    </button>
+
+  </div>
+
+
+  <h2>🎓 رحلة التعلم</h2>
+
+  <div class="menu">
+
+    <button class="menu-button" data-section="letters">
+      <span class="icon">🔤</span>
+      الحروف
+    </button>
+
+    <button class="menu-button" data-section="harakat">
+      <span class="icon">✨</span>
+      الحركات
+    </button>
+
+    <button class="menu-button" data-section="syllables">
+      <span class="icon">🧩</span>
+      المقاطع
+    </button>
+
+    <button class="menu-button" data-section="words">
+      <span class="icon">📖</span>
+      الكلمات
+    </button>
+
+    <button class="menu-button" data-section="sentences">
+      <span class="icon">💬</span>
+      الجمل
+    </button>
+
+    <button class="menu-button" data-section="stories">
+      <span class="icon">📚</span>
+      القصص
+    </button>
+
+    <button class="menu-button" data-section="games">
+      <span class="icon">🎮</span>
+      الألعاب
+    </button>
+
+    <button class="menu-button" data-section="progress">
+      <span class="icon">⭐</span>
+      تقدمي
+    </button>
+
+  </div>
+
+
+  <div class="welcome" id="message">
+
+    <h3>مرحبًا! 🌟</h3>
+
+    <p>
+      اختر اللغة ثم ابدأ رحلة تعلم القراءة.
+    </p>
+
+  </div>
+
+</main>
+
+
+<script>
+
+  let language = "ar";
+
+  let stars = 0;
+
+
+  const messages = {
+
+    ar: {
+      letters: "الحروف",
+      harakat: "الحركات",
+      syllables: "المقاطع",
+      words: "الكلمات",
+      sentences: "الجمل",
+      stories: "القصص",
+      games: "الألعاب",
+      progress: "تقدمي"
+    },
+
+    fr: {
+      letters: "Lettres",
+      harakat: "Sons",
+      syllables: "Syllabes",
+      words: "Mots",
+      sentences: "Phrases",
+      stories: "Histoires",
+      games: "Jeux",
+      progress: "Progression"
+    },
+
+    en: {
+      letters: "Letters",
+      harakat: "Sounds",
+      syllables: "Syllables",
+      words: "Words",
+      sentences: "Sentences",
+      stories: "Stories",
+      games: "Games",
+      progress: "Progress"
+    }
+
+  };
+
+
+  document.querySelectorAll(".language").forEach(button => {
+
+    button.addEventListener("click", function() {
+
+      language = this.dataset.lang;
+
+      document.querySelectorAll(".language")
+        .forEach(b => b.classList.remove("active"));
+
+      this.classList.add("active");
+
+      if (language === "ar") {
+
+        document.getElementById("message").innerHTML =
+          "<h3>مرحبًا! 🌟</h3>" +
+          "<p>اختر نشاطًا للبدء.</p>";
+
+      } else if (language === "fr") {
+
+        document.getElementById("message").innerHTML =
+          "<h3>Bienvenue ! 🌟</h3>" +
+          "<p>Choisis une activité pour commencer.</p>";
+
+      } else {
+
+        document.getElementById("message").innerHTML =
+          "<h3>Welcome! 🌟</h3>" +
+          "<p>Choose an activity to start.</p>";
+
+      }
+
+    });
+
+  });
+
+
+  document.querySelectorAll(".menu-button").forEach(button => {
+
+    button.addEventListener("click", function() {
+
+      const section = this.dataset.section;
+
+      stars++;
+
+      document.getElementById("stars").textContent = stars;
+
+      const title = messages[language][section];
+
+      document.getElementById("message").innerHTML =
+        "<h3>📚 " + title + "</h3>" +
+        "<p>سيتم فتح هذا القسم في المرحلة القادمة.</p>";
+
+    });
+
+  });
+
+</script>
+
+</body>
+</html>
