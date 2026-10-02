@@ -3,10 +3,19 @@
   "short_name": "تعلم القراءة",
   "description": "تطبيق تفاعلي يساعد الأطفال على تعلم القراءة باللغة العربية والفرنسية والإنجليزية من خلال الحروف والكلمات والألعاب والمسابقات.",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#4f46e5",
   "orientation": "portrait",
   "lang": "ar",
-  "dir": "rtl"
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
 }
