@@ -1,1 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Reading</title>
+    <link rel="stylesheet" href="style.css">
+</head>
 
+<body>
+
+<header>
+    <h1>📖 English Reading</h1>
+    <p>Read words and simple sentences.</p>
+</header>
+
+<main class="container">
+
+    <div class="content-box">
+
+        <h2>📚 Words</h2>
+
+        <p style="font-size: 30px;">
+            🐱 The cat
+        </p>
+
+        <button class="open-button" onclick="speak('The cat')">
+            🔊 Listen
+        </button>
+
+        <hr style="margin: 25px 0;">
+
+        <p style="font-size: 30px;">
+            🏠 The house
+        </p>
+
+        <button class="open-button" onclick="speak('The house')">
+            🔊 Listen
+        </button>
+
+    </div>
+
+    <div class="content-box">
+
+        <h2>📖 Simple Sentence</h2>
+
+        <p style="font-size: 27px;">
+            The cat is in the house.
+        </p>
+
+        <button class="open-button" onclick="speak('The cat is in the house')">
+            🔊 Listen to the sentence
+        </button>
+
+    </div>
+
+    <a href="english.html" class="back-button">
+        ↩️ Back to English
+    </a>
+
+</main>
+
+<script>
+function speak(text) {
+
+    if ("speechSynthesis" in window) {
+
+        speechSynthesis.cancel();
+
+        const speech = new SpeechSynthesisUtterance(text);
+
+        speech.lang = "en-US";
+        speech.rate = 0.7;
+
+        speechSynthesis.speak(speech);
+    }
+}
+</script>
+
+</body>
+</html>
