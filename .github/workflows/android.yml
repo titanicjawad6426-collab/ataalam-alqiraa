@@ -17,7 +17,13 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
 
       - name: Install Capacitor
         run: |
@@ -26,14 +32,8 @@ jobs:
       - name: Create Android project
         run: npx cap add android
 
-      - name: Sync web app
+      - name: Sync app
         run: npx cap sync android
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
 
       - name: Build APK
         working-directory: android
