@@ -1,1 +1,71 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تمارين اللغة العربية</title>
+    <link rel="stylesheet" href="style.css">
+</head>
 
+<body>
+
+<header>
+    <h1>✏️ تمارين اللغة العربية</h1>
+    <p>اختبر ما تعلمته</p>
+</header>
+
+<main class="container">
+
+    <div class="content-box">
+
+        <h2>🔤 التمرين الأول</h2>
+
+        <p style="font-size: 24px;">
+            اختر الحرف الذي تبدأ به كلمة "أسد":
+        </p>
+
+        <div class="letter-grid">
+
+            <button class="letter" onclick="checkAnswer('أ')">
+                أ
+            </button>
+
+            <button class="letter" onclick="checkAnswer('ب')">
+                ب
+            </button>
+
+            <button class="letter" onclick="checkAnswer('م')">
+                م
+            </button>
+
+        </div>
+
+        <h2 id="result" style="margin-top:25px;"></h2>
+
+    </div>
+
+    <a href="arabic.html" class="back-button">
+        ↩️ العودة إلى العربية
+    </a>
+
+</main>
+
+<script>
+function checkAnswer(answer) {
+
+    const result = document.getElementById("result");
+
+    if (answer === "أ") {
+
+        result.textContent = "🎉 إجابة صحيحة! أحسنت.";
+
+    } else {
+
+        result.textContent = "💡 حاول مرة أخرى.";
+
+    }
+}
+</script>
+
+</body>
+</html>
