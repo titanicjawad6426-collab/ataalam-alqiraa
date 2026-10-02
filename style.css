@@ -205,50 +205,85 @@ footer {
 .language-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
+    gap: 16px;
     width: 100%;
-    box-sizing: border-box;
+    max-width: 600px;
+    margin: 20px auto;
 }
 
 .language-button {
+    aspect-ratio: 1 / 1;
     width: 100%;
-    min-width: 0;
     box-sizing: border-box;
-    padding: 18px 10px;
-    border: none;
-    border-radius: 15px;
-    background: #f1f5f9;
+
+    border: 2px solid #e2e8f0;
+    border-radius: 20px;
+
+    background: #ffffff;
+
     font-size: 18px;
     font-weight: bold;
+
     cursor: pointer;
+
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    overflow: hidden;
-    word-break: break-word;
+
+    gap: 12px;
+
+    padding: 10px;
+
+    transition: transform 0.2s ease,
+                box-shadow 0.2s ease;
 }
 
-.language-button span {
-    max-width: 100%;
-    overflow-wrap: anywhere;
-    text-align: center;
+.language-button:first-child {
+    background: #fff7ed;
+}
+
+.language-button:nth-child(2) {
+    background: #eff6ff;
+}
+
+.language-button:nth-child(3) {
+    background: #f0fdf4;
 }
 
 .language-button:hover {
-    transform: scale(1.03);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.10);
 }
+
+.language-button:active {
+    transform: scale(0.96);
+}
+
+.language-button span {
+    display: block;
+    width: 100%;
+
+    text-align: center;
+
+    white-space: normal;
+    overflow-wrap: break-word;
+}
+
+
+/* الهاتف */
 
 @media (max-width: 600px) {
 
     .language-grid {
-        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 0 5px;
     }
 
     .language-button {
-        min-height: 70px;
-        flex-direction: row;
-        font-size: 20px;
+        border-radius: 16px;
+        font-size: 15px;
+        gap: 8px;
     }
-}
+
+        }
