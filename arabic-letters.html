@@ -1,1 +1,89 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حروف الهجاء العربية</title>
+    <link rel="stylesheet" href="style.css">
+</head>
 
+<body>
+
+<header>
+    <h1>🔤 حروف الهجاء العربية</h1>
+    <p>اضغط على الحرف لسماع نطقه</p>
+</header>
+
+<main class="container">
+
+    <div class="content-box">
+        <h2>الحروف العربية</h2>
+
+        <div class="letter-grid">
+
+            <button class="letter" onclick="speakLetter('أ')">أ</button>
+            <button class="letter" onclick="speakLetter('ب')">ب</button>
+            <button class="letter" onclick="speakLetter('ت')">ت</button>
+            <button class="letter" onclick="speakLetter('ث')">ث</button>
+            <button class="letter" onclick="speakLetter('ج')">ج</button>
+            <button class="letter" onclick="speakLetter('ح')">ح</button>
+            <button class="letter" onclick="speakLetter('خ')">خ</button>
+            <button class="letter" onclick="speakLetter('د')">د</button>
+            <button class="letter" onclick="speakLetter('ذ')">ذ</button>
+            <button class="letter" onclick="speakLetter('ر')">ر</button>
+            <button class="letter" onclick="speakLetter('ز')">ز</button>
+            <button class="letter" onclick="speakLetter('س')">س</button>
+            <button class="letter" onclick="speakLetter('ش')">ش</button>
+            <button class="letter" onclick="speakLetter('ص')">ص</button>
+            <button class="letter" onclick="speakLetter('ض')">ض</button>
+            <button class="letter" onclick="speakLetter('ط')">ط</button>
+            <button class="letter" onclick="speakLetter('ظ')">ظ</button>
+            <button class="letter" onclick="speakLetter('ع')">ع</button>
+            <button class="letter" onclick="speakLetter('غ')">غ</button>
+            <button class="letter" onclick="speakLetter('ف')">ف</button>
+            <button class="letter" onclick="speakLetter('ق')">ق</button>
+            <button class="letter" onclick="speakLetter('ك')">ك</button>
+            <button class="letter" onclick="speakLetter('ل')">ل</button>
+            <button class="letter" onclick="speakLetter('م')">م</button>
+            <button class="letter" onclick="speakLetter('ن')">ن</button>
+            <button class="letter" onclick="speakLetter('ه')">ه</button>
+            <button class="letter" onclick="speakLetter('و')">و</button>
+            <button class="letter" onclick="speakLetter('ي')">ي</button>
+
+        </div>
+    </div>
+
+    <div class="content-box">
+        <h2 id="selected-letter">👆 اختر حرفًا</h2>
+        <p>اضغط على أي حرف لسماع نطقه.</p>
+    </div>
+
+    <a href="arabic.html" class="back-button">
+        ↩️ العودة إلى العربية
+    </a>
+
+</main>
+
+<script>
+function speakLetter(letter) {
+
+    document.getElementById("selected-letter").textContent =
+        "🔊 الحرف: " + letter;
+
+    if ("speechSynthesis" in window) {
+
+        speechSynthesis.cancel();
+
+        const speech = new SpeechSynthesisUtterance(letter);
+
+        speech.lang = "ar-SA";
+        speech.rate = 0.7;
+        speech.pitch = 1;
+
+        speechSynthesis.speak(speech);
+    }
+}
+</script>
+
+</body>
+  </html>
