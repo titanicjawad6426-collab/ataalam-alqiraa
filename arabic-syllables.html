@@ -1,1 +1,79 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المقاطع العربية</title>
+    <link rel="stylesheet" href="style.css">
+</head>
 
+<body>
+
+<header>
+    <h1>🧩 المقاطع العربية</h1>
+    <p>تعلم تركيب المقاطع والكلمات</p>
+</header>
+
+<main class="container">
+
+    <div class="content-box">
+
+        <h2>مقاطع بسيطة</h2>
+
+        <div class="letter-grid">
+
+            <button class="letter" onclick="speak('با')">با</button>
+            <button class="letter" onclick="speak('بو')">بو</button>
+            <button class="letter" onclick="speak('بي')">بي</button>
+
+            <button class="letter" onclick="speak('ما')">ما</button>
+            <button class="letter" onclick="speak('مو')">مو</button>
+            <button class="letter" onclick="speak('مي')">مي</button>
+
+            <button class="letter" onclick="speak('سا')">سا</button>
+            <button class="letter" onclick="speak('سو')">سو</button>
+            <button class="letter" onclick="speak('سي')">سي</button>
+
+        </div>
+
+    </div>
+
+    <div class="content-box">
+
+        <h2>📚 تركيب كلمة</h2>
+
+        <p>مَ + دْ + رَ + سَ + ة = مَدْرَسَة</p>
+
+        <button
+            class="open-button"
+            onclick="speak('مدرسة')">
+            🔊 استمع
+        </button>
+
+    </div>
+
+    <a href="arabic.html" class="back-button">
+        ↩️ العودة إلى العربية
+    </a>
+
+</main>
+
+<script>
+function speak(text) {
+
+    if ("speechSynthesis" in window) {
+
+        speechSynthesis.cancel();
+
+        const speech = new SpeechSynthesisUtterance(text);
+
+        speech.lang = "ar-SA";
+        speech.rate = 0.75;
+
+        speechSynthesis.speak(speech);
+    }
+}
+</script>
+
+</body>
+</html>
