@@ -1,1 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture française</title>
+    <link rel="stylesheet" href="style.css">
+</head>
 
+<body>
+
+<header>
+    <h1>📖 Lecture</h1>
+    <p>Lis les mots et les petites phrases.</p>
+</header>
+
+<main class="container">
+
+    <div class="content-box">
+
+        <h2>📚 Les mots</h2>
+
+        <p style="font-size: 30px;">
+            🐱 Le chat
+        </p>
+
+        <button class="open-button" onclick="speak('Le chat')">
+            🔊 Écouter
+        </button>
+
+        <hr style="margin: 25px 0;">
+
+        <p style="font-size: 30px;">
+            🏠 La maison
+        </p>
+
+        <button class="open-button" onclick="speak('La maison')">
+            🔊 Écouter
+        </button>
+
+    </div>
+
+    <div class="content-box">
+
+        <h2>📖 Petite phrase</h2>
+
+        <p style="font-size: 27px;">
+            Le chat est dans la maison.
+        </p>
+
+        <button class="open-button" onclick="speak('Le chat est dans la maison')">
+            🔊 Écouter la phrase
+        </button>
+
+    </div>
+
+    <a href="french.html" class="back-button">
+        ↩️ Retour au français
+    </a>
+
+</main>
+
+<script>
+function speak(text) {
+
+    if ("speechSynthesis" in window) {
+
+        speechSynthesis.cancel();
+
+        const speech = new SpeechSynthesisUtterance(text);
+
+        speech.lang = "fr-FR";
+        speech.rate = 0.7;
+
+        speechSynthesis.speak(speech);
+    }
+}
+</script>
+
+</body>
+</html>
