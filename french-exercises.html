@@ -1,1 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercices de français</title>
+    <link rel="stylesheet" href="style.css">
+</head>
 
+<body>
+
+<header>
+    <h1>✏️ Exercices de français</h1>
+    <p>Teste ce que tu as appris.</p>
+</header>
+
+<main class="container">
+
+    <div class="content-box">
+
+        <h2>🔤 Exercice 1</h2>
+
+        <p style="font-size: 24px;">
+            Quelle lettre commence le mot « Chat » ?
+        </p>
+
+        <div class="letter-grid">
+
+            <button class="letter" onclick="checkAnswer('C')">
+                C
+            </button>
+
+            <button class="letter" onclick="checkAnswer('M')">
+                M
+            </button>
+
+            <button class="letter" onclick="checkAnswer('B')">
+                B
+            </button>
+
+        </div>
+
+        <h2 id="result" style="margin-top: 25px;"></h2>
+
+    </div>
+
+    <a href="french.html" class="back-button">
+        ↩️ Retour au français
+    </a>
+
+</main>
+
+<script>
+function checkAnswer(answer) {
+
+    const result = document.getElementById("result");
+
+    if (answer === "C") {
+
+        result.textContent = "🎉 Bonne réponse ! Bravo !";
+
+    } else {
+
+        result.textContent = "💡 Essaie encore !";
+    }
+}
+</script>
+
+</body>
+</html>
