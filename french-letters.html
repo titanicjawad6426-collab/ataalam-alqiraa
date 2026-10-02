@@ -1,1 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lettres françaises</title>
+    <link rel="stylesheet" href="style.css">
+</head>
 
+<body>
+
+<header>
+    <h1>🇫🇷 Les lettres françaises</h1>
+    <p>Clique sur une lettre pour écouter sa prononciation.</p>
+</header>
+
+<main class="container">
+
+    <div class="content-box">
+        <h2>🔤 Alphabet français</h2>
+
+        <div class="letter-grid">
+
+            <button class="letter" onclick="speakLetter('A')">A</button>
+            <button class="letter" onclick="speakLetter('B')">B</button>
+            <button class="letter" onclick="speakLetter('C')">C</button>
+            <button class="letter" onclick="speakLetter('D')">D</button>
+            <button class="letter" onclick="speakLetter('E')">E</button>
+            <button class="letter" onclick="speakLetter('F')">F</button>
+            <button class="letter" onclick="speakLetter('G')">G</button>
+            <button class="letter" onclick="speakLetter('H')">H</button>
+            <button class="letter" onclick="speakLetter('I')">I</button>
+            <button class="letter" onclick="speakLetter('J')">J</button>
+            <button class="letter" onclick="speakLetter('K')">K</button>
+            <button class="letter" onclick="speakLetter('L')">L</button>
+            <button class="letter" onclick="speakLetter('M')">M</button>
+            <button class="letter" onclick="speakLetter('N')">N</button>
+            <button class="letter" onclick="speakLetter('O')">O</button>
+            <button class="letter" onclick="speakLetter('P')">P</button>
+            <button class="letter" onclick="speakLetter('Q')">Q</button>
+            <button class="letter" onclick="speakLetter('R')">R</button>
+            <button class="letter" onclick="speakLetter('S')">S</button>
+            <button class="letter" onclick="speakLetter('T')">T</button>
+            <button class="letter" onclick="speakLetter('U')">U</button>
+            <button class="letter" onclick="speakLetter('V')">V</button>
+            <button class="letter" onclick="speakLetter('W')">W</button>
+            <button class="letter" onclick="speakLetter('X')">X</button>
+            <button class="letter" onclick="speakLetter('Y')">Y</button>
+            <button class="letter" onclick="speakLetter('Z')">Z</button>
+
+        </div>
+    </div>
+
+    <div class="content-box">
+        <h2 id="selected-letter">👆 Choisis une lettre</h2>
+        <p>Appuie sur une lettre pour entendre sa prononciation.</p>
+    </div>
+
+    <a href="french.html" class="back-button">
+        ↩️ Retour au français
+    </a>
+
+</main>
+
+<script>
+function speakLetter(letter) {
+
+    document.getElementById("selected-letter").textContent =
+        "🔊 Lettre : " + letter;
+
+    if ("speechSynthesis" in window) {
+
+        speechSynthesis.cancel();
+
+        const speech = new SpeechSynthesisUtterance(letter);
+
+        speech.lang = "fr-FR";
+        speech.rate = 0.75;
+        speech.pitch = 1;
+
+        speechSynthesis.speak(speech);
+    }
+}
+</script>
+
+</body>
+      </html>
