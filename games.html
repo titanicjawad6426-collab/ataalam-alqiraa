@@ -7,58 +7,113 @@
     <title>الألعاب التعليمية</title>
 
     <link rel="stylesheet" href="style.css">
-    <script src="script.js" defer></script>
 </head>
 
 <body>
 
 <header>
     <h1>🎮 الألعاب التعليمية</h1>
-    <p>تعلم والعب في نفس الوقت!</p>
+    <p>تعلم والعب واجمع النقاط ⭐</p>
 </header>
 
 <main class="container">
 
-    <div class="section-grid">
+    <!-- اختيار اللغة -->
+    <div class="content-box">
 
-        <div class="game-card">
-            <h2>🔤 لعبة الحروف</h2>
-            <p>تعرف على الحرف الصحيح.</p>
-            <button class="open-button" onclick="showMessage('سيتم إضافة لعبة الحروف قريباً')">
-                لعب
+        <h2>🌍 اختر اللغة</h2>
+
+        <div class="letter-grid">
+
+            <button class="letter" onclick="changeLanguage('ar')">
+                🇲🇦<br>
+                العربية
             </button>
+
+            <button class="letter" onclick="changeLanguage('fr')">
+                🇫🇷<br>
+                Français
+            </button>
+
+            <button class="letter" onclick="changeLanguage('en')">
+                🇬🇧<br>
+                English
+            </button>
+
         </div>
 
-        <div class="game-card">
-            <h2>📝 لعبة الكلمات</h2>
-            <p>تعلم الكلمات بطريقة ممتعة.</p>
-            <button class="open-button" onclick="showMessage('سيتم إضافة لعبة الكلمات قريباً')">
-                لعب
+    </div>
+
+    <!-- معلومات اللعبة -->
+
+    <div class="content-box">
+
+        <h2 id="game-title">🎯 اختر الإجابة الصحيحة</h2>
+
+        <p>
+            ⭐ النقاط:
+            <strong id="score">0</strong>
+        </p>
+
+        <p>
+            السؤال:
+            <strong id="question-number">1</strong>
+            /
+            <strong id="total-questions">5</strong>
+        </p>
+
+    </div>
+
+    <!-- اللعبة -->
+
+    <div class="content-box">
+
+        <div id="game-area">
+
+            <div id="game-image"
+                 style="font-size:70px; margin-bottom:15px;">
+                🍎
+            </div>
+
+            <h2 id="question">
+                ما الحرف الذي تبدأ به كلمة تفاحة؟
+            </h2>
+
+            <div id="answers"
+                 class="letter-grid">
+            </div>
+
+            <p id="feedback"
+               style="font-size:22px; font-weight:bold; margin-top:20px;">
+            </p>
+
+            <button
+                id="next-button"
+                class="open-button"
+                onclick="nextQuestion()"
+                style="display:none;">
+                السؤال التالي ➡️
             </button>
+
         </div>
 
-        <div class="game-card">
-            <h2>🖼️ لعبة الصور</h2>
-            <p>اربط الصورة بالكلمة المناسبة.</p>
-            <button class="open-button" onclick="showMessage('سيتم إضافة لعبة الصور قريباً')">
-                لعب
-            </button>
-        </div>
+        <!-- النتيجة -->
 
-        <div class="game-card">
-            <h2>🔊 لعبة الاستماع</h2>
-            <p>استمع واختر الإجابة الصحيحة.</p>
-            <button class="open-button" onclick="showMessage('سيتم إضافة لعبة الاستماع قريباً')">
-                لعب
-            </button>
-        </div>
+        <div id="result-area"
+             style="display:none;">
 
-        <div class="game-card">
-            <h2>🔗 لعبة المطابقة</h2>
-            <p>طابق الحروف والكلمات والصور.</p>
-            <button class="open-button" onclick="showMessage('سيتم إضافة لعبة المطابقة قريباً')">
-                لعب
+            <h2>🏆 انتهت اللعبة!</h2>
+
+            <p id="final-result"
+               style="font-size:28px;">
+            </p>
+
+            <button
+                class="open-button"
+                onclick="restartGame()">
+                🔄 العب مرة أخرى
             </button>
+
         </div>
 
     </div>
@@ -69,5 +124,409 @@
 
 </main>
 
+<footer>
+
+    <p>
+        🌟 تعلم والعب واستمتع 🌟
+    </p>
+
+</footer>
+
+
+<script>
+
+/* =========================
+   بيانات الألعاب
+========================= */
+
+const games = {
+
+    ar: [
+
+        {
+            image: "🍎",
+            question: "ما الحرف الذي تبدأ به كلمة تفاحة؟",
+            answers: ["أ", "ب", "ت"],
+            correct: "أ"
+        },
+
+        {
+            image: "🐱",
+            question: "ما الحرف الذي تبدأ به كلمة قطة؟",
+            answers: ["ق", "ك", "م"],
+            correct: "ق"
+        },
+
+        {
+            image: "🏠",
+            question: "ما الحرف الذي تبدأ به كلمة بيت؟",
+            answers: ["ب", "ت", "س"],
+            correct: "ب"
+        },
+
+        {
+            image: "📖",
+            question: "ما الحرف الذي تبدأ به كلمة كتاب؟",
+            answers: ["ك", "ب", "م"],
+            correct: "ك"
+        },
+
+        {
+            image: "☀️",
+            question: "ما الحرف الذي تبدأ به كلمة شمس؟",
+            answers: ["ش", "س", "ص"],
+            correct: "ش"
+        }
+
+    ],
+
+
+    fr: [
+
+        {
+            image: "🍎",
+            question: "Quelle lettre commence le mot « pomme » ?",
+            answers: ["P", "B", "M"],
+            correct: "P"
+        },
+
+        {
+            image: "🐱",
+            question: "Quelle lettre commence le mot « chat » ?",
+            answers: ["C", "A", "S"],
+            correct: "C"
+        },
+
+        {
+            image: "🏠",
+            question: "Quelle lettre commence le mot « maison » ?",
+            answers: ["M", "B", "C"],
+            correct: "M"
+        },
+
+        {
+            image: "📖",
+            question: "Quelle lettre commence le mot « livre » ?",
+            answers: ["L", "B", "M"],
+            correct: "L"
+        },
+
+        {
+            image: "☀️",
+            question: "Quelle lettre commence le mot « soleil » ?",
+            answers: ["S", "C", "P"],
+            correct: "S"
+        }
+
+    ],
+
+
+    en: [
+
+        {
+            image: "🍎",
+            question: "Which letter starts the word Apple?",
+            answers: ["A", "B", "C"],
+            correct: "A"
+        },
+
+        {
+            image: "🐱",
+            question: "Which letter starts the word Cat?",
+            answers: ["C", "D", "B"],
+            correct: "C"
+        },
+
+        {
+            image: "🏠",
+            question: "Which letter starts the word House?",
+            answers: ["H", "K", "M"],
+            correct: "H"
+        },
+
+        {
+            image: "📖",
+            question: "Which letter starts the word Book?",
+            answers: ["B", "P", "D"],
+            correct: "B"
+        },
+
+        {
+            image: "☀️",
+            question: "Which letter starts the word Sun?",
+            answers: ["S", "T", "U"],
+            correct: "S"
+        }
+
+    ]
+
+};
+
+
+/* =========================
+   إعداد اللعبة
+========================= */
+
+let currentLanguage = "ar";
+
+let currentQuestion = 0;
+
+let score = 0;
+
+let answered = false;
+
+
+/* =========================
+   تغيير اللغة
+========================= */
+
+function changeLanguage(language) {
+
+    currentLanguage = language;
+
+    currentQuestion = 0;
+
+    score = 0;
+
+    answered = false;
+
+    document.documentElement.lang = language;
+
+    if (language === "ar") {
+
+        document.documentElement.dir = "rtl";
+
+    } else {
+
+        document.documentElement.dir = "ltr";
+
+    }
+
+    document.getElementById("result-area").style.display = "none";
+
+    document.getElementById("game-area").style.display = "block";
+
+    loadQuestion();
+
+}
+
+
+/* =========================
+   تحميل السؤال
+========================= */
+
+function loadQuestion() {
+
+    const questions = games[currentLanguage];
+
+    const question = questions[currentQuestion];
+
+
+    document.getElementById("game-image").textContent =
+        question.image;
+
+
+    document.getElementById("question").textContent =
+        question.question;
+
+
+    document.getElementById("question-number").textContent =
+        currentQuestion + 1;
+
+
+    document.getElementById("total-questions").textContent =
+        questions.length;
+
+
+    document.getElementById("score").textContent =
+        score;
+
+
+    document.getElementById("feedback").textContent =
+        "";
+
+
+    document.getElementById("next-button").style.display =
+        "none";
+
+
+    answered = false;
+
+
+    const answersContainer =
+        document.getElementById("answers");
+
+
+    answersContainer.innerHTML = "";
+
+
+    question.answers.forEach(function(answer) {
+
+        const button =
+            document.createElement("button");
+
+
+        button.className = "letter";
+
+
+        button.textContent = answer;
+
+
+        button.onclick = function() {
+
+            checkAnswer(answer, button);
+
+        };
+
+
+        answersContainer.appendChild(button);
+
+    });
+
+}
+
+
+/* =========================
+   فحص الإجابة
+========================= */
+
+function checkAnswer(answer, button) {
+
+    if (answered) {
+
+        return;
+
+    }
+
+
+    answered = true;
+
+
+    const question =
+        games[currentLanguage][currentQuestion];
+
+
+    if (answer === question.correct) {
+
+        score++;
+
+
+        button.style.background =
+            "#b8f5c1";
+
+
+        document.getElementById("feedback").textContent =
+            "🎉 إجابة صحيحة! أحسنت!";
+
+
+    } else {
+
+        button.style.background =
+            "#ffc0c0";
+
+
+        document.getElementById("feedback").textContent =
+            "💡 حاول مرة أخرى في السؤال التالي.";
+
+    }
+
+
+    document.getElementById("score").textContent =
+        score;
+
+
+    document.getElementById("next-button").style.display =
+        "inline-block";
+
+}
+
+
+/* =========================
+   السؤال التالي
+========================= */
+
+function nextQuestion() {
+
+    currentQuestion++;
+
+
+    const questions =
+        games[currentLanguage];
+
+
+    if (currentQuestion >= questions.length) {
+
+        showResult();
+
+        return;
+
+    }
+
+
+    loadQuestion();
+
+}
+
+
+/* =========================
+   النتيجة
+========================= */
+
+function showResult() {
+
+    document.getElementById("game-area").style.display =
+        "none";
+
+
+    document.getElementById("result-area").style.display =
+        "block";
+
+
+    const total =
+        games[currentLanguage].length;
+
+
+    document.getElementById("final-result").textContent =
+        "⭐ حصلت على " +
+        score +
+        " من " +
+        total +
+        " نقاط!";
+
+}
+
+
+/* =========================
+   إعادة اللعبة
+========================= */
+
+function restartGame() {
+
+    currentQuestion = 0;
+
+    score = 0;
+
+    answered = false;
+
+
+    document.getElementById("result-area").style.display =
+        "none";
+
+
+    document.getElementById("game-area").style.display =
+        "block";
+
+
+    loadQuestion();
+
+}
+
+
+/* تشغيل اللعبة */
+
+loadQuestion();
+
+</script>
+
 </body>
-</html>
+    </html>
