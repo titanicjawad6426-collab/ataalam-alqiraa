@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>حروف الهجاء العربية</title>
+
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -17,46 +20,55 @@
 <main class="container">
 
     <div class="content-box">
+
         <h2>الحروف العربية</h2>
 
         <div class="letter-grid">
 
-            <button class="letter" onclick="speakLetter('أ')">أ</button>
-            <button class="letter" onclick="speakLetter('ب')">ب</button>
-            <button class="letter" onclick="speakLetter('ت')">ت</button>
-            <button class="letter" onclick="speakLetter('ث')">ث</button>
-            <button class="letter" onclick="speakLetter('ج')">ج</button>
-            <button class="letter" onclick="speakLetter('ح')">ح</button>
-            <button class="letter" onclick="speakLetter('خ')">خ</button>
-            <button class="letter" onclick="speakLetter('د')">د</button>
-            <button class="letter" onclick="speakLetter('ذ')">ذ</button>
-            <button class="letter" onclick="speakLetter('ر')">ر</button>
-            <button class="letter" onclick="speakLetter('ز')">ز</button>
-            <button class="letter" onclick="speakLetter('س')">س</button>
-            <button class="letter" onclick="speakLetter('ش')">ش</button>
-            <button class="letter" onclick="speakLetter('ص')">ص</button>
-            <button class="letter" onclick="speakLetter('ض')">ض</button>
-            <button class="letter" onclick="speakLetter('ط')">ط</button>
-            <button class="letter" onclick="speakLetter('ظ')">ظ</button>
-            <button class="letter" onclick="speakLetter('ع')">ع</button>
-            <button class="letter" onclick="speakLetter('غ')">غ</button>
-            <button class="letter" onclick="speakLetter('ف')">ف</button>
-            <button class="letter" onclick="speakLetter('ق')">ق</button>
-            <button class="letter" onclick="speakLetter('ك')">ك</button>
-            <button class="letter" onclick="speakLetter('ل')">ل</button>
-            <button class="letter" onclick="speakLetter('م')">م</button>
-            <button class="letter" onclick="speakLetter('ن')">ن</button>
-            <button class="letter" onclick="speakLetter('ه')">ه</button>
-            <button class="letter" onclick="speakLetter('و')">و</button>
-            <button class="letter" onclick="speakLetter('ي')">ي</button>
+            <button class="letter" onclick="playLetter('أ','ألف')">أ</button>
+            <button class="letter" onclick="playLetter('ب','باء')">ب</button>
+            <button class="letter" onclick="playLetter('ت','تاء')">ت</button>
+            <button class="letter" onclick="playLetter('ث','ثاء')">ث</button>
+            <button class="letter" onclick="playLetter('ج','جيم')">ج</button>
+            <button class="letter" onclick="playLetter('ح','حاء')">ح</button>
+            <button class="letter" onclick="playLetter('خ','خاء')">خ</button>
+            <button class="letter" onclick="playLetter('د','دال')">د</button>
+            <button class="letter" onclick="playLetter('ذ','ذال')">ذ</button>
+            <button class="letter" onclick="playLetter('ر','راء')">ر</button>
+            <button class="letter" onclick="playLetter('ز','زاي')">ز</button>
+            <button class="letter" onclick="playLetter('س','سين')">س</button>
+            <button class="letter" onclick="playLetter('ش','شين')">ش</button>
+            <button class="letter" onclick="playLetter('ص','صاد')">ص</button>
+            <button class="letter" onclick="playLetter('ض','ضاد')">ض</button>
+            <button class="letter" onclick="playLetter('ط','طاء')">ط</button>
+            <button class="letter" onclick="playLetter('ظ','ظاء')">ظ</button>
+            <button class="letter" onclick="playLetter('ع','عين')">ع</button>
+            <button class="letter" onclick="playLetter('غ','غين')">غ</button>
+            <button class="letter" onclick="playLetter('ف','فاء')">ف</button>
+            <button class="letter" onclick="playLetter('ق','قاف')">ق</button>
+            <button class="letter" onclick="playLetter('ك','كاف')">ك</button>
+            <button class="letter" onclick="playLetter('ل','لام')">ل</button>
+            <button class="letter" onclick="playLetter('م','ميم')">م</button>
+            <button class="letter" onclick="playLetter('ن','نون')">ن</button>
+            <button class="letter" onclick="playLetter('ه','هاء')">ه</button>
+            <button class="letter" onclick="playLetter('و','واو')">و</button>
+            <button class="letter" onclick="playLetter('ي','ياء')">ي</button>
 
         </div>
+
     </div>
 
+
     <div class="content-box">
+
         <h2 id="selected-letter">👆 اختر حرفًا</h2>
-        <p id="status">اضغط على حرف لسماع صوته.</p>
+
+        <p id="status">
+            اضغط على حرف لسماع صوته.
+        </p>
+
     </div>
+
 
     <a href="arabic.html" class="back-button">
         ↩️ العودة إلى العربية
@@ -64,80 +76,108 @@
 
 </main>
 
+
 <script>
 
-function speakLetter(letter) {
+let currentAudio = null;
 
-    const names = {
-        "أ": "ألف",
-        "ب": "باء",
-        "ت": "تاء",
-        "ث": "ثاء",
-        "ج": "جيم",
-        "ح": "حاء",
-        "خ": "خاء",
-        "د": "دال",
-        "ذ": "ذال",
-        "ر": "راء",
-        "ز": "زاي",
-        "س": "سين",
-        "ش": "شين",
-        "ص": "صاد",
-        "ض": "ضاد",
-        "ط": "طاء",
-        "ظ": "ظاء",
-        "ع": "عين",
-        "غ": "غين",
-        "ف": "فاء",
-        "ق": "قاف",
-        "ك": "كاف",
-        "ل": "لام",
-        "م": "ميم",
-        "ن": "نون",
-        "ه": "هاء",
-        "و": "واو",
-        "ي": "ياء"
-    };
 
-    const name = names[letter];
+/*
+   تشغيل الصوت الخاص بالحرف
+*/
+function playLetter(letter, audioName) {
 
-    document.getElementById("selected-letter").textContent =
-        "🔊 " + letter + " — " + name;
+    const selectedLetter =
+        document.getElementById("selected-letter");
 
-    if (!("speechSynthesis" in window)) {
-        document.getElementById("status").textContent =
-            "⚠️ الصوت غير مدعوم في هذا الجهاز.";
-        return;
+    const status =
+        document.getElementById("status");
+
+
+    selectedLetter.textContent =
+        "🔊 " + letter;
+
+
+    /*
+       إيقاف الصوت السابق
+       إذا كان هناك صوت يعمل
+    */
+    if (currentAudio) {
+
+        currentAudio.pause();
+
+        currentAudio.currentTime = 0;
+
     }
 
-    window.speechSynthesis.cancel();
 
-    const utterance = new SpeechSynthesisUtterance(name);
+    /*
+       إنشاء ملف الصوت
+       
+       الملفات موجودة داخل:
+       audio/
+    */
+    const audio =
+        new Audio(
+            "audio/" +
+            encodeURIComponent(audioName) +
+            ".mp3"
+        );
 
-    utterance.lang = "ar";
 
-    utterance.rate = 0.6;
+    currentAudio = audio;
 
-    utterance.pitch = 1;
 
-    utterance.volume = 1;
+    /*
+       عند بداية التشغيل
+    */
+    audio.onplay = function () {
 
-    utterance.onstart = function() {
-        document.getElementById("status").textContent =
-            "🔊 يتم نطق الحرف...";
+        status.textContent =
+            "🔊 يتم تشغيل صوت الحرف...";
+
     };
 
-    utterance.onend = function() {
-        document.getElementById("status").textContent =
-            "✅ انتهى النطق";
+
+    /*
+       عند انتهاء الصوت
+    */
+    audio.onended = function () {
+
+        status.textContent =
+            "✅ انتهى الصوت";
+
     };
 
-    utterance.onerror = function() {
-        document.getElementById("status").textContent =
-            "⚠️ تعذر تشغيل الصوت.";
+
+    /*
+       في حالة حدوث خطأ
+    */
+    audio.onerror = function () {
+
+        status.textContent =
+            "⚠️ تعذر تشغيل ملف الصوت.";
+
+        console.error(
+            "لم يتم العثور على ملف:",
+            "audio/" + audioName + ".mp3"
+        );
+
     };
 
-    window.speechSynthesis.speak(utterance);
+
+    /*
+       تشغيل الصوت
+    */
+    audio.play().catch(function(error) {
+
+        console.error(error);
+
+        status.textContent =
+            "⚠️ اضغط على الحرف مرة أخرى لتشغيل الصوت.";
+
+    });
+
 }
 
 </script>
