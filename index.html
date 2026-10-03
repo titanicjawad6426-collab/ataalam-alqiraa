@@ -42,7 +42,23 @@
     <p>🌟 تطبيق تعلم القراءة للأطفال 🌟</p>
 </footer><script>
 if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("./sw.js");
+
+    window.addEventListener("load", () => {
+
+        navigator.serviceWorker
+            .register("./sw.js")
+            .then(() => {
+                console.log("Service Worker registered");
+            })
+            .catch(error => {
+                console.error(
+                    "Service Worker error:",
+                    error
+                );
+            });
+
+    });
+
 }
-    </script></body>
+</script></body>
 </html>
