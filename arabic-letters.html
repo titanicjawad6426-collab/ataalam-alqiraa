@@ -67,23 +67,57 @@
 <script>
 function speakLetter(letter) {
 
+    const letterNames = {
+        "أ": "ألف",
+        "ب": "باء",
+        "ت": "تاء",
+        "ث": "ثاء",
+        "ج": "جيم",
+        "ح": "حاء",
+        "خ": "خاء",
+        "د": "دال",
+        "ذ": "ذال",
+        "ر": "راء",
+        "ز": "زاي",
+        "س": "سين",
+        "ش": "شين",
+        "ص": "صاد",
+        "ض": "ضاد",
+        "ط": "طاء",
+        "ظ": "ظاء",
+        "ع": "عين",
+        "غ": "غين",
+        "ف": "فاء",
+        "ق": "قاف",
+        "ك": "كاف",
+        "ل": "لام",
+        "م": "ميم",
+        "ن": "نون",
+        "ه": "هاء",
+        "و": "واو",
+        "ي": "ياء"
+    };
+
+    const name = letterNames[letter] || letter;
+
     document.getElementById("selected-letter").textContent =
-        "🔊 الحرف: " + letter;
+        "🔊 الحرف: " + letter + " — " + name;
 
     if ("speechSynthesis" in window) {
 
         speechSynthesis.cancel();
 
-        const speech = new SpeechSynthesisUtterance(letter);
+        const speech = new SpeechSynthesisUtterance(name);
 
         speech.lang = "ar-SA";
-        speech.rate = 0.7;
-        speech.pitch = 1;
+        speech.rate = 0.65;
+        speech.pitch = 1.05;
+        speech.volume = 1;
 
         speechSynthesis.speak(speech);
     }
 }
-</script>
+        </script>
 
 </body>
   </html>
