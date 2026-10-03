@@ -22,18 +22,19 @@
 
         <div class="letter-grid">
 
-            <button class="letter" onclick="speak('أ')">🔊 أ</button>
-            <button class="letter" onclick="speak('ب')">🔊 ب</button>
-            <button class="letter" onclick="speak('ت')">🔊 ت</button>
-            <button class="letter" onclick="speak('ث')">🔊 ث</button>
-            <button class="letter" onclick="speak('ج')">🔊 ج</button>
-            <button class="letter" onclick="speak('ح')">🔊 ح</button>
-            <button class="letter" onclick="speak('خ')">🔊 خ</button>
-            <button class="letter" onclick="speak('د')">🔊 د</button>
+            <button class="letter" onclick="playLetter('أ', 'ألف')">🔊 أ</button>
+            <button class="letter" onclick="playLetter('ب', 'باء')">🔊 ب</button>
+            <button class="letter" onclick="playLetter('ت', 'تاء')">🔊 ت</button>
+            <button class="letter" onclick="playLetter('ث', 'ثاء')">🔊 ث</button>
+            <button class="letter" onclick="playLetter('ج', 'جيم')">🔊 ج</button>
+            <button class="letter" onclick="playLetter('ح', 'حاء')">🔊 ح</button>
+            <button class="letter" onclick="playLetter('خ', 'خاء')">🔊 خ</button>
+            <button class="letter" onclick="playLetter('د', 'دال')">🔊 د</button>
 
         </div>
 
     </div>
+
 
     <div class="content-box">
 
@@ -50,13 +51,46 @@
 
     </div>
 
+
     <a href="arabic.html" class="back-button">
         ↩️ العودة إلى العربية
     </a>
 
 </main>
 
+
 <script>
+
+/* تشغيل صوت الحرف من مجلد audio */
+
+function playLetter(letter, audioName) {
+
+    try {
+
+        const audio = new Audio(
+            "audio/" + encodeURIComponent(audioName) + ".mp3"
+        );
+
+        audio.play().catch(function(error) {
+
+            console.log("تعذر تشغيل الملف الصوتي:", error);
+
+            // إذا تعذر تشغيل MP3، نستعمل النطق الآلي كبديل
+            speak(letter);
+
+        });
+
+    } catch (error) {
+
+        console.log("خطأ في تشغيل الصوت:", error);
+
+        speak(letter);
+    }
+}
+
+
+/* نطق الكلمات */
+
 function speak(text) {
 
     if ("speechSynthesis" in window) {
@@ -71,7 +105,9 @@ function speak(text) {
         speechSynthesis.speak(speech);
 
     }
+
 }
+
 </script>
 
 </body>
