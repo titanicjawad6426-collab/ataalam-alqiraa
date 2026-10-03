@@ -401,3 +401,7 @@ footer {
         font-size: 15px;
     }
     }
+/* لون زر الحساب والرياضيات */
+.math {
+    background: #00b894;
+}
