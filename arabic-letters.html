@@ -55,7 +55,7 @@
 
     <div class="content-box">
         <h2 id="selected-letter">👆 اختر حرفًا</h2>
-        <p>اضغط على أي حرف لسماع نطقه.</p>
+        <p id="status">اضغط على حرف لسماع صوته.</p>
     </div>
 
     <a href="arabic.html" class="back-button">
@@ -65,9 +65,10 @@
 </main>
 
 <script>
+
 function speakLetter(letter) {
 
-    const letterNames = {
+    const names = {
         "أ": "ألف",
         "ب": "باء",
         "ت": "تاء",
@@ -98,26 +99,48 @@ function speakLetter(letter) {
         "ي": "ياء"
     };
 
-    const name = letterNames[letter] || letter;
+    const name = names[letter];
 
     document.getElementById("selected-letter").textContent =
-        "🔊 الحرف: " + letter + " — " + name;
+        "🔊 " + letter + " — " + name;
 
-    if ("speechSynthesis" in window) {
-
-        speechSynthesis.cancel();
-
-        const speech = new SpeechSynthesisUtterance(name);
-
-        speech.lang = "ar-SA";
-        speech.rate = 0.65;
-        speech.pitch = 1.05;
-        speech.volume = 1;
-
-        speechSynthesis.speak(speech);
+    if (!("speechSynthesis" in window)) {
+        document.getElementById("status").textContent =
+            "⚠️ الصوت غير مدعوم في هذا الجهاز.";
+        return;
     }
+
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(name);
+
+    utterance.lang = "ar";
+
+    utterance.rate = 0.6;
+
+    utterance.pitch = 1;
+
+    utterance.volume = 1;
+
+    utterance.onstart = function() {
+        document.getElementById("status").textContent =
+            "🔊 يتم نطق الحرف...";
+    };
+
+    utterance.onend = function() {
+        document.getElementById("status").textContent =
+            "✅ انتهى النطق";
+    };
+
+    utterance.onerror = function() {
+        document.getElementById("status").textContent =
+            "⚠️ تعذر تشغيل الصوت.";
+    };
+
+    window.speechSynthesis.speak(utterance);
 }
-        </script>
+
+</script>
 
 </body>
-  </html>
+</html>
