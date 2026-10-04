@@ -1,20 +1,12 @@
 /* ==========================================
-   تعلم الجمع للأطفال
-   5 مستويات متسلسلة
+   تعلم الجمع
+   صفحة العمليات
 ========================================== */
-
 
 const TOTAL_QUESTIONS = 10;
 
 
-/*
-   المستوى:
-   1 = رقم واحد
-   2 = رقمان
-   3 = ثلاثة أرقام
-   4 = أربعة أرقام
-   5 = خمسة أرقام
-*/
+/* عدد أرقام كل مستوى */
 
 const levelDigits = {
     1: 1,
@@ -34,6 +26,57 @@ let numberA = 0;
 let numberB = 0;
 
 let answered = false;
+
+
+/* ==========================================
+   قراءة المستوى من الرابط
+========================================== */
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+const requestedLevel =
+    parseInt(
+        params.get("level")
+    );
+
+
+/* المستوى المفتوح */
+
+let unlockedLevel =
+    parseInt(
+        localStorage.getItem(
+            "additionUnlockedLevel"
+        )
+    );
+
+
+if (
+    isNaN(unlockedLevel) ||
+    unlockedLevel < 1
+) {
+
+    unlockedLevel = 1;
+
+    localStorage.setItem(
+        "additionUnlockedLevel",
+        "1"
+    );
+}
+
+
+if (
+    !isNaN(requestedLevel) &&
+    requestedLevel >= 1 &&
+    requestedLevel <= unlockedLevel
+) {
+
+    currentLevel =
+        requestedLevel;
+
+}
 
 
 /* ==========================================
@@ -67,81 +110,24 @@ const questionNumberElement =
 const scoreElement =
     document.getElementById("score");
 
-const completeElement =
-    document.getElementById("complete");
-
-const completeTextElement =
-    document.getElementById("completeText");
-
-const nextLevelButton =
-    document.getElementById("nextLevel");
+const levelTitleElement =
+    document.getElementById("levelTitle");
 
 const additionCard =
     document.getElementById("additionCard");
 
+const levelFinished =
+    document.getElementById("levelFinished");
 
-/* ==========================================
-   المستوى المفتوح
-========================================== */
+const finishedText =
+    document.getElementById("finishedText");
 
-function getUnlockedLevel() {
-
-    let saved =
-        localStorage.getItem(
-            "additionUnlockedLevel"
-        );
-
-    if (!saved) {
-
-        localStorage.setItem(
-            "additionUnlockedLevel",
-            "1"
-        );
-
-        return 1;
-    }
-
-    let level =
-        parseInt(saved);
-
-    if (
-        isNaN(level) ||
-        level < 1
-    ) {
-
-        level = 1;
-    }
-
-    if (level > 5) {
-        level = 5;
-    }
-
-    return level;
-}
+const backToLevels =
+    document.getElementById("backToLevels");
 
 
 /* ==========================================
-   فتح المستوى التالي
-========================================== */
-
-function unlockNextLevel() {
-
-    if (currentLevel >= 5) {
-        return;
-    }
-
-    const nextLevel =
-        currentLevel + 1;
-
-    localStorage.setItem(
-        "additionUnlockedLevel",
-        nextLevel.toString()
-    );
-}
-
-
-/* ==========================================
-   إنشاء رقم حسب عدد الخانات
+   إنشاء رقم
 ========================================== */
 
 function generateNumber(digits) {
@@ -169,7 +155,7 @@ function generateNumber(digits) {
 
 
 /* ==========================================
-   إنشاء عملية جديدة
+   إنشاء عملية
 ========================================== */
 
 function createQuestion() {
@@ -198,12 +184,17 @@ function createQuestion() {
     questionNumberElement.textContent =
         currentQuestion;
 
+    levelTitleElement.textContent =
+        "المستوى " +
+        currentLevel;
+
 
     answerElement.value = "";
 
     answerElement.disabled = false;
 
     checkAnswerButton.disabled = false;
+
 
     messageElement.textContent = "";
 
@@ -223,7 +214,7 @@ function createQuestion() {
 
 
 /* ==========================================
-   التحقق من الإجابة
+   التحقق
 ========================================== */
 
 function checkAnswer() {
@@ -233,11 +224,9 @@ function checkAnswer() {
     }
 
 
-    const value =
-        parseInt(answerElement.value);
-
-
-    if (isNaN(value)) {
+    if (
+        answerElement.value.trim() === ""
+    ) {
 
         messageElement.textContent =
             "✏️ اكتب الإجابة أولاً";
@@ -249,13 +238,17 @@ function checkAnswer() {
     }
 
 
+    const userAnswer =
+        Number(
+            answerElement.value
+        );
+
+
     const correctAnswer =
         numberA + numberB;
 
 
-    /* الإجابة صحيحة */
-
-    if (value === correctAnswer) {
+    if (userAnswer === correctAnswer) {
 
         answered = true;
 
@@ -286,9 +279,6 @@ function checkAnswer() {
 
     }
 
-
-    /* الإجابة خاطئة */
-
     else {
 
         messageElement.textContent =
@@ -306,7 +296,7 @@ function checkAnswer() {
 
 
 /* ==========================================
-   الانتقال للعملية التالية
+   العملية التالية
 ========================================== */
 
 function nextQuestion() {
@@ -335,187 +325,84 @@ function nextQuestion() {
 
 function finishLevel() {
 
+    /*
+        فتح المستوى التالي
+    */
+
+    if (currentLevel < 5) {
+
+        const nextLevel =
+            currentLevel + 1;
+
+
+        const currentUnlocked =
+            parseInt(
+                localStorage.getItem(
+                    "additionUnlockedLevel"
+                )
+            ) || 1;
+
+
+        if (
+            nextLevel >
+            currentUnlocked
+        ) {
+
+            localStorage.setItem(
+                "additionUnlockedLevel",
+                nextLevel.toString()
+            );
+        }
+    }
+
+
+    /*
+        عرض رسالة النجاح
+    */
+
     additionCard.style.display =
         "none";
 
-
-    completeElement.style.display =
+    levelFinished.style.display =
         "block";
 
 
     if (currentLevel < 5) {
 
-        unlockNextLevel();
-
-
-        completeTextElement.textContent =
-            "🎉 رائع! لقد أكملت جميع عمليات المستوى " +
+        finishedText.textContent =
+            "🎉 لقد أكملت المستوى " +
             currentLevel +
-            ". لقد تم فتح المستوى " +
+            " بنجاح! المستوى " +
             (currentLevel + 1) +
-            "!";
-
-
-        nextLevelButton.style.display =
-            "inline-block";
+            " أصبح مفتوحًا الآن.";
 
     }
 
     else {
 
-        completeTextElement.textContent =
-            "🏆 مذهل! لقد أكملت جميع مستويات الجمع الخمسة!";
-
-
-        nextLevelButton.style.display =
-            "none";
+        finishedText.textContent =
+            "🏆 رائع جدًا! لقد أكملت جميع مستويات الجمع الخمسة!";
     }
-
-
-    updateLevelButtons();
 }
 
 
 /* ==========================================
-   الانتقال للمستوى التالي
+   العودة إلى صفحة المستويات
 ========================================== */
 
-function goToNextLevel() {
+backToLevels.addEventListener(
+    "click",
+    function () {
 
-    if (currentLevel >= 5) {
-        return;
+        window.location.href =
+            "addition-levels.html";
+
     }
-
-
-    currentLevel++;
-
-    currentQuestion = 1;
-
-
-    completeElement.style.display =
-        "none";
-
-
-    additionCard.style.display =
-        "block";
-
-
-    updateLevelButtons();
-
-    createQuestion();
-}
+);
 
 
 /* ==========================================
-   اختيار مستوى
-========================================== */
-
-function selectLevel(level) {
-
-    const unlocked =
-        getUnlockedLevel();
-
-
-    if (level > unlocked) {
-
-        alert(
-            "🔒 أكمل المستوى السابق أولاً"
-        );
-
-        return;
-    }
-
-
-    currentLevel = level;
-
-    currentQuestion = 1;
-
-
-    completeElement.style.display =
-        "none";
-
-
-    additionCard.style.display =
-        "block";
-
-
-    updateLevelButtons();
-
-    createQuestion();
-}
-
-
-/* ==========================================
-   تحديث أزرار المستويات
-========================================== */
-
-function updateLevelButtons() {
-
-    const unlocked =
-        getUnlockedLevel();
-
-
-    document
-        .querySelectorAll(".level-btn")
-        .forEach(button => {
-
-            const level =
-                parseInt(
-                    button.dataset.level
-                );
-
-
-            const icon =
-                button.querySelector("span");
-
-
-            button.classList.remove(
-                "active"
-            );
-
-
-            if (level > unlocked) {
-
-                button.classList.add(
-                    "locked"
-                );
-
-                icon.textContent =
-                    "🔒";
-
-            }
-
-            else {
-
-                button.classList.remove(
-                    "locked"
-                );
-
-
-                icon.textContent =
-                    level === 1 ? "1️⃣" :
-                    level === 2 ? "2️⃣" :
-                    level === 3 ? "3️⃣" :
-                    level === 4 ? "4️⃣" :
-                    "5️⃣";
-
-
-                if (
-                    level === currentLevel
-                ) {
-
-                    button.classList.add(
-                        "active"
-                    );
-                }
-            }
-
-        });
-}
-
-
-/* ==========================================
-   أحداث الأزرار
+   الأحداث
 ========================================== */
 
 checkAnswerButton.addEventListener(
@@ -530,40 +417,9 @@ nextQuestionButton.addEventListener(
 );
 
 
-nextLevelButton.addEventListener(
-    "click",
-    goToNextLevel
-);
-
-
-/* اختيار المستوى */
-
-document
-    .querySelectorAll(".level-btn")
-    .forEach(button => {
-
-        button.addEventListener(
-            "click",
-            function() {
-
-                const level =
-                    parseInt(
-                        this.dataset.level
-                    );
-
-
-                selectLevel(level);
-            }
-        );
-
-    });
-
-
-/* زر Enter */
-
 answerElement.addEventListener(
     "keydown",
-    function(event) {
+    function (event) {
 
         if (event.key === "Enter") {
 
@@ -572,13 +428,12 @@ answerElement.addEventListener(
             checkAnswer();
         }
 
-    });
+    }
+);
 
 
 /* ==========================================
-   بدء اللعبة
+   بدء المستوى
 ========================================== */
-
-updateLevelButtons();
 
 createQuestion();
