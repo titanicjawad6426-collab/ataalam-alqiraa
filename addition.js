@@ -1303,6 +1303,14 @@ backToLevels.addEventListener(
 
 );
 
+/*
+ * زر التحقق
+ */
+
+checkAnswerButton.addEventListener(
+    "click",
+    checkAnswer
+);
 
 /*
  * زر Enter
