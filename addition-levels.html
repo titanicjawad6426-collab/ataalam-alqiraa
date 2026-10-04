@@ -2,6 +2,7 @@
 <html lang="ar" dir="rtl">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -16,7 +17,7 @@
     <style>
 
         .levels-page {
-            max-width: 700px;
+            max-width: 850px;
             margin: auto;
             padding: 20px;
         }
@@ -38,14 +39,14 @@
         .levels-list {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 12px;
+            gap: 14px;
         }
 
         .level-card {
             border: 2px solid #ddd;
             background: white;
             border-radius: 18px;
-            min-height: 110px;
+            min-height: 125px;
             padding: 12px 5px;
             cursor: pointer;
             font-family: inherit;
@@ -53,7 +54,7 @@
         }
 
         .level-card:hover {
-            transform: translateY(-2px);
+            transform: translateY(-3px);
         }
 
         .level-card .icon {
@@ -72,7 +73,7 @@
             display: block;
             font-size: 13px;
             color: #777;
-            margin-top: 5px;
+            margin-top: 7px;
         }
 
         /* المستوى المفتوح */
@@ -82,19 +83,26 @@
             background: #eef8ff;
         }
 
-        /* المستوى الحالي */
+        /* آخر مستوى مفتوح */
 
         .level-card.current {
             border-color: #4caf50;
             background: #effaf0;
         }
 
-        /* المستوى المغلق */
+        /* المستوى المقفل */
 
         .level-card.locked {
-            opacity: 0.55;
+            opacity: 0.45;
             cursor: not-allowed;
-            background: #f3f3f3;
+            background: #eeeeee;
+            border-color: #cccccc;
+
+            pointer-events: none;
+
+            transform: none !important;
+
+            filter: grayscale(100%);
         }
 
         .levels-message {
@@ -102,20 +110,21 @@
             margin-top: 20px;
             min-height: 30px;
             font-weight: bold;
+            color: #d93025;
         }
 
         .reset-progress {
             display: block;
             margin: 25px auto 0;
             border: none;
-            background: #eee;
+            background: #eeeeee;
             border-radius: 12px;
             padding: 10px 18px;
             font-family: inherit;
             cursor: pointer;
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 700px) {
 
             .levels-page {
                 padding: 12px;
@@ -125,13 +134,10 @@
                 grid-template-columns: repeat(2, 1fr);
             }
 
-            .level-card:last-child {
-                grid-column: span 2;
-            }
-
         }
 
     </style>
+
 </head>
 
 <body>
@@ -141,7 +147,7 @@
     <h1>➕ تعلم الجمع</h1>
 
     <p>
-        اختر المستوى الذي تريد التعلم فيه 🌟
+        أكمل كل مستوى لفتح المستوى التالي 🌟
     </p>
 
 </header>
@@ -149,13 +155,12 @@
 
 <main class="container levels-page">
 
-
     <div class="levels-title">
 
         <h2>🎯 مستويات الجمع</h2>
 
         <p>
-            أكمل كل مستوى لفتح المستوى التالي
+            يجب الحصول على 12 إجابة صحيحة لفتح المستوى التالي
         </p>
 
     </div>
@@ -164,11 +169,7 @@
     <div
         id="levelsList"
         class="levels-list"
-    >
-
-        <!-- سيتم إنشاء المستويات بواسطة JavaScript -->
-
-    </div>
+    ></div>
 
 
     <div
@@ -188,11 +189,14 @@
     <a
         href="math.html"
         class="main-button games"
-        style="display:block;text-align:center;margin-top:15px;"
+        style="
+            display:block;
+            text-align:center;
+            margin-top:15px;
+        "
     >
         ↩️ العودة إلى الرياضيات
     </a>
-
 
 </main>
 
@@ -209,32 +213,39 @@
 <script>
 
 const levelsList =
-    document.getElementById("levelsList");
+    document.getElementById(
+        "levelsList"
+    );
 
 const levelsMessage =
-    document.getElementById("levelsMessage");
+    document.getElementById(
+        "levelsMessage"
+    );
 
 const resetProgress =
-    document.getElementById("resetProgress");
+    document.getElementById(
+        "resetProgress"
+    );
 
 
 /*
-    المستوى المفتوح حاليًا
+ * مفتاح جديد حتى يبدأ النظام
+ * الجديد من المستوى الأول
+ */
 
-    1 = المستوى الأول مفتوح
-    2 = الأول والثاني مفتوحان
-    ...
-    5 = جميع المستويات مفتوحة
-*/
+const PROGRESS_KEY =
+    "additionUnlockedLevelV2";
+
 
 function getUnlockedLevel() {
 
     let level =
         parseInt(
             localStorage.getItem(
-                "additionUnlockedLevel"
+                PROGRESS_KEY
             )
         );
+
 
     if (
         isNaN(level) ||
@@ -242,35 +253,76 @@ function getUnlockedLevel() {
     ) {
 
         level = 1;
+
+        localStorage.setItem(
+            PROGRESS_KEY,
+            "1"
+        );
+
     }
 
-    if (level > 5) {
-        level = 5;
+
+    if (level > 10) {
+        level = 10;
     }
+
 
     return level;
+
 }
 
 
-/*
-    إنشاء صفحة المستويات
-*/
+function getDescription(level) {
+
+    const descriptions = {
+
+        1: "رقم + رقم",
+
+        2: "رقمان + رقم",
+
+        3: "رقمان + رقمان",
+
+        4: "3 أرقام + رقمان",
+
+        5: "3 أرقام + 3 أرقام",
+
+        6: "4 أرقام + 3 أرقام",
+
+        7: "4 أرقام + 4 أرقام",
+
+        8: "5 أرقام + 4 أرقام",
+
+        9: "5 أرقام + 5 أرقام",
+
+        10: "6 أرقام + 5 أرقام"
+
+    };
+
+    return descriptions[level];
+
+}
+
 
 function displayLevels() {
 
     const unlocked =
         getUnlockedLevel();
 
+
     levelsList.innerHTML = "";
+
 
     for (
         let level = 1;
-        level <= 5;
+        level <= 10;
         level++
     ) {
 
         const button =
-            document.createElement("button");
+            document.createElement(
+                "button"
+            );
+
 
         button.className =
             "level-card";
@@ -282,58 +334,37 @@ function displayLevels() {
                 "unlocked"
             );
 
+
+            if (
+                level === unlocked
+            ) {
+
+                button.classList.add(
+                    "current"
+                );
+
+            }
+
         } else {
 
             button.classList.add(
                 "locked"
             );
+
+            button.disabled = true;
+
+            button.setAttribute(
+                "aria-disabled",
+                "true"
+            );
+
         }
 
 
-        let icon;
-
-        if (level <= unlocked) {
-
-            icon =
-                level === unlocked
-                    ? "⭐"
-                    : "🔓";
-
-        } else {
-
-            icon = "🔒";
-        }
-
-
-        let description;
-
-        switch (level) {
-
-            case 1:
-                description =
-                    "رقم واحد";
-                break;
-
-            case 2:
-                description =
-                    "رقمان";
-                break;
-
-            case 3:
-                description =
-                    "3 أرقام";
-                break;
-
-            case 4:
-                description =
-                    "4 أرقام";
-                break;
-
-            case 5:
-                description =
-                    "5 أرقام";
-                break;
-        }
+        const icon =
+            level <= unlocked
+                ? "🔓"
+                : "🔒";
 
 
         button.innerHTML = `
@@ -347,15 +378,11 @@ function displayLevels() {
             </span>
 
             <span class="description">
-                ${description}
+                ${getDescription(level)}
             </span>
 
         `;
 
-
-        /*
-            إذا كان المستوى مفتوحًا
-        */
 
         if (level <= unlocked) {
 
@@ -373,33 +400,14 @@ function displayLevels() {
         }
 
 
-        /*
-            إذا كان المستوى مغلقًا
-        */
+        levelsList.appendChild(
+            button
+        );
 
-        else {
-
-            button.addEventListener(
-                "click",
-                function () {
-
-                    levelsMessage.textContent =
-                        "🔒 أكمل المستوى السابق أولاً";
-
-                }
-            );
-
-        }
-
-
-        levelsList.appendChild(button);
     }
+
 }
 
-
-/*
-    إعادة التقدم
-*/
 
 resetProgress.addEventListener(
     "click",
@@ -407,20 +415,23 @@ resetProgress.addEventListener(
 
         const confirmed =
             confirm(
-                "هل تريد إعادة جميع المستويات إلى البداية؟"
+                "هل تريد إعادة جميع مستويات الجمع إلى البداية؟"
             );
+
 
         if (confirmed) {
 
             localStorage.setItem(
-                "additionUnlockedLevel",
+                PROGRESS_KEY,
                 "1"
             );
 
+
             displayLevels();
 
+
             levelsMessage.textContent =
-                "🔄 تم إعادة التقدم إلى المستوى الأول.";
+                "🔄 تم فتح المستوى الأول فقط.";
 
         }
 
@@ -433,4 +444,4 @@ displayLevels();
 </script>
 
 </body>
-      </html>
+</html>
