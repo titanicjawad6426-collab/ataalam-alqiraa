@@ -1,4 +1,4 @@
-const CACHE_NAME = "ataalam-alqiraa-v4";
+const CACHE_NAME = "ataalam-alqiraa-v5";
 
 const APP_FILES = [
     "./",
@@ -9,6 +9,10 @@ const APP_FILES = [
     "./manifest.json",
     "./audio-manifest.json",
 
+    // ================================
+    // اللغة العربية
+    // ================================
+
     "./arabic.html",
     "./arabic-letters.html",
     "./arabic-pronunciation.html",
@@ -16,6 +20,10 @@ const APP_FILES = [
     "./arabic-syllables.html",
     "./arabic-words.html",
     "./arabic-exercises.html",
+
+    // ================================
+    // اللغة الفرنسية
+    // ================================
 
     "./french.html",
     "./french-letters.html",
@@ -25,6 +33,10 @@ const APP_FILES = [
     "./french-words.html",
     "./french-exercises.html",
 
+    // ================================
+    // اللغة الإنجليزية
+    // ================================
+
     "./english.html",
     "./english-letters.html",
     "./english-phonics.html",
@@ -33,9 +45,24 @@ const APP_FILES = [
     "./english-words.html",
     "./english-exercises.html",
 
+    // ================================
+    // الرياضيات
+    // ================================
+
     "./math.html",
+    "./addition.html",
+    "./addition.js",
+
+    // ================================
+    // الألعاب والمسابقات
+    // ================================
+
     "./games.html",
     "./quizzes.html",
+
+    // ================================
+    // الأيقونة
+    // ================================
 
     "./icon-512.png"
 ];
@@ -51,35 +78,50 @@ self.addEventListener("install", event => {
 
         (async () => {
 
-            const cache = await caches.open(CACHE_NAME);
+            const cache =
+                await caches.open(CACHE_NAME);
 
             // تخزين ملفات التطبيق الأساسية
+
             for (const file of APP_FILES) {
 
                 try {
 
                     await cache.add(file);
 
-                    console.log("Cached:", file);
+                    console.log(
+                        "Cached:",
+                        file
+                    );
 
                 } catch (error) {
 
-                    console.warn("Failed to cache:", file);
+                    console.warn(
+                        "Failed to cache:",
+                        file
+                    );
 
                 }
 
             }
 
 
-            // قراءة قائمة ملفات الصوت
+            // ================================
+            // تخزين ملفات الصوت
+            // ================================
+
             try {
 
-                const response = await fetch(
-                    "./audio-manifest.json",
-                    { cache: "no-store" }
-                );
+                const response =
+                    await fetch(
+                        "./audio-manifest.json",
+                        {
+                            cache: "no-store"
+                        }
+                    );
 
-                const audioFiles = await response.json();
+                const audioFiles =
+                    await response.json();
 
                 console.log(
                     "Audio files found:",
@@ -87,12 +129,13 @@ self.addEventListener("install", event => {
                 );
 
 
-                // تخزين جميع ملفات الصوت
                 for (const file of audioFiles) {
 
                     try {
 
-                        await cache.add("./" + file);
+                        await cache.add(
+                            "./" + file
+                        );
 
                         console.log(
                             "Audio cached:",
@@ -120,7 +163,8 @@ self.addEventListener("install", event => {
             }
 
 
-            // تفعيل Service Worker مباشرة
+            // تفعيل النسخة الجديدة مباشرة
+
             await self.skipWaiting();
 
         })()
@@ -143,13 +187,21 @@ self.addEventListener("activate", event => {
             const cacheNames =
                 await caches.keys();
 
+
             await Promise.all(
 
                 cacheNames
-                    .filter(name => name !== CACHE_NAME)
-                    .map(name => caches.delete(name))
+                    .filter(
+                        name =>
+                            name !== CACHE_NAME
+                    )
+                    .map(
+                        name =>
+                            caches.delete(name)
+                    )
 
             );
+
 
             await self.clients.claim();
 
@@ -170,27 +222,35 @@ self.addEventListener("fetch", event => {
         return;
     }
 
+
     event.respondWith(
 
         (async () => {
 
-            // ابحث أولاً في الذاكرة
+            // البحث أولاً في الذاكرة
+
             const cached =
-                await caches.match(event.request);
+                await caches.match(
+                    event.request
+                );
 
             if (cached) {
                 return cached;
             }
 
 
-            // إذا لم يوجد، حاول الإنترنت
+            // محاولة الاتصال بالإنترنت
+
             try {
 
                 const response =
-                    await fetch(event.request);
+                    await fetch(
+                        event.request
+                    );
 
 
                 // تخزين الملف الجديد
+
                 if (
                     response &&
                     response.status === 200 &&
@@ -198,7 +258,9 @@ self.addEventListener("fetch", event => {
                 ) {
 
                     const cache =
-                        await caches.open(CACHE_NAME);
+                        await caches.open(
+                            CACHE_NAME
+                        );
 
                     cache.put(
                         event.request,
@@ -211,13 +273,18 @@ self.addEventListener("fetch", event => {
 
             } catch (error) {
 
-                // إذا كانت صفحة HTML ولم يوجد إنترنت
+                // في حالة فتح صفحة HTML
+                // بدون إنترنت
+
                 if (
-                    event.request.mode === "navigate"
+                    event.request.mode ===
+                    "navigate"
                 ) {
 
                     const offlinePage =
-                        await caches.match("./index.html");
+                        await caches.match(
+                            "./index.html"
+                        );
 
                     if (offlinePage) {
                         return offlinePage;
@@ -225,10 +292,12 @@ self.addEventListener("fetch", event => {
 
                 }
 
+
                 return new Response(
                     "لا يوجد اتصال بالإنترنت",
                     {
                         status: 503,
+
                         headers: {
                             "Content-Type":
                                 "text/plain; charset=utf-8"
