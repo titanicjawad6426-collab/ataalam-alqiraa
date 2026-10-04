@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>مستويات الجمع</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+
+        .levels-page {
+            max-width: 700px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .levels-title {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .levels-title h2 {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .levels-title p {
+            color: #666;
+        }
+
+        .levels-list {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+        }
+
+        .level-card {
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 18px;
+            min-height: 110px;
+            padding: 12px 5px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: 0.2s;
+        }
+
+        .level-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .level-card .icon {
+            display: block;
+            font-size: 32px;
+            margin-bottom: 7px;
+        }
+
+        .level-card .number {
+            display: block;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .level-card .description {
+            display: block;
+            font-size: 13px;
+            color: #777;
+            margin-top: 5px;
+        }
+
+        /* المستوى المفتوح */
+
+        .level-card.unlocked {
+            border-color: #2196f3;
+            background: #eef8ff;
+        }
+
+        /* المستوى الحالي */
+
+        .level-card.current {
+            border-color: #4caf50;
+            background: #effaf0;
+        }
+
+        /* المستوى المغلق */
+
+        .level-card.locked {
+            opacity: 0.55;
+            cursor: not-allowed;
+            background: #f3f3f3;
+        }
+
+        .levels-message {
+            text-align: center;
+            margin-top: 20px;
+            min-height: 30px;
+            font-weight: bold;
+        }
+
+        .reset-progress {
+            display: block;
+            margin: 25px auto 0;
+            border: none;
+            background: #eee;
+            border-radius: 12px;
+            padding: 10px 18px;
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        @media (max-width: 600px) {
+
+            .levels-page {
+                padding: 12px;
+            }
+
+            .levels-list {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .level-card:last-child {
+                grid-column: span 2;
+            }
+
+        }
+
+    </style>
+</head>
+
+<body>
+
+<header>
+
+    <h1>➕ تعلم الجمع</h1>
+
+    <p>
+        اختر المستوى الذي تريد التعلم فيه 🌟
+    </p>
+
+</header>
+
+
+<main class="container levels-page">
+
+
+    <div class="levels-title">
+
+        <h2>🎯 مستويات الجمع</h2>
+
+        <p>
+            أكمل كل مستوى لفتح المستوى التالي
+        </p>
+
+    </div>
+
+
+    <div
+        id="levelsList"
+        class="levels-list"
+    >
+
+        <!-- سيتم إنشاء المستويات بواسطة JavaScript -->
+
+    </div>
+
+
+    <div
+        id="levelsMessage"
+        class="levels-message"
+    ></div>
+
+
+    <button
+        id="resetProgress"
+        class="reset-progress"
+    >
+        🔄 إعادة التقدم من البداية
+    </button>
+
+
+    <a
+        href="math.html"
+        class="main-button games"
+        style="display:block;text-align:center;margin-top:15px;"
+    >
+        ↩️ العودة إلى الرياضيات
+    </a>
+
+
+</main>
+
+
+<footer>
+
+    <p>
+        🌟 تعلم الحساب بالمرح واللعب 🌟
+    </p>
+
+</footer>
+
+
+<script>
+
+const levelsList =
+    document.getElementById("levelsList");
+
+const levelsMessage =
+    document.getElementById("levelsMessage");
+
+const resetProgress =
+    document.getElementById("resetProgress");
+
+
+/*
+    المستوى المفتوح حاليًا
+
+    1 = المستوى الأول مفتوح
+    2 = الأول والثاني مفتوحان
+    ...
+    5 = جميع المستويات مفتوحة
+*/
+
+function getUnlockedLevel() {
+
+    let level =
+        parseInt(
+            localStorage.getItem(
+                "additionUnlockedLevel"
+            )
+        );
+
+    if (
+        isNaN(level) ||
+        level < 1
+    ) {
+
+        level = 1;
+    }
+
+    if (level > 5) {
+        level = 5;
+    }
+
+    return level;
+}
+
+
+/*
+    إنشاء صفحة المستويات
+*/
+
+function displayLevels() {
+
+    const unlocked =
+        getUnlockedLevel();
+
+    levelsList.innerHTML = "";
+
+    for (
+        let level = 1;
+        level <= 5;
+        level++
+    ) {
+
+        const button =
+            document.createElement("button");
+
+        button.className =
+            "level-card";
+
+
+        if (level <= unlocked) {
+
+            button.classList.add(
+                "unlocked"
+            );
+
+        } else {
+
+            button.classList.add(
+                "locked"
+            );
+        }
+
+
+        let icon;
+
+        if (level <= unlocked) {
+
+            icon =
+                level === unlocked
+                    ? "⭐"
+                    : "🔓";
+
+        } else {
+
+            icon = "🔒";
+        }
+
+
+        let description;
+
+        switch (level) {
+
+            case 1:
+                description =
+                    "رقم واحد";
+                break;
+
+            case 2:
+                description =
+                    "رقمان";
+                break;
+
+            case 3:
+                description =
+                    "3 أرقام";
+                break;
+
+            case 4:
+                description =
+                    "4 أرقام";
+                break;
+
+            case 5:
+                description =
+                    "5 أرقام";
+                break;
+        }
+
+
+        button.innerHTML = `
+
+            <span class="icon">
+                ${icon}
+            </span>
+
+            <span class="number">
+                المستوى ${level}
+            </span>
+
+            <span class="description">
+                ${description}
+            </span>
+
+        `;
+
+
+        /*
+            إذا كان المستوى مفتوحًا
+        */
+
+        if (level <= unlocked) {
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    window.location.href =
+                        "addition.html?level=" +
+                        level;
+
+                }
+            );
+
+        }
+
+
+        /*
+            إذا كان المستوى مغلقًا
+        */
+
+        else {
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    levelsMessage.textContent =
+                        "🔒 أكمل المستوى السابق أولاً";
+
+                }
+            );
+
+        }
+
+
+        levelsList.appendChild(button);
+    }
+}
+
+
+/*
+    إعادة التقدم
+*/
+
+resetProgress.addEventListener(
+    "click",
+    function () {
+
+        const confirmed =
+            confirm(
+                "هل تريد إعادة جميع المستويات إلى البداية؟"
+            );
+
+        if (confirmed) {
+
+            localStorage.setItem(
+                "additionUnlockedLevel",
+                "1"
+            );
+
+            displayLevels();
+
+            levelsMessage.textContent =
+                "🔄 تم إعادة التقدم إلى المستوى الأول.";
+
+        }
+
+    }
+);
+
+
+displayLevels();
+
+</script>
+
+</body>
+      </html>
