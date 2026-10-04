@@ -50,6 +50,7 @@ const APP_FILES = [
     // ================================
 
     "./math.html",
+    "./addition-levels.html",
     "./addition.html",
     "./addition.js",
 
