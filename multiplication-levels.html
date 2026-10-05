@@ -3,290 +3,372 @@
 
 <head>
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>مستويات الضرب</title>
 
     <link rel="stylesheet" href="style.css">
 
     <style>
-
-        .levels-container {
-            max-width: 700px;
-            margin: 30px auto;
-            padding: 15px;
+        body {
+            margin: 0;
+            background: #f4f8fc;
         }
 
-        .levels-grid {
+        .multiplication-header {
+            background: linear-gradient(135deg, #20b9f0, #32a9ef);
+            color: white;
+            text-align: center;
+            padding: 35px 15px 30px;
+            border-radius: 0 0 45px 45px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .multiplication-header h1 {
+            margin: 0;
+            font-size: 2.1rem;
+            font-weight: bold;
+        }
+
+        .multiplication-header p {
+            margin: 15px 0 0;
+            font-size: 1.15rem;
+        }
+
+        .levels-title {
+            text-align: center;
+            font-size: 2.2rem;
+            margin: 35px 0 10px;
+            color: #222;
+        }
+
+        .levels-subtitle {
+            text-align: center;
+            color: #777;
+            font-size: 1.15rem;
+            margin: 0 20px 25px;
+        }
+
+        .multiplication-levels {
+            width: 92%;
+            max-width: 700px;
+            margin: auto;
+
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
+
+            gap: 18px;
+            padding-bottom: 30px;
         }
 
-        .level-button {
+        .multiplication-level {
             position: relative;
-            min-height: 100px;
-            border: none;
-            border-radius: 18px;
-            padding: 15px;
-            font-size: 1.2rem;
-            font-weight: bold;
+
+            min-height: 180px;
+
+            border-radius: 30px;
+            border: 3px solid #3ba8df;
+
+            background: #eefaff;
+
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            text-align: center;
+
             cursor: pointer;
-            background: #ffffff;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-            transition: transform 0.2s;
+
+            transition: 0.2s;
         }
 
-        .level-button:hover {
+        .multiplication-level:hover {
             transform: translateY(-3px);
         }
 
+        .multiplication-level.unlocked {
+            border-color: #3ba8df;
+            background: #eefaff;
+        }
+
+        .multiplication-level.completed {
+            border-color: #58b866;
+            background: #effbf0;
+        }
+
+        .multiplication-level.locked {
+            border-color: #dedfe2;
+            background: #f0f1f3;
+
+            color: #c5c7ca;
+
+            cursor: not-allowed;
+
+            box-shadow: none;
+
+            opacity: 0.7;
+        }
+
+        .lock {
+            font-size: 2.8rem;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+
         .level-number {
-            display: block;
-            font-size: 1.5rem;
-            margin-bottom: 8px;
+            font-size: 1.45rem;
+            font-weight: bold;
+            margin-bottom: 12px;
         }
 
         .level-description {
-            display: block;
-            font-size: 0.9rem;
-            font-weight: normal;
+            font-size: 1rem;
+            color: #777;
         }
 
-        .locked {
-            opacity: 0.55;
-            cursor: not-allowed;
-        }
-
-        .lock-icon {
-            position: absolute;
-            top: 10px;
-            left: 12px;
-            font-size: 1.5rem;
+        .locked .level-description {
+            color: #c2c4c7;
         }
 
         .back-button {
             display: block;
-            max-width: 300px;
-            margin: 25px auto 10px;
+
+            width: 85%;
+            max-width: 350px;
+
+            margin: 10px auto 30px;
+
+            padding: 14px;
+
             text-align: center;
             text-decoration: none;
+
+            border-radius: 15px;
+
+            background: white;
+            color: #333;
+
+            border: 2px solid #ddd;
+
+            font-size: 1.1rem;
         }
 
         @media (max-width: 600px) {
 
-            .levels-grid {
-                grid-template-columns: 1fr;
+            .multiplication-header h1 {
+                font-size: 1.8rem;
             }
 
-        }
+            .levels-title {
+                font-size: 1.9rem;
+            }
 
+            .multiplication-levels {
+                width: 94%;
+                gap: 12px;
+            }
+
+            .multiplication-level {
+                min-height: 165px;
+                border-radius: 25px;
+            }
+
+            .lock {
+                font-size: 2.4rem;
+            }
+
+            .level-number {
+                font-size: 1.25rem;
+            }
+
+            .level-description {
+                font-size: 0.9rem;
+            }
+        }
     </style>
 </head>
 
-
 <body>
 
-<header>
+<header class="multiplication-header">
 
     <h1>✖️ تعلم الضرب</h1>
 
-    <p>
-        اختر المستوى المناسب لك
-    </p>
+    <p>اختر المستوى المناسب لك</p>
 
 </header>
 
 
-<main class="levels-container">
+<h2 class="levels-title">
+    مستويات الضرب 🎯
+</h2>
 
-    <div class="levels-grid">
-
-
-        <!-- المستوى 1 -->
-
-        <button
-            class="level-button"
-            data-level="1">
-
-            <span class="level-number">
-                المستوى 1
-            </span>
-
-            <span class="level-description">
-                رقم واحد × رقم واحد
-            </span>
-
-        </button>
+<p class="levels-subtitle">
+    يجب الحصول على 12 إجابة صحيحة لفتح المستوى التالي
+</p>
 
 
-        <!-- المستوى 2 -->
-
-        <button
-            class="level-button"
-            data-level="2">
-
-            <span class="level-number">
-                المستوى 2
-            </span>
-
-            <span class="level-description">
-                عدد من رقمين × رقم واحد
-            </span>
-
-        </button>
+<main class="multiplication-levels">
 
 
-        <!-- المستوى 3 -->
+    <div class="multiplication-level" data-level="1">
 
-        <button
-            class="level-button"
-            data-level="3">
+        <div class="lock">🔓</div>
 
-            <span class="level-number">
-                المستوى 3
-            </span>
+        <div class="level-number">
+            المستوى 1
+        </div>
 
-            <span class="level-description">
-                عدد من رقمين × عدد من رقمين
-            </span>
-
-        </button>
-
-
-        <!-- المستوى 4 -->
-
-        <button
-            class="level-button"
-            data-level="4">
-
-            <span class="level-number">
-                المستوى 4
-            </span>
-
-            <span class="level-description">
-                3 أرقام × رقمين
-            </span>
-
-        </button>
-
-
-        <!-- المستوى 5 -->
-
-        <button
-            class="level-button"
-            data-level="5">
-
-            <span class="level-number">
-                المستوى 5
-            </span>
-
-            <span class="level-description">
-                3 أرقام × 3 أرقام
-            </span>
-
-        </button>
-
-
-        <!-- المستوى 6 -->
-
-        <button
-            class="level-button"
-            data-level="6">
-
-            <span class="level-number">
-                المستوى 6
-            </span>
-
-            <span class="level-description">
-                4 أرقام × 3 أرقام
-            </span>
-
-        </button>
-
-
-        <!-- المستوى 7 -->
-
-        <button
-            class="level-button"
-            data-level="7">
-
-            <span class="level-number">
-                المستوى 7
-            </span>
-
-            <span class="level-description">
-                4 أرقام × 4 أرقام
-            </span>
-
-        </button>
-
-
-        <!-- المستوى 8 -->
-
-        <button
-            class="level-button"
-            data-level="8">
-
-            <span class="level-number">
-                المستوى 8
-            </span>
-
-            <span class="level-description">
-                5 أرقام × 4 أرقام
-            </span>
-
-        </button>
-
-
-        <!-- المستوى 9 -->
-
-        <button
-            class="level-button"
-            data-level="9">
-
-            <span class="level-number">
-                المستوى 9
-            </span>
-
-            <span class="level-description">
-                5 أرقام × 5 أرقام
-            </span>
-
-        </button>
-
-
-        <!-- المستوى 10 -->
-
-        <button
-            class="level-button"
-            data-level="10">
-
-            <span class="level-number">
-                المستوى 10
-            </span>
-
-            <span class="level-description">
-                6 أرقام × 5 أرقام
-            </span>
-
-        </button>
-
+        <div class="level-description">
+            رقم واحد × رقم واحد
+        </div>
 
     </div>
 
 
-    <a
-        href="math.html"
-        class="main-button back-button">
+    <div class="multiplication-level" data-level="2">
 
-        ⬅️ العودة إلى الحساب والرياضيات
+        <div class="lock">🔒</div>
 
-    </a>
+        <div class="level-number">
+            المستوى 2
+        </div>
+
+        <div class="level-description">
+            عدد من رقمين × رقم واحد
+        </div>
+
+    </div>
+
+
+    <div class="multiplication-level" data-level="3">
+
+        <div class="lock">🔒</div>
+
+        <div class="level-number">
+            المستوى 3
+        </div>
+
+        <div class="level-description">
+            عدد من رقمين × عدد من رقمين
+        </div>
+
+    </div>
+
+
+    <div class="multiplication-level" data-level="4">
+
+        <div class="lock">🔒</div>
+
+        <div class="level-number">
+            المستوى 4
+        </div>
+
+        <div class="level-description">
+            3 أرقام × رقمين
+        </div>
+
+    </div>
+
+
+    <div class="multiplication-level" data-level="5">
+
+        <div class="lock">🔒</div>
+
+        <div class="level-number">
+            المستوى 5
+        </div>
+
+        <div class="level-description">
+            3 أرقام × 3 أرقام
+        </div>
+
+    </div>
+
+
+    <div class="multiplication-level" data-level="6">
+
+        <div class="lock">🔒</div>
+
+        <div class="level-number">
+            المستوى 6
+        </div>
+
+        <div class="level-description">
+            4 أرقام × 3 أرقام
+        </div>
+
+    </div>
+
+
+    <div class="multiplication-level" data-level="7">
+
+        <div class="lock">🔒</div>
+
+        <div class="level-number">
+            المستوى 7
+        </div>
+
+        <div class="level-description">
+            4 أرقام × 4 أرقام
+        </div>
+
+    </div>
+
+
+    <div class="multiplication-level" data-level="8">
+
+        <div class="lock">🔒</div>
+
+        <div class="level-number">
+            المستوى 8
+        </div>
+
+        <div class="level-description">
+            5 أرقام × 4 أرقام
+        </div>
+
+    </div>
+
+
+    <div class="multiplication-level" data-level="9">
+
+        <div class="lock">🔒</div>
+
+        <div class="level-number">
+            المستوى 9
+        </div>
+
+        <div class="level-description">
+            5 أرقام × 5 أرقام
+        </div>
+
+    </div>
+
+
+    <div class="multiplication-level" data-level="10">
+
+        <div class="lock">🔒</div>
+
+        <div class="level-number">
+            المستوى 10
+        </div>
+
+        <div class="level-description">
+            6 أرقام × 5 أرقام
+        </div>
+
+    </div>
 
 </main>
+
+
+<a href="math.html" class="back-button">
+    ⬅️ العودة إلى الحساب والرياضيات
+</a>
 
 
 <script>
@@ -301,72 +383,70 @@
         ) || 1;
 
 
-    const levelButtons =
+    const levels =
         document.querySelectorAll(
-            ".level-button"
+            ".multiplication-level"
         );
 
 
-    levelButtons.forEach(
-        button => {
+    levels.forEach(level => {
 
-            const level =
-                Number(
-                    button.dataset.level
-                );
+        const levelNumber =
+            Number(level.dataset.level);
 
 
-            if (level > unlockedLevel) {
-
-                button.classList.add(
-                    "locked"
-                );
+        const lock =
+            level.querySelector(".lock");
 
 
-                const lock =
-                    document.createElement("span");
+        if (levelNumber <= unlockedLevel) {
 
-                lock.className =
-                    "lock-icon";
+            level.classList.remove("locked");
 
-                lock.textContent =
-                    "🔒";
+            level.classList.add("unlocked");
 
 
-                button.appendChild(lock);
+            if (levelNumber < unlockedLevel) {
 
+                level.classList.add("completed");
 
-                button.addEventListener(
-                    "click",
-                    () => {
-
-                        alert(
-                            "🔒 هذا المستوى مغلق.\nأكمل المستوى السابق أولاً."
-                        );
-
-                    }
-                );
-
+                lock.textContent = "🔓";
 
             } else {
 
-                button.addEventListener(
-                    "click",
-                    () => {
-
-                        window.location.href =
-                            `multiplication.html?level=${level}`;
-
-                    }
-                );
+                lock.textContent = "🔓";
 
             }
 
+
+            level.addEventListener("click", () => {
+
+                window.location.href =
+                    `multiplication.html?level=${levelNumber}`;
+
+            });
+
+
+        } else {
+
+            level.classList.add("locked");
+
+            lock.textContent = "🔒";
+
+
+            level.addEventListener("click", () => {
+
+                alert(
+                    "🔒 أكمل المستوى السابق أولاً."
+                );
+
+            });
+
         }
-    );
+
+    });
 
 </script>
 
-
 </body>
-</html>
+    </html>
