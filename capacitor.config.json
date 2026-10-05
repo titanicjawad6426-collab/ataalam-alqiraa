@@ -1,7 +1,7 @@
 {
   "appId": "com.kidsreading.app",
   "appName": "Kids Reading",
-  "webDir": ".",
+  "webDir": "www",
   "server": {
     "androidScheme": "https"
   }
