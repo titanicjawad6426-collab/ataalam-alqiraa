@@ -29,6 +29,16 @@ jobs:
         run: |
           npm install @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7
 
+      - name: Prepare web files
+        run: |
+          mkdir -p www
+          rsync -av \
+            --exclude='www' \
+            --exclude='android' \
+            --exclude='.git' \
+            --exclude='.github' \
+            ./ www/
+
       - name: Create Android project
         run: npx cap add android
 
