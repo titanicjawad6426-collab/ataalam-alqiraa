@@ -54,6 +54,10 @@ const APP_FILES = [
     "./addition.html",
     "./addition.js",
 
+    "./multiplication-levels.html",
+    "./multiplication.html",
+    "./multiplication.js",
+
     // ================================
     // الألعاب والمسابقات
     // ================================
