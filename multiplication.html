@@ -1,1 +1,140 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <title>تعلم الضرب</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+    <h1>✖️ تعلم الضرب</h1>
+    <p id="levelTitle">المستوى 1</p>
+</header>
+
+<main class="container">
+
+    <!-- العملية -->
+    <section class="math-card">
+
+        <div id="operationArea" class="vertical-operation" dir="ltr">
+
+            <div class="top-number">
+                <span id="numberA">24</span>
+            </div>
+
+            <div class="bottom-number">
+                <span>×</span>
+                <span id="numberB">13</span>
+            </div>
+
+            <div class="line"></div>
+
+            <!-- النواتج الجزئية -->
+            <div id="partialResults"></div>
+
+            <!-- ناتج الجمع النهائي -->
+            <div id="finalResultArea"></div>
+
+        </div>
+
+    </section>
+
+
+    <!-- تعليمات الخطوة -->
+    <section class="instruction-card">
+
+        <h2 id="stepTitle">الخطوة الأولى</h2>
+
+        <p id="stepInstruction">
+            احسب عملية الضرب وأدخل النتيجة.
+        </p>
+
+        <div class="answer-area">
+
+            <input
+                type="number"
+                id="answerInput"
+                inputmode="numeric"
+                autocomplete="off"
+                placeholder="اكتب النتيجة"
+            >
+
+            <button id="checkAnswerButton" class="main-button math">
+                ✓ تحقق
+            </button>
+
+        </div>
+
+        <p id="feedback" class="feedback"></p>
+
+    </section>
+
+
+    <!-- التقدم -->
+    <section class="progress-card">
+
+        <p id="questionCounter">
+            العملية 1 من 12
+        </p>
+
+        <div class="progress-bar">
+            <div id="progressFill"></div>
+        </div>
+
+    </section>
+
+
+    <!-- نتيجة المستوى -->
+    <section id="resultCard" class="result-card" style="display:none;">
+
+        <h2>🎉 انتهى المستوى!</h2>
+
+        <p id="resultSummary"></p>
+
+        <p id="unlockMessage"></p>
+
+        <div id="reviewList" class="review-list"></div>
+
+        <div class="result-buttons">
+
+            <button id="retryButton" class="main-button math">
+                🔄 إعادة المستوى
+            </button>
+
+            <a href="multiplication-levels.html"
+               class="main-button">
+                📚 المستويات
+            </a>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- الاحتفال -->
+<div id="celebration" class="celebration" style="display:none;">
+
+    <div class="celebration-content">
+        <div class="celebration-stars">⭐ ⭐ ⭐</div>
+
+        <h2>ممتاز! 🎉</h2>
+
+        <p>أحسنت! لقد أكملت المستوى بنجاح.</p>
+
+        <div class="fireworks">🎆 🎇 🎆</div>
+    </div>
+
+</div>
+
+
+<script src="multiplication.js?v=1"></script>
+
+</body>
+  </html>
