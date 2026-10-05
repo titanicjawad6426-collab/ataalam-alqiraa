@@ -1,6 +1,18 @@
 /* =========================================================
    تعلم الضرب - الضرب العمودي المدرسي
    10 مستويات × 12 عملية
+
+   القاعدة:
+   - إذا كان العدد السفلي من رقم واحد:
+     النتيجة مباشرة.
+     مثال:
+         1
+     ×   5
+     ─────
+         ?
+     
+   - إذا كان العدد السفلي من رقمين أو أكثر:
+     نستخدم الجداءات الجزئية ثم الناتج النهائي.
 ========================================================= */
 
 
@@ -16,26 +28,15 @@ const PROGRESS_KEY = "multiplicationUnlockedLevelV1";
 
 const levelDigits = {
 
-    // العدد العلوي × العدد السفلي
-
     1: [1, 1],
-
     2: [2, 1],
-
     3: [2, 2],
-
     4: [3, 2],
-
     5: [3, 3],
-
     6: [4, 3],
-
     7: [4, 4],
-
     8: [5, 4],
-
     9: [5, 5],
-
     10: [6, 5]
 };
 
@@ -103,13 +104,15 @@ const celebration =
 // معرفة المستوى
 // =========================================================
 
-const urlParams = new URLSearchParams(window.location.search);
+const urlParams =
+    new URLSearchParams(window.location.search);
 
 let currentLevel =
     parseInt(urlParams.get("level")) || 1;
 
 
 // حماية المستوى
+
 if (
     currentLevel < 1 ||
     currentLevel > MAX_LEVEL
@@ -123,7 +126,9 @@ if (
 // =========================================================
 
 let unlockedLevel =
-    parseInt(localStorage.getItem(PROGRESS_KEY)) || 1;
+    parseInt(
+        localStorage.getItem(PROGRESS_KEY)
+    ) || 1;
 
 
 if (unlockedLevel < 1) {
@@ -132,6 +137,7 @@ if (unlockedLevel < 1) {
 
 
 // إذا حاول المستخدم الدخول إلى مستوى مغلق
+
 if (currentLevel > unlockedLevel) {
 
     alert(
@@ -162,6 +168,12 @@ let questionResults = [];
 let waitingForNextQuestion = false;
 
 
+// مهم جداً:
+// هل أخطأ الطفل في العملية الحالية؟
+
+let currentQuestionHadError = false;
+
+
 // =========================================================
 // إنشاء رقم عشوائي بعدد خانات محدد
 // =========================================================
@@ -182,7 +194,8 @@ function randomNumber(digits) {
         Math.pow(10, digits) - 1;
 
     return Math.floor(
-        Math.random() * (max - min + 1)
+        Math.random() *
+        (max - min + 1)
     ) + min;
 }
 
@@ -219,8 +232,11 @@ function createQuestion() {
 
 
     return {
+
         a: a,
+
         b: b,
+
         answer: a * b
     };
 }
@@ -248,15 +264,6 @@ function generateQuestions() {
         const q =
             createQuestion();
 
-        /*
-          نمنع تكرار العملية.
-
-          وإذا كان العددان من نفس عدد الخانات
-          نمنع أيضاً:
-
-          24 × 13
-          13 × 24
-        */
 
         const key =
             `${q.a}x${q.b}`;
@@ -264,12 +271,14 @@ function generateQuestions() {
         const reverseKey =
             `${q.b}x${q.a}`;
 
+
         if (
             used.has(key) ||
             used.has(reverseKey)
         ) {
             continue;
         }
+
 
         used.add(key);
 
@@ -292,9 +301,11 @@ function startLevel() {
 
     questionResults = [];
 
-    resultCard.style.display = "none";
+    resultCard.style.display =
+        "none";
 
-    celebration.style.display = "none";
+    celebration.style.display =
+        "none";
 
     loadQuestion();
 }
@@ -312,6 +323,9 @@ function loadQuestion() {
     currentStep = 0;
 
     waitingForNextQuestion = false;
+
+    currentQuestionHadError = false;
+
 
     answerInput.disabled = false;
 
@@ -346,12 +360,12 @@ function loadQuestion() {
             TOTAL_QUESTIONS
         ) * 100;
 
+
     progressFill.style.width =
         `${progress}%`;
 
 
     buildOperation();
-
 
     updateStep();
 
@@ -376,17 +390,7 @@ function buildOperation() {
 
 
     /*
-      نأخذ أرقام العدد السفلي
-      من اليمين إلى اليسار.
-
-      مثال:
-
-      13
-
-      يصبح:
-
-      3
-      1
+      عدد خانات العدد السفلي
     */
 
     const digits =
@@ -395,61 +399,106 @@ function buildOperation() {
             .reverse();
 
 
-    digits.forEach((digit, index) => {
+    /*
+      إذا كان العدد السفلي من رقم واحد:
 
-        const row =
+          1
+      ×   5
+      ─────
+          ?
+
+      لا نعرض الجداء الجزئي.
+    */
+
+    if (digits.length === 1) {
+
+        const finalLine =
             document.createElement("div");
 
-        row.className =
-            "partial-row";
+        finalLine.className =
+            "final-line";
 
 
-        /*
-          الإزاحة:
-
-          السطر الأول:
-          72
-
-          السطر الثاني:
-           24
-
-          السطر الثالث:
-            48
-
-          وهكذا...
-
-          لا نضيف أصفار.
-          فقط نضيف مسافة من اليمين
-          لمحاكاة الكتابة المدرسية.
-        */
-
-        row.style.paddingLeft =
-            `${index * 1.2}em`;
+        finalResultArea.appendChild(
+            finalLine
+        );
 
 
-        row.dataset.index =
-            index;
+        const finalRow =
+            document.createElement("div");
+
+        finalRow.className =
+            "final-row";
 
 
-        row.innerHTML =
-            `<span class="partial-value">?</span>`;
+        finalRow.innerHTML =
+            `<span class="final-value">?</span>`;
 
 
-        partialResultsElement.appendChild(row);
-    });
+        finalResultArea.appendChild(
+            finalRow
+        );
+
+
+        return;
+    }
+
+
+    /*
+      العدد السفلي من رقمين أو أكثر:
+
+      نعرض الجداءات الجزئية.
+    */
+
+    digits.forEach(
+        (digit, index) => {
+
+            const row =
+                document.createElement("div");
+
+            row.className =
+                "partial-row";
+
+
+            /*
+              إزاحة بصرية فقط.
+              لا نضيف أصفار.
+            */
+
+            row.style.paddingLeft =
+                `${index * 1.2}em`;
+
+
+            row.dataset.index =
+                index;
+
+
+            row.innerHTML =
+                `<span class="partial-value">?</span>`;
+
+
+            partialResultsElement.appendChild(
+                row
+            );
+        }
+    );
 
 
     // خط الجمع
+
     const finalLine =
         document.createElement("div");
 
     finalLine.className =
         "final-line";
 
+
     finalResultArea.appendChild(
         finalLine
     );
 
+
+    // الناتج النهائي
 
     const finalRow =
         document.createElement("div");
@@ -457,8 +506,10 @@ function buildOperation() {
     finalRow.className =
         "final-row";
 
+
     finalRow.innerHTML =
         `<span class="final-value">?</span>`;
+
 
     finalResultArea.appendChild(
         finalRow
@@ -484,21 +535,10 @@ function getPartialProducts() {
             const number =
                 Number(digit);
 
+
             const baseProduct =
                 currentQuestion.a * number;
 
-
-            /*
-              الناتج الحسابي الحقيقي.
-
-              مثال:
-
-              24 × 3 = 72
-
-              24 × 1 = 24
-
-              لا نكتب 240.
-            */
 
             return {
 
@@ -510,9 +550,7 @@ function getPartialProducts() {
 
                 displayProduct:
                     baseProduct
-
             };
-
         }
     );
 }
@@ -532,9 +570,49 @@ function updateStep() {
         partialProducts.length;
 
 
-    // -----------------------------------------
-    // ما زلنا في خطوات الضرب
-    // -----------------------------------------
+    /*
+      ============================================
+      إذا كان العدد السفلي من رقم واحد
+      ============================================
+
+      مثال:
+
+          1
+      ×   5
+      ─────
+          ?
+
+      لا توجد خطوة جداء جزئي.
+      ننتقل مباشرة للناتج النهائي.
+    */
+
+    if (numberOfPartialSteps === 1) {
+
+        currentStep =
+            numberOfPartialSteps;
+
+
+        stepTitle.textContent =
+            "النتيجة";
+
+
+        stepInstruction.innerHTML =
+            `احسب: <strong>${currentQuestion.a} × ${currentQuestion.b}</strong>`;
+
+
+        answerInput.placeholder =
+            "اكتب ناتج الضرب";
+
+
+        return;
+    }
+
+
+    /*
+      ============================================
+      العمليات متعددة الأرقام
+      ============================================
+    */
 
     if (
         currentStep <
@@ -561,12 +639,14 @@ function updateStep() {
     }
 
 
-    // -----------------------------------------
-    // خطوة الجمع
-    // -----------------------------------------
+    /*
+      ============================================
+      خطوة الناتج النهائي
+      ============================================
+    */
 
     stepTitle.textContent =
-        "الخطوة الأخيرة";
+        "النتيجة النهائية";
 
 
     stepInstruction.innerHTML =
@@ -578,25 +658,6 @@ function updateStep() {
 
 
     showPartialProducts();
-
-
-    /*
-      إذا كانت العملية تحتوي على
-      رقم واحد فقط في العدد السفلي
-      فلا توجد عملية جمع إضافية.
-
-      مثال:
-
-      24 × 3
-
-      الناتج النهائي هو نفسه 72.
-    */
-
-    if (numberOfPartialSteps === 1) {
-
-        stepInstruction.innerHTML =
-            `احسب الناتج النهائي: <strong>${currentQuestion.a} × ${currentQuestion.b}</strong>`;
-    }
 }
 
 
@@ -624,6 +685,7 @@ function showPartialProducts() {
                 return;
             }
 
+
             const value =
                 rows[index]
                     .querySelector(
@@ -634,13 +696,6 @@ function showPartialProducts() {
             value.textContent =
                 item.product;
 
-
-            /*
-              السطر الثاني لا يحتوي على صفر.
-
-              نستخدم الإزاحة البصرية
-              فقط.
-            */
 
             rows[index]
                 .style.paddingLeft =
@@ -688,6 +743,80 @@ function checkAnswer() {
 
 
     // =================================================
+    // إذا كان العدد السفلي من رقم واحد
+    // النتيجة مباشرة
+    // =================================================
+
+    if (
+        partialProducts.length === 1
+    ) {
+
+        const correctFinal =
+            currentQuestion.answer;
+
+
+        if (
+            userAnswer ===
+            correctFinal
+        ) {
+
+            feedback.textContent =
+                "🎉 صحيح!";
+
+            feedback.className =
+                "feedback correct";
+
+
+            /*
+              لا نحسب العملية إلا إذا
+              لم يحدث أي خطأ فيها.
+            */
+
+            if (!currentQuestionHadError) {
+
+                score++;
+            }
+
+
+            showFinalResult(
+                correctFinal
+            );
+
+
+            setTimeout(() => {
+
+                nextQuestion();
+
+            }, 700);
+
+
+        } else {
+
+            feedback.textContent =
+                "❌ الناتج غير صحيح. حاول مرة أخرى.";
+
+            feedback.className =
+                "feedback wrong";
+
+
+            currentQuestionHadError = true;
+
+
+            recordFinalError(
+                userAnswer,
+                correctFinal
+            );
+
+
+            answerInput.select();
+        }
+
+
+        return;
+    }
+
+
+    // =================================================
     // مرحلة النواتج الجزئية
     // =================================================
 
@@ -709,7 +838,6 @@ function checkAnswer() {
             correctAnswer
         ) {
 
-            // صحيح
             feedback.textContent =
                 "✅ إجابة صحيحة!";
 
@@ -729,10 +857,6 @@ function checkAnswer() {
             answerInput.value = "";
 
 
-            /*
-              انتقال تلقائي للخطوة التالية
-            */
-
             setTimeout(() => {
 
                 feedback.textContent = "";
@@ -746,12 +870,15 @@ function checkAnswer() {
 
         } else {
 
-            // خطأ
             feedback.textContent =
-                `❌ غير صحيح. حاول مرة أخرى.`;
+                "❌ غير صحيح. حاول مرة أخرى.";
 
             feedback.className =
                 "feedback wrong";
+
+
+            currentQuestionHadError =
+                true;
 
 
             recordStepError(
@@ -760,11 +887,6 @@ function checkAnswer() {
                 correctAnswer
             );
 
-
-            /*
-              لا ننتقل مباشرة من الخطوة.
-              نعطي الطفل فرصة لإعادة المحاولة.
-            */
 
             answerInput.select();
         }
@@ -794,7 +916,21 @@ function checkAnswer() {
             "feedback correct";
 
 
-        score++;
+        /*
+          مهم:
+          إذا أخطأ الطفل في أي خطوة سابقة
+          فلا تُحسب العملية ضمن الـ 12 الصحيحة.
+        */
+
+        if (!currentQuestionHadError) {
+
+            score++;
+        }
+
+
+        showFinalResult(
+            correctFinal
+        );
 
 
         setTimeout(() => {
@@ -813,6 +949,10 @@ function checkAnswer() {
             "feedback wrong";
 
 
+        currentQuestionHadError =
+            true;
+
+
         recordFinalError(
             userAnswer,
             correctFinal
@@ -820,6 +960,31 @@ function checkAnswer() {
 
 
         answerInput.select();
+    }
+}
+
+
+// =========================================================
+// إظهار الناتج النهائي
+// =========================================================
+
+function showFinalResult(value) {
+
+    const finalValue =
+        finalResultArea
+            .querySelector(
+                ".final-value"
+            );
+
+
+    if (finalValue) {
+
+        finalValue.textContent =
+            value;
+
+        finalValue.classList.add(
+            "correct-result"
+        );
     }
 }
 
@@ -889,7 +1054,6 @@ function recordStepError(
             errors: [],
 
             finalError: false
-
         };
 
 
@@ -938,7 +1102,6 @@ function recordFinalError(
             errors: [],
 
             finalError: false
-
         };
 
 
@@ -1028,6 +1191,7 @@ function finishLevel() {
 
         unlockNextLevel();
 
+
         unlockMessage.textContent =
             currentLevel < MAX_LEVEL
                 ? `🔓 تم فتح المستوى ${currentLevel + 1}!`
@@ -1041,7 +1205,6 @@ function finishLevel() {
 
         unlockMessage.textContent =
             "🔒 يجب الحصول على 12/12 لفتح المستوى التالي.";
-
     }
 
 
@@ -1086,10 +1249,6 @@ function unlockNextLevel() {
 
 function buildReview() {
 
-    /*
-      نعرض العمليات التي وقع فيها خطأ فقط.
-    */
-
     const errors =
         questionResults.filter(
             item =>
@@ -1106,15 +1265,19 @@ function buildReview() {
         const message =
             document.createElement("div");
 
+
         message.className =
             "review-success";
+
 
         message.textContent =
             "🌟 ممتاز! لم تخطئ في أي عملية.";
 
+
         reviewList.appendChild(
             message
         );
+
 
         return;
     }
@@ -1123,17 +1286,22 @@ function buildReview() {
     const title =
         document.createElement("h3");
 
+
     title.textContent =
         "📝 مراجعة الأخطاء";
 
-    reviewList.appendChild(title);
+
+    reviewList.appendChild(
+        title
+    );
 
 
     errors.forEach(
-        (item, index) => {
+        (item) => {
 
             const card =
                 document.createElement("div");
+
 
             card.className =
                 "review-item";
@@ -1185,7 +1353,8 @@ function buildReview() {
             }
 
 
-            card.innerHTML = html;
+            card.innerHTML =
+                html;
 
 
             reviewList.appendChild(
@@ -1207,7 +1376,6 @@ function showCelebration() {
 
 
     createStars();
-
 
     playApplause();
 
@@ -1371,6 +1539,7 @@ function playApplause() {
 
         }, duration * 1000);
 
+
     } catch (error) {
 
         console.log(
@@ -1390,6 +1559,7 @@ retryButton.addEventListener(
     () => {
 
         startLevel();
+
 
         window.scrollTo({
             top: 0,
