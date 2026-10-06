@@ -50,6 +50,7 @@ const APP_FILES = [
     // ================================
 
     "./math.html",
+
     "./addition-levels.html",
     "./addition.html",
     "./addition.js",
@@ -73,9 +74,9 @@ const APP_FILES = [
 ];
 
 
-// ================================
-// تثبيت التطبيق وتخزين الملفات
-// ================================
+// ============================================
+// تثبيت النسخة الجديدة
+// ============================================
 
 self.addEventListener("install", event => {
 
@@ -86,13 +87,13 @@ self.addEventListener("install", event => {
             const cache =
                 await caches.open(CACHE_NAME);
 
-            // تخزين ملفات التطبيق الأساسية
-
             for (const file of APP_FILES) {
 
                 try {
 
-                    await cache.add(file);
+                    await cache.add(
+                        file
+                    );
 
                     console.log(
                         "Cached:",
@@ -103,7 +104,8 @@ self.addEventListener("install", event => {
 
                     console.warn(
                         "Failed to cache:",
-                        file
+                        file,
+                        error
                     );
 
                 }
@@ -111,9 +113,9 @@ self.addEventListener("install", event => {
             }
 
 
-            // ================================
-            // تخزين ملفات الصوت
-            // ================================
+            // ====================================
+            // ملفات الصوت
+            // ====================================
 
             try {
 
@@ -142,11 +144,6 @@ self.addEventListener("install", event => {
                             "./" + file
                         );
 
-                        console.log(
-                            "Audio cached:",
-                            file
-                        );
-
                     } catch (error) {
 
                         console.warn(
@@ -160,15 +157,15 @@ self.addEventListener("install", event => {
 
             } catch (error) {
 
-                console.error(
-                    "Could not load audio manifest",
+                console.warn(
+                    "Could not load audio manifest:",
                     error
                 );
 
             }
 
 
-            // تفعيل النسخة الجديدة مباشرة
+            // تفعيل النسخة الجديدة فوراً
 
             await self.skipWaiting();
 
@@ -179,9 +176,9 @@ self.addEventListener("install", event => {
 });
 
 
-// ================================
-// تفعيل النسخة الجديدة
-// ================================
+// ============================================
+// تفعيل Service Worker الجديد
+// ============================================
 
 self.addEventListener("activate", event => {
 
@@ -192,6 +189,8 @@ self.addEventListener("activate", event => {
             const cacheNames =
                 await caches.keys();
 
+
+            // حذف جميع النسخ القديمة
 
             await Promise.all(
 
@@ -208,6 +207,8 @@ self.addEventListener("activate", event => {
             );
 
 
+            // التحكم في الصفحات المفتوحة
+
             await self.clients.claim();
 
         })()
@@ -217,22 +218,122 @@ self.addEventListener("activate", event => {
 });
 
 
-// ================================
-// تشغيل التطبيق بدون إنترنت
-// ================================
+// ============================================
+// تحميل الملفات
+// ============================================
 
 self.addEventListener("fetch", event => {
 
-    if (event.request.method !== "GET") {
+    if (
+        event.request.method !== "GET"
+    ) {
         return;
     }
 
+
+    const url =
+        new URL(
+            event.request.url
+        );
+
+
+    // ========================================
+    // ملفات الضرب
+    // ========================================
+    // هذه الملفات نريد دائماً التأكد من
+    // وجود النسخة الجديدة من الإنترنت
+    // ========================================
+
+    const isMultiplicationFile =
+        url.pathname.endsWith(
+            "/multiplication.html"
+        ) ||
+        url.pathname.endsWith(
+            "/multiplication.js"
+        ) ||
+        url.pathname.endsWith(
+            "/multiplication-levels.html"
+        );
+
+
+    if (isMultiplicationFile) {
+
+        event.respondWith(
+
+            (async () => {
+
+                try {
+
+                    const response =
+                        await fetch(
+                            event.request,
+                            {
+                                cache: "no-store"
+                            }
+                        );
+
+
+                    if (
+                        response &&
+                        response.status === 200
+                    ) {
+
+                        const cache =
+                            await caches.open(
+                                CACHE_NAME
+                            );
+
+                        await cache.put(
+                            event.request,
+                            response.clone()
+                        );
+
+                    }
+
+                    return response;
+
+                } catch (error) {
+
+                    const cached =
+                        await caches.match(
+                            event.request
+                        );
+
+                    if (cached) {
+                        return cached;
+                    }
+
+
+                    return new Response(
+                        "لا يوجد اتصال بالإنترنت",
+                        {
+                            status: 503,
+                            headers: {
+                                "Content-Type":
+                                    "text/plain; charset=utf-8"
+                            }
+                        }
+                    );
+
+                }
+
+            })()
+
+        );
+
+        return;
+    }
+
+
+    // ========================================
+    // باقي ملفات التطبيق
+    // ========================================
 
     event.respondWith(
 
         (async () => {
 
-            // البحث أولاً في الذاكرة
+            // البحث في الكاش أولاً
 
             const cached =
                 await caches.match(
@@ -244,7 +345,8 @@ self.addEventListener("fetch", event => {
             }
 
 
-            // محاولة الاتصال بالإنترنت
+            // إذا لم يوجد في الكاش
+            // نحاول تحميله من الإنترنت
 
             try {
 
@@ -253,8 +355,6 @@ self.addEventListener("fetch", event => {
                         event.request
                     );
 
-
-                // تخزين الملف الجديد
 
                 if (
                     response &&
@@ -267,7 +367,7 @@ self.addEventListener("fetch", event => {
                             CACHE_NAME
                         );
 
-                    cache.put(
+                    await cache.put(
                         event.request,
                         response.clone()
                     );
@@ -278,8 +378,7 @@ self.addEventListener("fetch", event => {
 
             } catch (error) {
 
-                // في حالة فتح صفحة HTML
-                // بدون إنترنت
+                // صفحة العمل بدون إنترنت
 
                 if (
                     event.request.mode ===
