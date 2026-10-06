@@ -55,6 +55,10 @@ const APP_FILES = [
     "./addition.html",
     "./addition.js",
 
+    "./subtraction-levels.html",
+    "./subtraction.html",
+    "./subtraction.js",
+
     "./multiplication-levels.html",
     "./multiplication.html",
     "./multiplication.js",
