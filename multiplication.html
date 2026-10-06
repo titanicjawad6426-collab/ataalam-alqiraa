@@ -2,139 +2,532 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0,
+                   maximum-scale=1.0, user-scalable=no">
 
     <title>تعلم الضرب</title>
 
     <link rel="stylesheet" href="style.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Tahoma, sans-serif;
+            background: #f4f7fb;
+        }
+
+        .multiplication-page {
+            width: 100%;
+            max-width: 700px;
+            margin: auto;
+            padding: 15px 10px 30px;
+            text-align: center;
+        }
+
+        .top-title {
+            margin: 5px 0 18px;
+            font-size: clamp(22px, 6vw, 34px);
+            color: #222;
+        }
+
+        .level-title {
+            margin-bottom: 15px;
+            font-size: 20px;
+            color: #555;
+        }
+
+        /*
+         * أهم جزء:
+         * operation-board يستخدم grid بأعمدة ثابتة.
+         * كل رقم يشغل خانة واحدة، وبالتالي لا نعتمد
+         * على المسافات التي تختلف بين الهاتف والكمبيوتر.
+         */
+
+        .operation-board {
+            width: min(96vw, 430px);
+            margin: 15px auto 25px;
+
+            display: grid;
+
+            /*
+             * 7 أعمدة:
+             * 2 أعمدة للهوامش
+             * 5 أعمدة للأرقام
+             *
+             * يتم استعمال الأعمدة الأخيرة للأرقام
+             * حتى تبقى خانة الوحدات ثابتة.
+             */
+            grid-template-columns:
+                1fr
+                42px
+                42px
+                42px
+                42px
+                42px
+                1fr;
+
+            grid-auto-rows: 48px;
+
+            direction: ltr;
+
+            align-items: center;
+            justify-content: center;
+
+            font-family:
+                "Courier New",
+                "DejaVu Sans Mono",
+                monospace;
+
+            font-weight: bold;
+        }
+
+        .number-row,
+        .multiply-row,
+        .line-row,
+        .partial-row,
+        .final-row {
+            display: contents;
+        }
+
+        .digit {
+            width: 42px;
+            height: 42px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 27px;
+            line-height: 1;
+
+            color: #222;
+        }
+
+        .multiply-symbol {
+            width: 42px;
+            height: 42px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 25px;
+        }
+
+        /*
+         * الخط واحد وقصير، كما طلبت.
+         */
+        .operation-line {
+            height: 3px;
+            background: #222;
+            border-radius: 2px;
+
+            grid-column: 2 / 7;
+
+            width: 100%;
+            justify-self: center;
+        }
+
+        /*
+         * منطقة إدخال النتيجة.
+         */
+        .answer-slot {
+            width: 38px;
+            height: 42px;
+
+            border: 3px solid #2878ff;
+            border-radius: 7px;
+
+            background: white;
+
+            text-align: center;
+            font-size: 25px;
+            font-weight: bold;
+
+            outline: none;
+
+            padding: 0;
+        }
+
+        .answer-slot:focus {
+            border-color: #0b55d8;
+            box-shadow: 0 0 0 3px rgba(40, 120, 255, 0.15);
+        }
+
+        .answer-digit {
+            width: 42px;
+            height: 42px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 27px;
+            font-weight: bold;
+        }
+
+        .answer-dot {
+            width: 42px;
+            height: 42px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 25px;
+            color: #999;
+        }
+
+        /*
+         * الأرقام الجزئية.
+         */
+        .partial-digit {
+            width: 42px;
+            height: 42px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .partial-empty {
+            width: 42px;
+            height: 42px;
+        }
+
+        .check-button {
+            width: min(90vw, 300px);
+            min-height: 52px;
+
+            border: none;
+            border-radius: 14px;
+
+            background: #2878ff;
+            color: white;
+
+            font-size: 20px;
+            font-weight: bold;
+
+            cursor: pointer;
+
+            margin: 8px auto;
+        }
+
+        .check-button:active {
+            transform: scale(0.98);
+        }
+
+        .message {
+            min-height: 30px;
+            margin: 8px auto;
+
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .question-counter {
+            font-size: 17px;
+            color: #666;
+            margin: 10px 0;
+        }
+
+        /*
+         * بطاقة النتيجة النهائية.
+         */
+        .result-card {
+            display: none;
+
+            width: min(94vw, 600px);
+            margin: 20px auto;
+            padding: 20px;
+
+            background: white;
+            border-radius: 18px;
+
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .result-card.show {
+            display: block;
+        }
+
+        .result-card h2 {
+            margin-top: 0;
+        }
+
+        .score-text {
+            font-size: 23px;
+            font-weight: bold;
+            margin: 12px 0;
+        }
+
+        .review-list {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .review-item {
+            padding: 9px;
+            margin: 5px 0;
+
+            border-radius: 8px;
+            background: #f5f5f5;
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            direction: ltr;
+        }
+
+        .review-correct {
+            border-right: 5px solid #2eaf55;
+        }
+
+        .review-wrong {
+            border-right: 5px solid #e53935;
+        }
+
+        .result-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+
+            margin-top: 20px;
+        }
+
+        .result-buttons button {
+            min-width: 150px;
+            min-height: 48px;
+
+            padding: 8px 18px;
+
+            border: none;
+            border-radius: 12px;
+
+            font-size: 17px;
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        .retry-button {
+            background: #2878ff;
+            color: white;
+        }
+
+        .back-button {
+            background: #ddd;
+            color: #222;
+        }
+
+        /*
+         * الاحتفال
+         */
+        .celebration {
+            position: fixed;
+            inset: 0;
+
+            display: none;
+
+            align-items: center;
+            justify-content: center;
+
+            pointer-events: none;
+
+            z-index: 9999;
+        }
+
+        .celebration.show {
+            display: flex;
+        }
+
+        .celebration-text {
+            padding: 20px 30px;
+
+            background: white;
+            border-radius: 20px;
+
+            font-size: 28px;
+            font-weight: bold;
+
+            box-shadow:
+                0 10px 35px rgba(0,0,0,0.2);
+
+            animation: celebrationPop 0.5s ease;
+        }
+
+        @keyframes celebrationPop {
+            0% {
+                transform: scale(0.4);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .star {
+            position: fixed;
+
+            font-size: 28px;
+
+            animation:
+                starFly 1.5s ease-out forwards;
+
+            z-index: 10000;
+        }
+
+        @keyframes starFly {
+            0% {
+                transform:
+                    translate(0, 0)
+                    rotate(0deg)
+                    scale(0.5);
+
+                opacity: 1;
+            }
+
+            100% {
+                transform:
+                    translate(var(--x), var(--y))
+                    rotate(360deg)
+                    scale(1.2);
+
+                opacity: 0;
+            }
+        }
+
+        /*
+         * الهاتف الصغير
+         */
+        @media (max-width: 380px) {
+
+            .operation-board {
+                grid-template-columns:
+                    1fr
+                    34px
+                    34px
+                    34px
+                    34px
+                    34px
+                    1fr;
+
+                grid-auto-rows: 43px;
+            }
+
+            .digit,
+            .multiply-symbol,
+            .answer-digit,
+            .answer-dot,
+            .partial-digit,
+            .partial-empty {
+                width: 34px;
+                height: 38px;
+            }
+
+            .digit {
+                font-size: 24px;
+            }
+
+            .multiply-symbol {
+                font-size: 22px;
+            }
+
+            .answer-slot {
+                width: 32px;
+                height: 38px;
+                font-size: 23px;
+            }
+
+            .operation-line {
+                grid-column: 2 / 7;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-<header>
-    <h1>✖️ تعلم الضرب</h1>
-    <p id="levelTitle">المستوى 1</p>
-</header>
+<div class="multiplication-page">
 
-<main class="container">
+    <h1 class="top-title">✖️ تعلم الضرب</h1>
+
+    <div id="levelTitle" class="level-title">
+        المستوى 1
+    </div>
+
+    <div id="questionCounter" class="question-counter">
+        العملية 1 من 12
+    </div>
 
     <!-- العملية -->
-    <section class="math-card">
+    <div id="operationBoard" class="operation-board">
+    </div>
 
-        <div id="operationArea" class="vertical-operation" dir="ltr">
+    <div id="message" class="message"></div>
 
-            <div class="top-number">
-                <span id="numberA">24</span>
-            </div>
+    <button
+        id="checkAnswerButton"
+        class="check-button"
+        type="button">
+        ✓ تحقق
+    </button>
 
-            <div class="bottom-number">
-                <span>×</span>
-                <span id="numberB">13</span>
-            </div>
+    <!-- النتيجة النهائية -->
+    <div id="resultCard" class="result-card">
 
-            <div class="line"></div>
+        <h2>🎉 انتهى المستوى</h2>
 
-            <!-- النواتج الجزئية -->
-            <div id="partialResults"></div>
+        <div id="scoreText" class="score-text"></div>
 
-            <!-- ناتج الجمع النهائي -->
-            <div id="finalResultArea"></div>
+        <div id="unlockMessage"></div>
 
-        </div>
-
-    </section>
-
-
-    <!-- تعليمات الخطوة -->
-    <section class="instruction-card">
-
-        <h2 id="stepTitle">الخطوة الأولى</h2>
-
-        <p id="stepInstruction">
-            احسب عملية الضرب وأدخل النتيجة.
-        </p>
-
-        <div class="answer-area">
-
-            <input
-                type="number"
-                id="answerInput"
-                inputmode="numeric"
-                autocomplete="off"
-                placeholder="اكتب النتيجة"
-            >
-
-            <button id="checkAnswerButton" class="main-button math">
-                ✓ تحقق
-            </button>
-
-        </div>
-
-        <p id="feedback" class="feedback"></p>
-
-    </section>
-
-
-    <!-- التقدم -->
-    <section class="progress-card">
-
-        <p id="questionCounter">
-            العملية 1 من 12
-        </p>
-
-        <div class="progress-bar">
-            <div id="progressFill"></div>
-        </div>
-
-    </section>
-
-
-    <!-- نتيجة المستوى -->
-    <section id="resultCard" class="result-card" style="display:none;">
-
-        <h2>🎉 انتهى المستوى!</h2>
-
-        <p id="resultSummary"></p>
-
-        <p id="unlockMessage"></p>
+        <h3>📋 مراجعة العمليات</h3>
 
         <div id="reviewList" class="review-list"></div>
 
         <div class="result-buttons">
 
-            <button id="retryButton" class="main-button math">
+            <button
+                id="retryButton"
+                class="retry-button"
+                type="button">
                 🔄 إعادة المستوى
             </button>
 
-            <a href="multiplication-levels.html"
-               class="main-button">
-                📚 المستويات
-            </a>
+            <button
+                id="backButton"
+                class="back-button"
+                type="button">
+                ↩️ مستويات الضرب
+            </button>
 
         </div>
 
-    </section>
-
-</main>
-
-
-<!-- الاحتفال -->
-<div id="celebration" class="celebration" style="display:none;">
-
-    <div class="celebration-content">
-        <div class="celebration-stars">⭐ ⭐ ⭐</div>
-
-        <h2>ممتاز! 🎉</h2>
-
-        <p>أحسنت! لقد أكملت المستوى بنجاح.</p>
-
-        <div class="fireworks">🎆 🎇 🎆</div>
     </div>
 
 </div>
 
+<!-- الاحتفال -->
+<div id="celebration" class="celebration">
+    <div class="celebration-text">
+        🎉 ممتاز! أحسنت 🎉
+    </div>
+</div>
 
 <script src="multiplication.js?v=20"></script>
 
 </body>
-  </html>
+</html>
