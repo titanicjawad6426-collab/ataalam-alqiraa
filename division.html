@@ -1,31 +1,49 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>تعلم القسمة</title>
 
     <link rel="stylesheet" href="style.css">
 
     <style>
+
         * {
             box-sizing: border-box;
         }
 
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
             background: #f5f7fb;
+            font-family: Arial, sans-serif;
             color: #111827;
         }
 
+        /* =========================
+           الرأس
+        ========================= */
+
         .top {
-            background: linear-gradient(135deg, #4f46e5, #06b6d4);
+            background: linear-gradient(
+                135deg,
+                #4f46e5,
+                #06b6d4
+            );
+
             color: white;
-            padding: 25px 15px 35px;
-            border-radius: 0 0 45px 45px;
+
             text-align: center;
+
+            padding: 28px 15px 35px;
+
+            border-radius: 0 0 45px 45px;
         }
 
         .top h1 {
@@ -33,384 +51,566 @@
             font-size: 30px;
         }
 
-        .top .level-title {
-            margin-top: 10px;
+        .level-title {
+            margin-top: 8px;
             font-size: 21px;
         }
 
         .progress {
-            margin: 15px auto 0;
-            max-width: 420px;
+            margin-top: 12px;
             font-size: 18px;
             font-weight: bold;
         }
 
+
+        /* =========================
+           اللعبة
+        ========================= */
+
         .game {
+            width: 100%;
             max-width: 700px;
-            margin: 25px auto;
-            padding: 0 12px;
+
+            margin: 0 auto;
+
+            padding: 25px 12px 40px;
         }
 
         .question-title {
             text-align: center;
-            font-size: 20px;
+
+            font-size: 22px;
             font-weight: bold;
+
             margin-bottom: 20px;
         }
 
-        /*
-         * لوحة القسمة
-         */
-        .division-board-wrapper {
+
+        /* =========================
+           لوحة القسمة
+        ========================= */
+
+        .division-area {
             width: 100%;
+
             overflow-x: auto;
-            padding: 10px 5px 20px;
+
+            padding:
+                10px
+                5px
+                35px;
+
+            direction: ltr;
         }
 
         .division-board {
-            direction: ltr;
 
             --cell: 48px;
 
             position: relative;
 
             width: max-content;
-            min-width: 360px;
 
-            margin: auto;
+            min-width: 330px;
+
+            margin: 0 auto;
+
+            direction: ltr;
 
             font-family:
-                "Courier New",
-                monospace;
+                Arial,
+                sans-serif;
 
             font-size: 30px;
+
             font-weight: bold;
 
-            text-align: right;
+            color: #111827;
         }
 
-        /*
-         * رأس القسمة
-         */
-        .division-top {
-            display: flex;
-            align-items: flex-start;
-            justify-content: flex-start;
-            min-height: 100px;
+
+        /* =========================
+           رأس القسمة
+
+           2572 | 3
+                ----
+                 ...
+        ========================= */
+
+        .division-head {
+
+            position: relative;
+
+            height: 110px;
         }
+
 
         .dividend {
-            display: flex;
-            direction: ltr;
-            height: 58px;
-        }
 
-        .digit {
-            width: var(--cell);
-            height: 52px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .division-symbol {
-            position: relative;
-            width: 58px;
-            height: 95px;
-            margin-left: 10px;
-        }
-
-        .division-symbol::before {
-            content: "";
             position: absolute;
+
             left: 0;
             top: 0;
-            height: 95px;
-            border-left: 3px solid #111827;
+
+            display: flex;
+
+            direction: ltr;
         }
 
-        .division-symbol::after {
-            content: "";
-            position: absolute;
-            left: 0;
-            top: 48px;
-            width: 100px;
-            border-top: 3px solid #111827;
+        .dividend-digit {
+
+            width: var(--cell);
+
+            height: 50px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            position: relative;
         }
+
+
+        /* الخط العمودي */
+
+        .vertical-line {
+
+            position: absolute;
+
+            top: 0;
+
+            width: 3px;
+
+            height: 105px;
+
+            background: #111827;
+        }
+
+
+        /* المقسوم عليه */
 
         .divisor {
+
             position: absolute;
-            left: 25px;
-            top: 0;
-            width: 70px;
+
+            top: 2px;
+
             text-align: center;
+
+            width: 55px;
         }
 
-        .quotient {
+
+        /* الخط الأفقي */
+
+        .horizontal-line {
+
             position: absolute;
-            left: 80px;
-            top: 4px;
+
+            height: 3px;
+
+            background: #111827;
+        }
+
+
+        /* حاصل القسمة */
+
+        .quotient {
+
+            position: absolute;
+
+            top: 2px;
 
             display: flex;
+
             direction: ltr;
         }
 
-        .quotient .q-digit {
+        .quotient-digit {
+
             width: var(--cell);
-            height: 42px;
+
+            height: 45px;
 
             display: flex;
+
             align-items: center;
+
             justify-content: center;
         }
 
-        /*
-         * منطقة خطوات الحل
-         */
-        .steps {
-            position: relative;
-            margin-top: 5px;
-            min-height: 300px;
-        }
 
-        .division-step {
-            display: grid;
-            grid-template-columns: repeat(var(--columns), var(--cell));
-            justify-content: start;
-            direction: ltr;
+        /* =========================
+           منطقة الخطوات
+        ========================= */
 
-            min-height: 48px;
+        .work-area {
 
             position: relative;
+
+            min-height: 260px;
         }
 
-        .division-step .cell {
-            width: var(--cell);
+
+        .work-row {
+
+            position: relative;
+
             height: 43px;
 
             display: flex;
-            align-items: center;
-            justify-content: center;
+
+            direction: ltr;
         }
 
-        .minus-sign {
-            position: absolute;
-            left: -25px;
-            top: 5px;
-            font-family: Arial, sans-serif;
-            font-weight: normal;
-        }
+        .work-cell {
 
-        .step-line {
-            height: 2px;
-            background: #111827;
-            margin: 2px 0 7px;
-        }
+            width: var(--cell);
 
-        /*
-         * سهم إنزال الرقم
-         */
-        .bring-arrow {
-            position: absolute;
-
-            width: 32px;
-            height: 48px;
+            height: 43px;
 
             display: flex;
-            justify-content: center;
+
             align-items: center;
 
-            font-family: Arial, sans-serif;
-            font-size: 34px;
-            font-weight: normal;
-
-            z-index: 5;
-
-            animation: arrowMove .7s ease-in-out;
+            justify-content: center;
         }
 
-        @keyframes arrowMove {
-            0% {
+
+        /* علامة الطرح */
+
+        .minus {
+
+            position: absolute;
+
+            font-size: 27px;
+
+            font-weight: normal;
+
+            left: -28px;
+
+            top: 4px;
+        }
+
+
+        /* خط الطرح */
+
+        .work-line {
+
+            height: 3px;
+
+            background: #111827;
+
+            margin-top: 0;
+
+            margin-bottom: 7px;
+
+            border-radius: 2px;
+        }
+
+
+        /* =========================
+           الأسهم
+        ========================= */
+
+        .bring-arrow {
+
+            position: absolute;
+
+            width: var(--cell);
+
+            height: 55px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-family: Arial, sans-serif;
+
+            font-size: 34px;
+
+            font-weight: normal;
+
+            z-index: 20;
+
+            pointer-events: none;
+
+            animation: arrowAppear .35s ease-out;
+        }
+
+        @keyframes arrowAppear {
+
+            from {
                 opacity: 0;
-                transform: translateY(-12px);
+                transform: translateY(-8px);
             }
 
-            100% {
+            to {
                 opacity: 1;
                 transform: translateY(0);
             }
+
         }
 
-        /*
-         * بطاقة السؤال الحالي
-         */
+
+        /* =========================
+           بطاقة الإجابة
+        ========================= */
+
         .answer-card {
-            margin: 10px auto 18px;
+
+            width: 100%;
+
             max-width: 500px;
 
-            background: white;
-            border-radius: 22px;
-            padding: 20px;
+            margin: 5px auto 18px;
 
-            box-shadow: 0 8px 25px rgba(0,0,0,.08);
+            background: white;
+
+            border-radius: 25px;
+
+            padding: 24px 18px;
+
+            box-shadow:
+                0 8px 25px
+                rgba(0,0,0,.08);
+
+            text-align: center;
         }
 
         .step-label {
-            font-size: 18px;
+
+            font-size: 21px;
+
             font-weight: bold;
-            margin-bottom: 12px;
+
+            margin-bottom: 10px;
         }
 
         .instruction {
+
+            font-size: 19px;
+
             color: #4b5563;
-            font-size: 17px;
-            line-height: 1.7;
-            min-height: 30px;
+
+            min-height: 34px;
+
+            line-height: 1.6;
         }
 
         .answer-input {
-            width: 90px;
-            height: 58px;
+
+            width: 105px;
+
+            height: 62px;
+
+            margin: 15px auto 5px;
+
+            display: block;
 
             text-align: center;
 
-            font-size: 30px;
-            font-weight: bold;
-
-            border: 3px solid #10b981;
-            border-radius: 14px;
-
-            outline: none;
             direction: ltr;
 
-            margin: 12px auto;
-            display: block;
+            font-size: 30px;
+
+            font-weight: bold;
+
+            border:
+                3px solid
+                #10b981;
+
+            border-radius: 16px;
+
+            outline: none;
         }
 
         .answer-input:focus {
-            border-color: #2563eb;
+
+            border-color:
+                #2563eb;
         }
 
+
+        /* =========================
+           زر التحقق
+        ========================= */
+
         .check {
-            display: block;
 
             width: min(100%, 500px);
+
+            height: 62px;
+
+            display: block;
+
             margin: 0 auto;
 
-            min-height: 62px;
-
             border: none;
+
             border-radius: 20px;
 
             background: #168cf0;
+
             color: white;
 
-            font-size: 25px;
+            font-size: 24px;
+
             font-weight: bold;
 
             cursor: pointer;
 
-            box-shadow: 0 7px 18px rgba(0,0,0,.15);
+            box-shadow:
+                0 7px 18px
+                rgba(0,0,0,.15);
         }
 
         .check:active {
+
             transform: scale(.98);
         }
 
+
+        /* =========================
+           الرسالة
+        ========================= */
+
         .message {
-            text-align: center;
+
             min-height: 32px;
-            margin: 15px auto;
+
+            margin: 12px auto;
+
+            text-align: center;
 
             font-size: 19px;
+
             font-weight: bold;
         }
 
         .success {
+
             color: #059669;
         }
 
         .error {
+
             color: #dc2626;
         }
 
+
+        /* =========================
+           شاشة النهاية
+        ========================= */
+
         .finish-card {
-            display: none;
 
             position: fixed;
+
             inset: 0;
 
-            background: rgba(0,0,0,.55);
+            display: none;
 
             align-items: center;
+
             justify-content: center;
 
-            z-index: 1000;
-
             padding: 20px;
+
+            background:
+                rgba(0,0,0,.55);
+
+            z-index: 1000;
         }
 
         .finish-box {
-            background: white;
-            border-radius: 25px;
-            padding: 35px 25px;
-            max-width: 450px;
+
             width: 100%;
+
+            max-width: 430px;
+
+            background: white;
+
+            border-radius: 25px;
+
+            padding: 30px 20px;
+
             text-align: center;
         }
 
-        .finish-box h2 {
-            font-size: 30px;
-            margin-top: 0;
+        .stars {
+
+            font-size: 38px;
+
+            margin-bottom: 12px;
         }
 
-        .stars {
-            font-size: 38px;
-            margin: 15px 0;
+        .finish-box h2 {
+
+            font-size: 30px;
+
+            margin: 8px 0;
         }
+
+
+        /* =========================
+           الهاتف
+        ========================= */
 
         @media (max-width: 520px) {
 
             .division-board {
-                --cell: 38px;
+
+                --cell: 39px;
+
                 font-size: 25px;
             }
 
-            .digit {
-                width: var(--cell);
-            }
-
             .top h1 {
-                font-size: 26px;
+
+                font-size: 27px;
             }
 
             .question-title {
-                font-size: 18px;
+
+                font-size: 20px;
             }
 
-            .answer-card {
-                padding: 16px;
+            .instruction {
+
+                font-size: 17px;
             }
 
             .check {
+
                 font-size: 22px;
             }
         }
+
     </style>
+
 </head>
 
+
 <body>
+
 
 <header class="top">
 
     <h1>➗ تعلم القسمة</h1>
 
     <div class="level-title">
-        المستوى <span id="levelNumber">1</span>
+        المستوى
+        <span id="levelNumber">1</span>
     </div>
 
     <div class="progress">
-        العملية <span id="questionNumber">1</span>
+        العملية
+        <span id="questionNumber">1</span>
         من 12
     </div>
 
@@ -424,26 +624,29 @@
     </div>
 
 
-    <div class="division-board-wrapper">
+    <div class="division-area">
 
-        <div id="divisionBoard" class="division-board">
-
-            <!-- يتم رسم العملية بواسطة JavaScript -->
-
-        </div>
+        <div
+            id="divisionBoard"
+            class="division-board"
+        ></div>
 
     </div>
 
 
     <div class="answer-card">
 
-        <div id="stepLabel" class="step-label">
-            الخطوة
+        <div
+            id="stepLabel"
+            class="step-label"
+        >
+            الخطوة 1
         </div>
 
-        <div id="instruction" class="instruction">
-            اكتب الإجابة
-        </div>
+        <div
+            id="instruction"
+            class="instruction"
+        ></div>
 
         <input
             id="answerInput"
@@ -456,17 +659,26 @@
     </div>
 
 
-    <div id="message" class="message"></div>
+    <div
+        id="message"
+        class="message"
+    ></div>
 
 
-    <button id="checkButton" class="check">
+    <button
+        id="checkButton"
+        class="check"
+    >
         ✓ تحقق
     </button>
 
 </main>
 
 
-<div id="finishCard" class="finish-card">
+<div
+    id="finishCard"
+    class="finish-card"
+>
 
     <div class="finish-box">
 
@@ -488,4 +700,5 @@
 <script src="division.js"></script>
 
 </body>
+
 </html>
