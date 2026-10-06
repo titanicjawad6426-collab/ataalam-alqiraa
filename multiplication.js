@@ -154,6 +154,19 @@ let answerValues = [];
 let currentSlot = -1;
 
 
+/*
+   هل تم الضغط على زر تحقق؟
+
+   قبل الضغط على تحقق:
+   يمكن تعديل أي رقم.
+
+   بعد الضغط:
+   لا يمكن تعديل الأرقام.
+*/
+
+let answerChecked = false;
+
+
 /* =========================================
    إنشاء رقم عشوائي
 ========================================= */
@@ -197,7 +210,7 @@ function randomNumber(
 
 
 /* =========================================
-   إنشاء 12 عملية بدون تكرار
+   إنشاء العمليات
 ========================================= */
 
 function generateQuestions() {
@@ -240,7 +253,9 @@ function generateQuestions() {
         if (
             used.has(key)
         ) {
+
             continue;
+
         }
 
 
@@ -262,11 +277,12 @@ function generateQuestions() {
 
 
     return result;
+
 }
 
 
 /* =========================================
-   إنشاء رقم داخل عمود محدد
+   إنشاء رقم
 ========================================= */
 
 function createDigit(
@@ -293,6 +309,7 @@ function createDigit(
 
 
     return element;
+
 }
 
 
@@ -302,7 +319,8 @@ function createDigit(
 
 function renderNumberA() {
 
-    numberARow.innerHTML = "";
+    numberARow.innerHTML =
+        "";
 
 
     const value =
@@ -314,20 +332,6 @@ function renderNumberA() {
     const length =
         value.length;
 
-
-    /*
-       المحاذاة من اليمين.
-
-       إذا كان العدد:
-       2
-
-       سيكون في العمود 6.
-
-       إذا كان:
-       24
-
-       سيكون في العمودين 5 و 6.
-    */
 
     const startColumn =
         6 - length + 1;
@@ -356,12 +360,13 @@ function renderNumberA() {
 
 
 /* =========================================
-   رسم العدد الثاني وعلامة الضرب
+   رسم العدد الثاني
 ========================================= */
 
 function renderNumberB() {
 
-    numberBRow.innerHTML = "";
+    numberBRow.innerHTML =
+        "";
 
 
     const value =
@@ -379,8 +384,8 @@ function renderNumberB() {
 
 
     /*
-       علامة الضرب تكون مباشرة
-       إلى يسار العدد الثاني.
+       علامة الضرب
+       مباشرة يسار العدد
     */
 
     const symbolColumn =
@@ -412,10 +417,6 @@ function renderNumberB() {
     );
 
 
-    /*
-       رسم أرقام العدد الثاني
-    */
-
     for (
         let i = 0;
         i < length;
@@ -439,7 +440,7 @@ function renderNumberB() {
 
 
 /* =========================================
-   تحديد طول الخط حسب النتيجة
+   إعداد الخط
 ========================================= */
 
 function setupSeparator() {
@@ -453,21 +454,6 @@ function setupSeparator() {
     const answerLength =
         answer.length;
 
-
-    /*
-       النتيجة دائماً تبدأ من
-       اليمين.
-
-       مثال:
-
-       16
-
-       العمود 5 + العمود 6
-
-       312
-
-       العمود 4 + 5 + 6
-    */
 
     const lineStart =
         6 - answerLength + 1;
@@ -488,7 +474,7 @@ function setupSeparator() {
 
 
 /* =========================================
-   تجهيز خانات النتيجة
+   تجهيز الإجابة
 ========================================= */
 
 function setupAnswer() {
@@ -510,12 +496,16 @@ function setupAnswer() {
 
 
     /*
-       البداية دائماً من خانة الوحدات
-       أي أقصى اليمين.
+       البداية من الوحدات
+       = أقصى اليمين
     */
 
     currentSlot =
         length - 1;
+
+
+    answerChecked =
+        false;
 
 
     renderAnswer();
@@ -524,22 +514,18 @@ function setupAnswer() {
 
 
 /* =========================================
-   رسم النتيجة
+   رسم الإجابة
 ========================================= */
 
 function renderAnswer() {
 
-    answerRow.innerHTML = "";
+    answerRow.innerHTML =
+        "";
 
 
     const length =
         answerValues.length;
 
-
-    /*
-       النتيجة محاذية تماماً
-       مع الأرقام الموجودة فوقها.
-    */
 
     const startColumn =
         6 - length + 1;
@@ -568,99 +554,93 @@ function renderAnswer() {
 
 
         /*
-           الرقم الذي تمت كتابته
+           ====================================
+           الرقم موجود
+           ====================================
         */
 
         if (
             answerValues[i] !== ""
         ) {
 
-            cell.textContent =
-                answerValues[i];
+            /*
+               إذا كان هذا الرقم
+               هو الخانة التي اختار
+               الطفل تعديلها
+            */
+
+            if (
+                i === currentSlot
+            ) {
+
+                createEditableCell(
+                    cell,
+                    i
+                );
+
+            }
+
+            else {
+
+                cell.textContent =
+                    answerValues[i];
+
+
+                /*
+                   السماح بالضغط على الرقم
+                   لتعديله قبل التحقق
+                */
+
+                if (
+                    !answerChecked
+                ) {
+
+                    cell.style.cursor =
+                        "pointer";
+
+
+                    cell.title =
+                        "اضغط لتعديل الرقم";
+
+
+                    cell.addEventListener(
+                        "click",
+                        () => {
+
+                            activateDigitForEditing(
+                                i
+                            );
+
+                        }
+                    );
+
+                }
+
+            }
 
         }
 
-
         /*
-           خانة الكتابة الحالية
+           ====================================
+           الخانة الحالية الفارغة
+           ====================================
         */
 
         else if (
             i === currentSlot
         ) {
 
-            const input =
-                document.createElement(
-                    "input"
-                );
-
-
-            input.className =
-                "answer-input";
-
-
-            input.type =
-                "text";
-
-
-            input.inputMode =
-                "numeric";
-
-
-            input.pattern =
-                "[0-9]*";
-
-
-            input.maxLength =
-                1;
-
-
-            input.autocomplete =
-                "off";
-
-
-            input.setAttribute(
-                "aria-label",
-                "اكتب الرقم"
-            );
-
-
-            input.addEventListener(
-                "input",
-                handleInput
-            );
-
-
-            input.addEventListener(
-                "keydown",
-                handleKeyDown
-            );
-
-
-            cell.appendChild(
-                input
-            );
-
-
-            /*
-               فتح لوحة الأرقام
-               والتركيز مباشرة
-            */
-
-            setTimeout(
-                () => {
-
-                    input.focus();
-
-                },
-                50
+            createEditableCell(
+                cell,
+                i
             );
 
         }
 
-
         /*
+           ====================================
            الخانات التي لم نصل إليها
+           ====================================
         */
 
         else {
@@ -685,11 +665,161 @@ function renderAnswer() {
 
 
 /* =========================================
-   عند كتابة الرقم
+   إنشاء خانة قابلة للتعديل
+========================================= */
+
+function createEditableCell(
+    cell,
+    index
+) {
+
+    const input =
+        document.createElement(
+            "input"
+        );
+
+
+    input.className =
+        "answer-input";
+
+
+    input.type =
+        "text";
+
+
+    input.inputMode =
+        "numeric";
+
+
+    input.pattern =
+        "[0-9]*";
+
+
+    input.maxLength =
+        1;
+
+
+    input.autocomplete =
+        "off";
+
+
+    input.setAttribute(
+        "aria-label",
+        "اكتب الرقم"
+    );
+
+
+    /*
+       إذا كان الرقم موجوداً
+       نضعه داخل المربع
+    */
+
+    if (
+        answerValues[index] !== ""
+    ) {
+
+        input.value =
+            answerValues[index];
+
+    }
+
+
+    input.addEventListener(
+        "input",
+        function(event) {
+
+            handleInput(
+                event,
+                index
+            );
+
+        }
+    );
+
+
+    input.addEventListener(
+        "keydown",
+        function(event) {
+
+            handleKeyDown(
+                event
+            );
+
+        }
+    );
+
+
+    cell.appendChild(
+        input
+    );
+
+
+    /*
+       التركيز تلقائياً
+    */
+
+    setTimeout(
+        () => {
+
+            input.focus();
+
+            /*
+               تحديد الرقم الموجود
+               حتى يستطيع الطفل استبداله
+            */
+
+            input.select();
+
+        },
+        40
+    );
+
+}
+
+
+/* =========================================
+   الضغط على رقم لإعادة تعديله
+========================================= */
+
+function activateDigitForEditing(
+    index
+) {
+
+    /*
+       ممنوع التعديل بعد الضغط
+       على تحقق
+    */
+
+    if (
+        answerChecked
+    ) {
+
+        return;
+
+    }
+
+
+    /*
+       نجعل الخانة الحالية
+       هي الرقم الذي تم الضغط عليه
+    */
+
+    currentSlot =
+        index;
+
+
+    renderAnswer();
+
+}
+
+
+/* =========================================
+   إدخال رقم
 ========================================= */
 
 function handleInput(
-    event
+    event,
+    index
 ) {
 
     let value =
@@ -697,7 +827,7 @@ function handleInput(
 
 
     /*
-       السماح بالأرقام فقط
+       أرقام فقط
     */
 
     value =
@@ -711,10 +841,16 @@ function handleInput(
         value === ""
     ) {
 
+        answerValues[index] =
+            "";
+
+
         event.target.value =
             "";
 
+
         return;
+
     }
 
 
@@ -727,19 +863,25 @@ function handleInput(
 
 
     /*
-       تخزين الرقم في الخانة الحالية
+       تخزين الرقم في مكانه
     */
 
-    answerValues[
-        currentSlot
-    ] = value;
+    answerValues[index] =
+        value;
 
 
     /*
-       الانتقال خانة إلى اليسار
+       بعد كتابة الرقم:
+       ننتقل إلى الخانة التي
+       على اليسار.
+
+       إذا كنا نصحح رقماً
+       في المنتصف، ننتقل أيضاً
+       خانة واحدة إلى اليسار.
     */
 
-    currentSlot--;
+    currentSlot =
+        index - 1;
 
 
     renderAnswer();
@@ -748,7 +890,7 @@ function handleInput(
 
 
 /* =========================================
-   زر Enter
+   Enter
 ========================================= */
 
 function handleKeyDown(
@@ -767,14 +909,22 @@ function handleKeyDown(
 
 
 /* =========================================
-   التحقق من الإجابة
+   التحقق
 ========================================= */
 
 function checkAnswer() {
 
     /*
-       لا يمكن التحقق قبل
-       ملء جميع الخانات
+       بعد الضغط على تحقق
+       نمنع تعديل الأرقام
+    */
+
+    answerChecked =
+        true;
+
+
+    /*
+       التأكد من اكتمال الإجابة
     */
 
     if (
@@ -784,13 +934,20 @@ function checkAnswer() {
         )
     ) {
 
+        answerChecked =
+            false;
+
+
         message.textContent =
             "أكمل كتابة النتيجة";
+
 
         message.className =
             "message wrong";
 
+
         return;
+
     }
 
 
@@ -815,6 +972,7 @@ function checkAnswer() {
         message.textContent =
             "✓ إجابة صحيحة";
 
+
         message.className =
             "message correct";
 
@@ -829,27 +987,34 @@ function checkAnswer() {
     else {
 
         message.textContent =
-            "✗ إجابة خاطئة، حاول مرة أخرى";
+            "✗ إجابة خاطئة";
+
 
         message.className =
             "message wrong";
 
 
+        /*
+           بعد التحقق من الخطأ
+           نسمح للطفل بتصحيح الأرقام
+           من جديد.
+        */
+
         setTimeout(
             () => {
 
-                const length =
-                    answerValues.length;
+                answerChecked =
+                    false;
 
 
-                answerValues =
-                    new Array(
-                        length
-                    ).fill("");
-
+                /*
+                   نضع المربع على
+                   آخر رقم كتبه الطفل
+                   من اليمين
+                */
 
                 currentSlot =
-                    length - 1;
+                    answerValues.length - 1;
 
 
                 renderAnswer();
@@ -880,6 +1045,7 @@ function nextQuestion() {
         finishLevel();
 
         return;
+
     }
 
 
@@ -889,7 +1055,7 @@ function nextQuestion() {
 
 
 /* =========================================
-   إنهاء المستوى
+   نهاية المستوى
 ========================================= */
 
 function finishLevel() {
@@ -902,6 +1068,10 @@ function finishLevel() {
         score ===
         TOTAL_QUESTIONS
     ) {
+
+        /*
+           فتح المستوى التالي
+        */
 
         if (
             currentLevel <
@@ -936,6 +1106,7 @@ function finishLevel() {
         message.textContent =
             `🎉 أحسنت! ${score} من ${TOTAL_QUESTIONS}`;
 
+
         message.className =
             "message correct";
 
@@ -945,6 +1116,7 @@ function finishLevel() {
 
         message.textContent =
             `النتيجة ${score} من ${TOTAL_QUESTIONS}`;
+
 
         message.className =
             "message wrong";
@@ -977,7 +1149,7 @@ function finishLevel() {
 
 
 /* =========================================
-   عرض العملية
+   عرض السؤال
 ========================================= */
 
 function showQuestion() {
@@ -1038,7 +1210,7 @@ function startGame() {
 
 
 /* =========================================
-   زر التحقق
+   زر تحقق
 ========================================= */
 
 checkAnswerButton.addEventListener(
