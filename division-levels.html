@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تعلم القسمة</title>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            text-align: center;
+        }
+
+        .division-header {
+            background: linear-gradient(135deg, #4f46e5, #06b6d4);
+            color: white;
+            padding: 35px 20px 45px;
+            border-radius: 0 0 55px 55px;
+        }
+
+        .division-header h1 {
+            margin: 0;
+            font-size: 32px;
+        }
+
+        .division-header p {
+            font-size: 22px;
+            margin: 15px 0 0;
+        }
+
+        .levels {
+            max-width: 700px;
+            margin: 35px auto;
+            padding: 0 18px;
+
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .level {
+            border: none;
+            border-radius: 18px;
+            padding: 22px 10px;
+            font-size: 21px;
+            font-weight: bold;
+            cursor: pointer;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,.08);
+            transition: .2s;
+        }
+
+        .level:not(:disabled):active {
+            transform: scale(.96);
+        }
+
+        .level.locked {
+            background: #e5e7eb;
+            color: #888;
+            cursor: not-allowed;
+        }
+
+        .level.unlocked {
+            background: linear-gradient(135deg, #2563eb, #06b6d4);
+            color: white;
+        }
+
+        .back {
+            display: inline-block;
+            margin: 10px 0 30px;
+            padding: 13px 25px;
+            border-radius: 14px;
+            background: white;
+            color: #333;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0,0,0,.08);
+        }
+
+        @media (max-width: 500px) {
+            .division-header h1 {
+                font-size: 27px;
+            }
+
+            .division-header p {
+                font-size: 19px;
+            }
+
+            .levels {
+                gap: 12px;
+            }
+
+            .level {
+                font-size: 18px;
+                padding: 20px 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="division-header">
+    <h1>➗ تعلم القسمة</h1>
+    <p>اختر المستوى</p>
+</header>
+
+<main>
+    <div id="levels" class="levels"></div>
+
+    <a href="math.html" class="back">⬅ العودة إلى الرياضيات</a>
+</main>
+
+<script>
+const PROGRESS_KEY = "divisionUnlockedLevelV1";
+const MAX_LEVEL = 10;
+
+let unlockedLevel =
+    Number(localStorage.getItem(PROGRESS_KEY)) || 1;
+
+if (unlockedLevel < 1) unlockedLevel = 1;
+if (unlockedLevel > MAX_LEVEL) unlockedLevel = MAX_LEVEL;
+
+const levelsContainer = document.getElementById("levels");
+
+for (let level = 1; level <= MAX_LEVEL; level++) {
+
+    const button = document.createElement("button");
+
+    button.className =
+        "level " +
+        (level <= unlockedLevel ? "unlocked" : "locked");
+
+    button.disabled = level > unlockedLevel;
+
+    button.innerHTML =
+        level <= unlockedLevel
+            ? `المستوى ${level}`
+            : `🔒 المستوى ${level}`;
+
+    if (level <= unlockedLevel) {
+        button.onclick = () => {
+            location.href = `division.html?level=${level}`;
+        };
+    }
+
+    levelsContainer.appendChild(button);
+}
+</script>
+
+</body>
+  </html>
