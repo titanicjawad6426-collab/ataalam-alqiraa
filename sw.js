@@ -1,4 +1,4 @@
-const CACHE_NAME = "ataalam-alqiraa-v24";
+const CACHE_NAME = "ataalam-alqiraa-v25";
 
 const APP_FILES = [
     "./",
@@ -51,17 +51,25 @@ const APP_FILES = [
 
     "./math.html",
 
+    // الجمع
     "./addition-levels.html",
     "./addition.html",
     "./addition.js",
 
+    // الطرح
     "./subtraction-levels.html",
     "./subtraction.html",
     "./subtraction.js",
 
+    // الضرب
     "./multiplication-levels.html",
     "./multiplication.html",
     "./multiplication.js",
+
+    // القسمة
+    "./division-levels.html",
+    "./division.html",
+    "./division.js",
 
     // ================================
     // الألعاب والمسابقات
