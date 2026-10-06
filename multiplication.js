@@ -1,12 +1,10 @@
 "use strict";
 
-
 /* =========================================
    إعدادات اللعبة
 ========================================= */
 
 const TOTAL_QUESTIONS = 12;
-
 const MAX_LEVEL = 10;
 
 const PROGRESS_KEY =
@@ -93,7 +91,7 @@ const message =
 
 
 /* =========================================
-   المستوى
+   المستوى الحالي
 ========================================= */
 
 const params =
@@ -134,6 +132,7 @@ if (
 
     currentLevel =
         unlockedLevel;
+
 }
 
 
@@ -155,13 +154,11 @@ let currentSlot = -1;
 
 
 /*
-   هل تم الضغط على زر تحقق؟
-
    قبل الضغط على تحقق:
    يمكن تعديل أي رقم.
 
-   بعد الضغط:
-   لا يمكن تعديل الأرقام.
+   بعد الضغط على تحقق:
+   يتم تثبيت الإجابة مؤقتاً.
 */
 
 let answerChecked = false;
@@ -171,9 +168,7 @@ let answerChecked = false;
    إنشاء رقم عشوائي
 ========================================= */
 
-function randomNumber(
-    digits
-) {
+function randomNumber(digits) {
 
     if (digits === 1) {
 
@@ -282,7 +277,7 @@ function generateQuestions() {
 
 
 /* =========================================
-   إنشاء رقم
+   إنشاء رقم في عمود محدد
 ========================================= */
 
 function createDigit(
@@ -384,8 +379,8 @@ function renderNumberB() {
 
 
     /*
-       علامة الضرب
-       مباشرة يسار العدد
+       علامة الضرب مباشرة
+       إلى يسار العدد الثاني
     */
 
     const symbolColumn =
@@ -440,7 +435,7 @@ function renderNumberB() {
 
 
 /* =========================================
-   إعداد الخط
+   إعداد الخط الفاصل
 ========================================= */
 
 function setupSeparator() {
@@ -454,6 +449,11 @@ function setupSeparator() {
     const answerLength =
         answer.length;
 
+
+    /*
+       يبدأ الخط من نفس عمود
+       أول رقم في النتيجة
+    */
 
     const lineStart =
         6 - answerLength + 1;
@@ -474,7 +474,7 @@ function setupSeparator() {
 
 
 /* =========================================
-   تجهيز الإجابة
+   تجهيز خانات الإجابة
 ========================================= */
 
 function setupAnswer() {
@@ -489,6 +489,10 @@ function setupAnswer() {
         answer.length;
 
 
+    /*
+       جميع الخانات فارغة
+    */
+
     answerValues =
         new Array(
             length
@@ -497,7 +501,7 @@ function setupAnswer() {
 
     /*
        البداية من الوحدات
-       = أقصى اليمين
+       أي من أقصى اليمين
     */
 
     currentSlot =
@@ -514,7 +518,7 @@ function setupAnswer() {
 
 
 /* =========================================
-   رسم الإجابة
+   رسم خانات الإجابة
 ========================================= */
 
 function renderAnswer() {
@@ -526,6 +530,11 @@ function renderAnswer() {
     const length =
         answerValues.length;
 
+
+    /*
+       محاذاة النتيجة مع
+       أرقام العملية
+    */
 
     const startColumn =
         6 - length + 1;
@@ -554,9 +563,9 @@ function renderAnswer() {
 
 
         /*
-           ====================================
-           الرقم موجود
-           ====================================
+           =================================
+           الرقم مكتوب
+        =================================
         */
 
         if (
@@ -564,13 +573,13 @@ function renderAnswer() {
         ) {
 
             /*
-               إذا كان هذا الرقم
-               هو الخانة التي اختار
-               الطفل تعديلها
+               إذا كانت هذه الخانة
+               هي التي يريد الطفل تعديلها
             */
 
             if (
-                i === currentSlot
+                i === currentSlot &&
+                !answerChecked
             ) {
 
                 createEditableCell(
@@ -587,8 +596,9 @@ function renderAnswer() {
 
 
                 /*
-                   السماح بالضغط على الرقم
-                   لتعديله قبل التحقق
+                   قبل الضغط على تحقق
+                   يمكن الضغط على الرقم
+                   لتعديله
                 */
 
                 if (
@@ -597,7 +607,6 @@ function renderAnswer() {
 
                     cell.style.cursor =
                         "pointer";
-
 
                     cell.title =
                         "اضغط لتعديل الرقم";
@@ -620,10 +629,11 @@ function renderAnswer() {
 
         }
 
+
         /*
-           ====================================
-           الخانة الحالية الفارغة
-           ====================================
+           =================================
+           الخانة الحالية
+        =================================
         */
 
         else if (
@@ -637,10 +647,11 @@ function renderAnswer() {
 
         }
 
+
         /*
-           ====================================
+           =================================
            الخانات التي لم نصل إليها
-           ====================================
+        =================================
         */
 
         else {
@@ -665,7 +676,7 @@ function renderAnswer() {
 
 
 /* =========================================
-   إنشاء خانة قابلة للتعديل
+   إنشاء خانة الإدخال
 ========================================= */
 
 function createEditableCell(
@@ -710,7 +721,7 @@ function createEditableCell(
 
 
     /*
-       إذا كان الرقم موجوداً
+       إذا كان هناك رقم سابق
        نضعه داخل المربع
     */
 
@@ -763,11 +774,6 @@ function createEditableCell(
 
             input.focus();
 
-            /*
-               تحديد الرقم الموجود
-               حتى يستطيع الطفل استبداله
-            */
-
             input.select();
 
         },
@@ -778,7 +784,7 @@ function createEditableCell(
 
 
 /* =========================================
-   الضغط على رقم لإعادة تعديله
+   الضغط على رقم لتعديله
 ========================================= */
 
 function activateDigitForEditing(
@@ -786,8 +792,8 @@ function activateDigitForEditing(
 ) {
 
     /*
-       ممنوع التعديل بعد الضغط
-       على تحقق
+       لا يسمح بالتعديل بعد
+       الضغط على تحقق
     */
 
     if (
@@ -800,8 +806,8 @@ function activateDigitForEditing(
 
 
     /*
-       نجعل الخانة الحالية
-       هي الرقم الذي تم الضغط عليه
+       جعل الخانة المضغوط عليها
+       هي خانة الإدخال
     */
 
     currentSlot =
@@ -827,7 +833,7 @@ function handleInput(
 
 
     /*
-       أرقام فقط
+       السماح بالأرقام فقط
     */
 
     value =
@@ -837,6 +843,10 @@ function handleInput(
         );
 
 
+    /*
+       إذا حذف الطفل الرقم
+    */
+
     if (
         value === ""
     ) {
@@ -844,15 +854,17 @@ function handleInput(
         answerValues[index] =
             "";
 
-
         event.target.value =
             "";
-
 
         return;
 
     }
 
+
+    /*
+       نأخذ رقماً واحداً فقط
+    */
 
     value =
         value.charAt(0);
@@ -863,7 +875,7 @@ function handleInput(
 
 
     /*
-       تخزين الرقم في مكانه
+       تخزين الرقم
     */
 
     answerValues[index] =
@@ -871,13 +883,8 @@ function handleInput(
 
 
     /*
-       بعد كتابة الرقم:
-       ننتقل إلى الخانة التي
-       على اليسار.
-
-       إذا كنا نصحح رقماً
-       في المنتصف، ننتقل أيضاً
-       خانة واحدة إلى اليسار.
+       الانتقال إلى الخانة
+       الموجودة على اليسار
     */
 
     currentSlot =
@@ -890,7 +897,7 @@ function handleInput(
 
 
 /* =========================================
-   Enter
+   زر Enter
 ========================================= */
 
 function handleKeyDown(
@@ -909,14 +916,13 @@ function handleKeyDown(
 
 
 /* =========================================
-   التحقق
+   التحقق من الإجابة
 ========================================= */
 
 function checkAnswer() {
 
     /*
-       بعد الضغط على تحقق
-       نمنع تعديل الأرقام
+       منع تعديل الأرقام أثناء التحقق
     */
 
     answerChecked =
@@ -924,7 +930,7 @@ function checkAnswer() {
 
 
     /*
-       التأكد من اكتمال الإجابة
+       التأكد من ملء جميع الخانات
     */
 
     if (
@@ -961,6 +967,10 @@ function checkAnswer() {
         currentQuestion.answer;
 
 
+    /* =====================================
+       الإجابة صحيحة
+    ===================================== */
+
     if (
         userAnswer ===
         correctAnswer
@@ -982,48 +992,52 @@ function checkAnswer() {
             700
         );
 
-    }
 
-    else {
-
-        message.textContent =
-            "✗ إجابة خاطئة";
-
-
-        message.className =
-            "message wrong";
-
-
-        /*
-           بعد التحقق من الخطأ
-           نسمح للطفل بتصحيح الأرقام
-           من جديد.
-        */
-
-        setTimeout(
-            () => {
-
-                answerChecked =
-                    false;
-
-
-                /*
-                   نضع المربع على
-                   آخر رقم كتبه الطفل
-                   من اليمين
-                */
-
-                currentSlot =
-                    answerValues.length - 1;
-
-
-                renderAnswer();
-
-            },
-            900
-        );
+        return;
 
     }
+
+
+    /* =====================================
+       الإجابة خاطئة
+    ===================================== */
+
+    message.textContent =
+        "✗ إجابة خاطئة، يمكنك تصحيحها";
+
+
+    message.className =
+        "message wrong";
+
+
+    /*
+       السماح بالتصحيح من جديد
+    */
+
+    setTimeout(
+        () => {
+
+            answerChecked =
+                false;
+
+
+            /*
+               لا نمسح الأرقام.
+
+               الطفل يستطيع الآن الضغط
+               على الرقم الخطأ نفسه
+               لتعديله.
+            */
+
+            currentSlot =
+                -1;
+
+
+            renderAnswer();
+
+        },
+        700
+    );
 
 }
 
@@ -1064,23 +1078,32 @@ function finishLevel() {
         true;
 
 
+    /*
+       =====================================
+       أكمل الطفل المستوى بنجاح
+       =====================================
+    */
+
     if (
         score ===
         TOTAL_QUESTIONS
     ) {
 
         /*
+           المستوى التالي
+        */
+
+        const nextLevel =
+            currentLevel + 1;
+
+
+        /*
            فتح المستوى التالي
         */
 
         if (
-            currentLevel <
-            MAX_LEVEL
+            nextLevel <= MAX_LEVEL
         ) {
-
-            const nextLevel =
-                currentLevel + 1;
-
 
             if (
                 nextLevel >
@@ -1103,26 +1126,123 @@ function finishLevel() {
         }
 
 
-        message.textContent =
-            `🎉 أحسنت! ${score} من ${TOTAL_QUESTIONS}`;
+        /*
+           =================================
+           رسالة تحفيزية
+        =================================
+        */
+
+        if (
+            currentLevel <
+            MAX_LEVEL
+        ) {
+
+            message.innerHTML =
+                `
+                🎉 أحسنت يا بطل! 🎉
+                <br>
+                أكملت المستوى ${currentLevel} بنجاح!
+                <br>
+                ⭐ استعد للمستوى ${nextLevel} ⭐
+                `;
+
+        }
+
+        else {
+
+            message.innerHTML =
+                `
+                🏆 رائع جداً! 🏆
+                <br>
+                لقد أكملت جميع مستويات الضرب!
+                <br>
+                ⭐ أنت بطل الحساب ⭐
+                `;
+
+        }
 
 
         message.className =
             "message correct";
 
+
+        /*
+           =================================
+           الانتقال التلقائي
+           =================================
+        */
+
+        setTimeout(
+            () => {
+
+                /*
+                   إذا لم نصل للمستوى 10
+                */
+
+                if (
+                    currentLevel <
+                    MAX_LEVEL
+                ) {
+
+                    window.location.href =
+                        `multiplication.html?level=${nextLevel}`;
+
+                }
+
+                else {
+
+                    /*
+                       بعد المستوى 10
+                       نبدأه من جديد
+                    */
+
+                    currentQuestionIndex =
+                        0;
+
+                    score =
+                        0;
+
+                    checkAnswerButton.disabled =
+                        false;
+
+                    questions =
+                        generateQuestions();
+
+                    showQuestion();
+
+                }
+
+            },
+            2500
+        );
+
+
+        return;
+
     }
 
-    else {
 
-        message.textContent =
-            `النتيجة ${score} من ${TOTAL_QUESTIONS}`;
+    /*
+       =====================================
+       لم يحصل على 12/12
+       =====================================
+    */
+
+    message.innerHTML =
+        `
+        النتيجة: ${score} من ${TOTAL_QUESTIONS}
+        <br>
+        💪 حاول مرة أخرى وستنجح!
+        `;
 
 
-        message.className =
-            "message wrong";
+    message.className =
+        "message wrong";
 
-    }
 
+    /*
+       إعادة المستوى
+    */
 
     setTimeout(
         () => {
@@ -1187,7 +1307,7 @@ function showQuestion() {
 
 
 /* =========================================
-   بدء اللعبة
+   تشغيل اللعبة
 ========================================= */
 
 function startGame() {
@@ -1210,7 +1330,7 @@ function startGame() {
 
 
 /* =========================================
-   زر تحقق
+   زر التحقق
 ========================================= */
 
 checkAnswerButton.addEventListener(
@@ -1220,7 +1340,7 @@ checkAnswerButton.addEventListener(
 
 
 /* =========================================
-   تشغيل اللعبة
+   بدء اللعبة
 ========================================= */
 
 startGame();
