@@ -2,599 +2,582 @@
 <html lang="ar" dir="rtl">
 
 <head>
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
-    <title>تعلم القسمة</title>
+<title>تعلم القسمة</title>
 
-    <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css">
 
-    <style>
+<style>
 
-        * {
-            box-sizing: border-box;
-        }
+* {
+    box-sizing: border-box;
+}
 
-        body {
-            margin: 0;
-            background: #f5f7fb;
-            font-family: Arial, sans-serif;
-            color: #111827;
-        }
+body {
+    margin: 0;
+    background: #f5f7fb;
+    font-family: Arial, sans-serif;
+    color: #111827;
+}
 
-        /* =========================
-           الرأس
-        ========================= */
+.top {
+    background: linear-gradient(
+        135deg,
+        #4f46e5,
+        #06b6d4
+    );
 
-        .top {
-            background: linear-gradient(
-                135deg,
-                #4f46e5,
-                #06b6d4
-            );
+    color: white;
+    text-align: center;
 
-            color: white;
+    padding: 28px 15px 35px;
 
-            text-align: center;
+    border-radius: 0 0 45px 45px;
+}
 
-            padding: 28px 15px 35px;
+.top h1 {
+    margin: 0;
+    font-size: 30px;
+}
 
-            border-radius: 0 0 45px 45px;
-        }
+.level-title {
+    margin-top: 8px;
+    font-size: 21px;
+}
 
-        .top h1 {
-            margin: 0;
-            font-size: 30px;
-        }
+.progress {
+    margin-top: 12px;
+    font-size: 18px;
+    font-weight: bold;
+}
 
-        .level-title {
-            margin-top: 8px;
-            font-size: 21px;
-        }
+.game {
+    width: 100%;
+    max-width: 700px;
 
-        .progress {
-            margin-top: 12px;
-            font-size: 18px;
-            font-weight: bold;
-        }
+    margin: auto;
 
+    padding: 25px 10px 40px;
+}
 
-        /* =========================
-           اللعبة
-        ========================= */
+.question-title {
+    text-align: center;
 
-        .game {
-            width: 100%;
-            max-width: 700px;
+    font-size: 22px;
+    font-weight: bold;
 
-            margin: 0 auto;
+    margin-bottom: 20px;
+}
 
-            padding: 25px 12px 40px;
-        }
 
-        .question-title {
-            text-align: center;
+/* =================================
+   لوحة القسمة
+================================= */
 
-            font-size: 22px;
-            font-weight: bold;
+.division-scroll {
+    width: 100%;
 
-            margin-bottom: 20px;
-        }
+    overflow-x: auto;
 
+    padding: 10px 5px 25px;
 
-        /* =========================
-           لوحة القسمة
-        ========================= */
+    direction: ltr;
+}
 
-        .division-area {
-            width: 100%;
+.division-board {
 
-            overflow-x: auto;
+    --cell: 46px;
 
-            padding:
-                10px
-                5px
-                35px;
+    position: relative;
 
-            direction: ltr;
-        }
+    width: max-content;
 
-        .division-board {
+    margin: auto;
 
-            --cell: 48px;
+    direction: ltr;
 
-            position: relative;
+    font-family: Arial, sans-serif;
 
-            width: max-content;
+    font-size: 29px;
 
-            min-width: 330px;
+    font-weight: bold;
 
-            margin: 0 auto;
+    min-height: 430px;
+}
 
-            direction: ltr;
 
-            font-family:
-                Arial,
-                sans-serif;
+/* =================================
+   المقسوم
+================================= */
 
-            font-size: 30px;
+.dividend-row {
+    display: grid;
 
-            font-weight: bold;
+    align-items: center;
 
-            color: #111827;
-        }
+    height: 55px;
+}
 
+.dividend-digit {
+    width: var(--cell);
+    height: 50px;
 
-        /* =========================
-           رأس القسمة
+    display: flex;
 
-           2572 | 3
-                ----
-                 ...
-        ========================= */
+    align-items: center;
+    justify-content: center;
 
-        .division-head {
+    position: relative;
+}
 
-            position: relative;
 
-            height: 110px;
-        }
+/* =================================
+   الخط العمودي
+================================= */
 
+.vertical-line {
+    position: absolute;
 
-        .dividend {
+    width: 3px;
 
-            position: absolute;
+    background: #111827;
 
-            left: 0;
-            top: 0;
+    top: 0;
 
-            display: flex;
+    bottom: 0;
 
-            direction: ltr;
-        }
+    z-index: 1;
+}
 
-        .dividend-digit {
 
-            width: var(--cell);
+/* =================================
+   المقسوم عليه
+================================= */
 
-            height: 50px;
+.divisor {
+    position: absolute;
 
-            display: flex;
+    font-size: 29px;
 
-            align-items: center;
+    display: flex;
 
-            justify-content: center;
+    align-items: center;
 
-            position: relative;
-        }
+    justify-content: center;
 
+    z-index: 5;
+}
 
-        /* الخط العمودي */
 
-        .vertical-line {
+/* =================================
+   الخط الأفقي
+================================= */
 
-            position: absolute;
+.horizontal-line {
+    position: absolute;
 
-            top: 0;
+    height: 3px;
 
-            width: 3px;
+    background: #111827;
 
-            height: 105px;
+    z-index: 2;
+}
 
-            background: #111827;
-        }
 
+/* =================================
+   حاصل القسمة
+================================= */
 
-        /* المقسوم عليه */
+.quotient-row {
+    position: absolute;
 
-        .divisor {
+    display: grid;
 
-            position: absolute;
+    height: 58px;
 
-            top: 2px;
+    z-index: 10;
+}
 
-            text-align: center;
+.quotient-cell {
+    width: var(--cell);
 
-            width: 55px;
-        }
+    height: 55px;
 
+    display: flex;
 
-        /* الخط الأفقي */
+    align-items: center;
+    justify-content: center;
+}
 
-        .horizontal-line {
 
-            position: absolute;
+/* =================================
+   خانات الأرقام
+================================= */
 
-            height: 3px;
+.digit-input {
 
-            background: #111827;
-        }
+    width: 38px;
+    height: 44px;
 
+    border: 3px solid #10b981;
 
-        /* حاصل القسمة */
+    border-radius: 10px;
 
-        .quotient {
+    background: white;
 
-            position: absolute;
+    text-align: center;
 
-            top: 2px;
+    direction: ltr;
 
-            display: flex;
+    font-size: 27px;
 
-            direction: ltr;
-        }
+    font-weight: bold;
 
-        .quotient-digit {
+    outline: none;
 
-            width: var(--cell);
+    padding: 0;
+}
 
-            height: 45px;
+.digit-input:focus {
 
-            display: flex;
+    border-color: #2563eb;
 
-            align-items: center;
+    box-shadow:
+        0 0 0 4px
+        rgba(37,99,235,.12);
+}
 
-            justify-content: center;
-        }
+.digit-input.locked {
 
+    border-color: transparent;
 
-        /* =========================
-           منطقة الخطوات
-        ========================= */
+    background: transparent;
 
-        .work-area {
+    box-shadow: none;
 
-            position: relative;
+    pointer-events: none;
+}
 
-            min-height: 260px;
-        }
 
+/* =================================
+   صفوف خطوات القسمة
+================================= */
 
-        .work-row {
+.work-area {
+    position: absolute;
 
-            position: relative;
+    left: 0;
 
-            height: 43px;
+    top: 125px;
 
-            display: flex;
+    width: 100%;
+}
 
-            direction: ltr;
-        }
+.work-row {
 
-        .work-cell {
+    display: grid;
 
-            width: var(--cell);
+    align-items: center;
 
-            height: 43px;
+    min-height: 48px;
 
-            display: flex;
+    position: relative;
+}
 
-            align-items: center;
 
-            justify-content: center;
-        }
+/* =================================
+   خلايا العمل
+================================= */
 
+.work-cell {
 
-        /* علامة الطرح */
+    width: var(--cell);
 
-        .minus {
+    min-height: 45px;
 
-            position: absolute;
+    display: flex;
 
-            font-size: 27px;
+    align-items: center;
+    justify-content: center;
 
-            font-weight: normal;
+    position: relative;
+}
 
-            left: -28px;
 
-            top: 4px;
-        }
+/* =================================
+   علامة الطرح
+================================= */
 
+.minus-sign {
 
-        /* خط الطرح */
+    position: absolute;
 
-        .work-line {
+    left: -27px;
 
-            height: 3px;
+    font-size: 28px;
 
-            background: #111827;
+    font-weight: normal;
+}
 
-            margin-top: 0;
 
-            margin-bottom: 7px;
+/* =================================
+   خط الطرح
+================================= */
 
-            border-radius: 2px;
-        }
+.subtraction-line {
 
+    height: 3px;
 
-        /* =========================
-           الأسهم
-        ========================= */
+    background: #111827;
 
-        .bring-arrow {
+    margin-top: 1px;
 
-            position: absolute;
+    margin-bottom: 6px;
+}
 
-            width: var(--cell);
 
-            height: 55px;
+/* =================================
+   الأسهم
+================================= */
 
-            display: flex;
+.down-arrow {
 
-            align-items: center;
+    position: absolute;
 
-            justify-content: center;
+    width: var(--cell);
 
-            font-family: Arial, sans-serif;
+    height: 45px;
 
-            font-size: 34px;
+    display: flex;
 
-            font-weight: normal;
+    align-items: center;
 
-            z-index: 20;
+    justify-content: center;
 
-            pointer-events: none;
+    font-size: 34px;
 
-            animation: arrowAppear .35s ease-out;
-        }
+    font-weight: normal;
 
-        @keyframes arrowAppear {
+    z-index: 20;
 
-            from {
-                opacity: 0;
-                transform: translateY(-8px);
-            }
+    animation: arrowIn .3s ease;
+}
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+@keyframes arrowIn {
 
-        }
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
 
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
-        /* =========================
-           بطاقة الإجابة
-        ========================= */
 
-        .answer-card {
+/* =================================
+   نقطة للخانات الفارغة
+================================= */
 
-            width: 100%;
+.empty-dot {
 
-            max-width: 500px;
+    color: #9ca3af;
 
-            margin: 5px auto 18px;
+    font-size: 24px;
+}
 
-            background: white;
 
-            border-radius: 25px;
+/* =================================
+   معلومات الخطوة
+================================= */
 
-            padding: 24px 18px;
+.step-info {
 
-            box-shadow:
-                0 8px 25px
-                rgba(0,0,0,.08);
+    text-align: center;
 
-            text-align: center;
-        }
+    min-height: 70px;
 
-        .step-label {
+    margin-top: 5px;
+}
 
-            font-size: 21px;
+.step-title {
 
-            font-weight: bold;
+    font-size: 20px;
 
-            margin-bottom: 10px;
-        }
+    font-weight: bold;
 
-        .instruction {
+    margin-bottom: 7px;
+}
 
-            font-size: 19px;
+.step-help {
 
-            color: #4b5563;
+    font-size: 18px;
 
-            min-height: 34px;
+    color: #4b5563;
+}
 
-            line-height: 1.6;
-        }
 
-        .answer-input {
+/* =================================
+   الرسالة
+================================= */
 
-            width: 105px;
+.message {
 
-            height: 62px;
+    min-height: 32px;
 
-            margin: 15px auto 5px;
+    text-align: center;
 
-            display: block;
+    font-size: 19px;
 
-            text-align: center;
+    font-weight: bold;
 
-            direction: ltr;
+    margin: 8px 0;
+}
 
-            font-size: 30px;
+.success {
+    color: #059669;
+}
 
-            font-weight: bold;
+.error {
+    color: #dc2626;
+}
 
-            border:
-                3px solid
-                #10b981;
 
-            border-radius: 16px;
+/* =================================
+   زر التحقق
+================================= */
 
-            outline: none;
-        }
+.check-button {
 
-        .answer-input:focus {
+    display: block;
 
-            border-color:
-                #2563eb;
-        }
+    width: min(100%, 500px);
 
+    height: 62px;
 
-        /* =========================
-           زر التحقق
-        ========================= */
+    margin: 8px auto 0;
 
-        .check {
+    border: none;
 
-            width: min(100%, 500px);
+    border-radius: 20px;
 
-            height: 62px;
+    background: #168cf0;
 
-            display: block;
+    color: white;
 
-            margin: 0 auto;
+    font-size: 24px;
 
-            border: none;
+    font-weight: bold;
 
-            border-radius: 20px;
+    cursor: pointer;
 
-            background: #168cf0;
+    box-shadow:
+        0 7px 18px
+        rgba(0,0,0,.15);
+}
 
-            color: white;
+.check-button:active {
+    transform: scale(.98);
+}
 
-            font-size: 24px;
 
-            font-weight: bold;
+/* =================================
+   شاشة النهاية
+================================= */
 
-            cursor: pointer;
+.finish {
 
-            box-shadow:
-                0 7px 18px
-                rgba(0,0,0,.15);
-        }
+    position: fixed;
 
-        .check:active {
+    inset: 0;
 
-            transform: scale(.98);
-        }
+    background:
+        rgba(0,0,0,.55);
 
+    display: none;
 
-        /* =========================
-           الرسالة
-        ========================= */
+    align-items: center;
+    justify-content: center;
 
-        .message {
+    z-index: 1000;
 
-            min-height: 32px;
+    padding: 20px;
+}
 
-            margin: 12px auto;
+.finish-box {
 
-            text-align: center;
+    width: 100%;
 
-            font-size: 19px;
+    max-width: 430px;
 
-            font-weight: bold;
-        }
+    background: white;
 
-        .success {
+    border-radius: 25px;
 
-            color: #059669;
-        }
+    padding: 30px 20px;
 
-        .error {
+    text-align: center;
+}
 
-            color: #dc2626;
-        }
+.finish-stars {
 
+    font-size: 38px;
+}
 
-        /* =========================
-           شاشة النهاية
-        ========================= */
+.finish-box h2 {
 
-        .finish-card {
+    font-size: 29px;
 
-            position: fixed;
+    margin: 10px 0;
+}
 
-            inset: 0;
 
-            display: none;
+/* =================================
+   الهاتف
+================================= */
 
-            align-items: center;
+@media (max-width: 520px) {
 
-            justify-content: center;
+    .division-board {
+        --cell: 39px;
 
-            padding: 20px;
+        font-size: 25px;
+    }
 
-            background:
-                rgba(0,0,0,.55);
+    .digit-input {
 
-            z-index: 1000;
-        }
+        width: 33px;
+        height: 39px;
 
-        .finish-box {
+        font-size: 24px;
+    }
 
-            width: 100%;
+    .top h1 {
+        font-size: 27px;
+    }
 
-            max-width: 430px;
+    .question-title {
+        font-size: 20px;
+    }
 
-            background: white;
+    .step-help {
+        font-size: 16px;
+    }
 
-            border-radius: 25px;
+    .check-button {
+        font-size: 22px;
+    }
+}
 
-            padding: 30px 20px;
-
-            text-align: center;
-        }
-
-        .stars {
-
-            font-size: 38px;
-
-            margin-bottom: 12px;
-        }
-
-        .finish-box h2 {
-
-            font-size: 30px;
-
-            margin: 8px 0;
-        }
-
-
-        /* =========================
-           الهاتف
-        ========================= */
-
-        @media (max-width: 520px) {
-
-            .division-board {
-
-                --cell: 39px;
-
-                font-size: 25px;
-            }
-
-            .top h1 {
-
-                font-size: 27px;
-            }
-
-            .question-title {
-
-                font-size: 20px;
-            }
-
-            .instruction {
-
-                font-size: 17px;
-            }
-
-            .check {
-
-                font-size: 22px;
-            }
-        }
-
-    </style>
+</style>
 
 </head>
-
 
 <body>
 
@@ -624,7 +607,7 @@
     </div>
 
 
-    <div class="division-area">
+    <div class="division-scroll">
 
         <div
             id="divisionBoard"
@@ -634,27 +617,17 @@
     </div>
 
 
-    <div class="answer-card">
+    <div class="step-info">
 
         <div
-            id="stepLabel"
-            class="step-label"
-        >
-            الخطوة 1
-        </div>
-
-        <div
-            id="instruction"
-            class="instruction"
+            id="stepTitle"
+            class="step-title"
         ></div>
 
-        <input
-            id="answerInput"
-            class="answer-input"
-            type="number"
-            inputmode="numeric"
-            autocomplete="off"
-        >
+        <div
+            id="stepHelp"
+            class="step-help"
+        ></div>
 
     </div>
 
@@ -667,7 +640,7 @@
 
     <button
         id="checkButton"
-        class="check"
+        class="check-button"
     >
         ✓ تحقق
     </button>
@@ -676,13 +649,13 @@
 
 
 <div
-    id="finishCard"
-    class="finish-card"
+    id="finish"
+    class="finish"
 >
 
     <div class="finish-box">
 
-        <div class="stars">
+        <div class="finish-stars">
             ⭐ 🎉 ⭐
         </div>
 
