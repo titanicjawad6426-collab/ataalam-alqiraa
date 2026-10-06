@@ -1,33 +1,19 @@
+"use strict";
+
 /* =========================================================
-   تعلم الضرب - الضرب العمودي المدرسي
-   10 مستويات × 12 عملية
-
-   القاعدة:
-   - إذا كان العدد السفلي من رقم واحد:
-     النتيجة مباشرة.
-     مثال:
-         1
-     ×   5
-     ─────
-         ?
-     
-   - إذا كان العدد السفلي من رقمين أو أكثر:
-     نستخدم الجداءات الجزئية ثم الناتج النهائي.
+   إعدادات اللعبة
 ========================================================= */
-
 
 const TOTAL_QUESTIONS = 12;
 const MAX_LEVEL = 10;
 
-const PROGRESS_KEY = "multiplicationUnlockedLevelV1";
+const PROGRESS_KEY =
+    "multiplicationUnlockedLevelV2";
 
-
-// =========================================================
-// إعداد المستويات
-// =========================================================
-
+/*
+ * عدد خانات العدد العلوي × عدد خانات العدد السفلي
+ */
 const levelDigits = {
-
     1: [1, 1],
     2: [2, 1],
     3: [2, 2],
@@ -41,36 +27,12 @@ const levelDigits = {
 };
 
 
-// =========================================================
-// عناصر الصفحة
-// =========================================================
+/* =========================================================
+   العناصر
+========================================================= */
 
-const numberAElement =
-    document.getElementById("numberA");
-
-const numberBElement =
-    document.getElementById("numberB");
-
-const partialResultsElement =
-    document.getElementById("partialResults");
-
-const finalResultArea =
-    document.getElementById("finalResultArea");
-
-const answerInput =
-    document.getElementById("answerInput");
-
-const checkAnswerButton =
-    document.getElementById("checkAnswerButton");
-
-const feedback =
-    document.getElementById("feedback");
-
-const stepTitle =
-    document.getElementById("stepTitle");
-
-const stepInstruction =
-    document.getElementById("stepInstruction");
+const operationBoard =
+    document.getElementById("operationBoard");
 
 const levelTitle =
     document.getElementById("levelTitle");
@@ -78,14 +40,17 @@ const levelTitle =
 const questionCounter =
     document.getElementById("questionCounter");
 
-const progressFill =
-    document.getElementById("progressFill");
+const message =
+    document.getElementById("message");
+
+const checkAnswerButton =
+    document.getElementById("checkAnswerButton");
 
 const resultCard =
     document.getElementById("resultCard");
 
-const resultSummary =
-    document.getElementById("resultSummary");
+const scoreText =
+    document.getElementById("scoreText");
 
 const unlockMessage =
     document.getElementById("unlockMessage");
@@ -96,22 +61,22 @@ const reviewList =
 const retryButton =
     document.getElementById("retryButton");
 
+const backButton =
+    document.getElementById("backButton");
+
 const celebration =
     document.getElementById("celebration");
 
 
-// =========================================================
-// معرفة المستوى
-// =========================================================
+/* =========================================================
+   المستوى
+========================================================= */
 
-const urlParams =
+const params =
     new URLSearchParams(window.location.search);
 
 let currentLevel =
-    parseInt(urlParams.get("level")) || 1;
-
-
-// حماية المستوى
+    parseInt(params.get("level"), 10) || 1;
 
 if (
     currentLevel < 1 ||
@@ -121,27 +86,46 @@ if (
 }
 
 
-// =========================================================
-// المستوى المفتوح
-// =========================================================
+/* =========================================================
+   المستوى المفتوح
+========================================================= */
 
-let unlockedLevel =
-    parseInt(
-        localStorage.getItem(PROGRESS_KEY)
-    ) || 1;
+function getUnlockedLevel() {
 
+    const saved =
+        parseInt(
+            localStorage.getItem(PROGRESS_KEY),
+            10
+        );
 
-if (unlockedLevel < 1) {
-    unlockedLevel = 1;
+    if (
+        !saved ||
+        saved < 1 ||
+        saved > MAX_LEVEL
+    ) {
+        localStorage.setItem(
+            PROGRESS_KEY,
+            "1"
+        );
+
+        return 1;
+    }
+
+    return saved;
 }
 
 
-// إذا حاول المستخدم الدخول إلى مستوى مغلق
+const unlockedLevel =
+    getUnlockedLevel();
 
+
+/*
+ * حماية المستوى
+ */
 if (currentLevel > unlockedLevel) {
 
     alert(
-        "🔒 هذا المستوى مغلق.\nأكمل المستوى السابق أولاً."
+        "🔒 هذا المستوى مقفل.\nأكمل المستوى السابق أولاً."
     );
 
     window.location.href =
@@ -149,377 +133,179 @@ if (currentLevel > unlockedLevel) {
 }
 
 
-// =========================================================
-// متغيرات اللعبة
-// =========================================================
+/* =========================================================
+   حالة اللعبة
+========================================================= */
 
 let questions = [];
 
 let currentQuestionIndex = 0;
 
-let currentQuestion = null;
-
-let currentStep = 0;
-
 let score = 0;
 
-let questionResults = [];
+let currentQuestion = null;
 
-let waitingForNextQuestion = false;
-
-
-// مهم جداً:
-// هل أخطأ الطفل في العملية الحالية؟
-
+/*
+ * هل حدث خطأ في أي خطوة من العملية الحالية؟
+ */
 let currentQuestionHadError = false;
 
 
-// =========================================================
-// إنشاء رقم عشوائي بعدد خانات محدد
-// =========================================================
+/*
+ * المرحلة الحالية:
+ *
+ * partial
+ * = نتيجة جزئية
+ *
+ * final
+ * = النتيجة النهائية
+ */
+let currentStage = "final";
 
-function randomNumber(digits) {
 
-    if (digits === 1) {
+/*
+ * رقم النتيجة الجزئية الحالية.
+ */
+let currentPartialIndex = 0;
 
-        return Math.floor(
-            Math.random() * 9
-        ) + 1;
-    }
 
-    const min =
-        Math.pow(10, digits - 1);
+/*
+ * بيانات إدخال الأرقام.
+ *
+ * مثال:
+ * result = 312
+ *
+ * values:
+ * ["", "", ""]
+ *
+ * currentSlot = 2
+ *
+ * أي نبدأ من أقصى اليمين.
+ */
+let answerValues = [];
 
-    const max =
-        Math.pow(10, digits) - 1;
+let currentSlot = -1;
+
+
+/* =========================================================
+   أدوات الأرقام
+========================================================= */
+
+function randomInt(min, max) {
 
     return Math.floor(
-        Math.random() *
-        (max - min + 1)
+        Math.random() * (max - min + 1)
     ) + min;
 }
 
 
-// =========================================================
-// إنشاء عملية جديدة
-// =========================================================
+function minForDigits(digits) {
 
-function createQuestion() {
+    if (digits === 1) {
+        return 1;
+    }
 
-    const digits =
-        levelDigits[currentLevel];
-
-    const digitsA = digits[0];
-
-    const digitsB = digits[1];
-
-    let a;
-    let b;
-
-    do {
-
-        a = randomNumber(digitsA);
-
-        b = randomNumber(digitsB);
-
-    } while (
-        a === b ||
-        (
-            digitsA === digitsB &&
-            a > b
-        )
-    );
-
-
-    return {
-
-        a: a,
-
-        b: b,
-
-        answer: a * b
-    };
+    return Math.pow(10, digits - 1);
 }
 
 
-// =========================================================
-// إنشاء 12 عملية بدون تكرار
-// =========================================================
+function maxForDigits(digits) {
+
+    return Math.pow(10, digits) - 1;
+}
+
+
+function generateNumber(digits) {
+
+    return randomInt(
+        minForDigits(digits),
+        maxForDigits(digits)
+    );
+}
+
+
+/* =========================================================
+   توليد العمليات
+========================================================= */
 
 function generateQuestions() {
 
-    questions = [];
+    const result = [];
 
     const used = new Set();
 
-    let attempts = 0;
+    const [
+        topDigits,
+        bottomDigits
+    ] = levelDigits[currentLevel];
 
     while (
-        questions.length < TOTAL_QUESTIONS &&
-        attempts < 10000
+        result.length < TOTAL_QUESTIONS
     ) {
 
-        attempts++;
+        const a =
+            generateNumber(topDigits);
 
-        const q =
-            createQuestion();
+        const b =
+            generateNumber(bottomDigits);
 
-
+        /*
+         * منع تكرار العملية.
+         */
         const key =
-            `${q.a}x${q.b}`;
+            `${a}x${b}`;
 
-        const reverseKey =
-            `${q.b}x${q.a}`;
-
-
-        if (
-            used.has(key) ||
-            used.has(reverseKey)
-        ) {
+        if (used.has(key)) {
             continue;
         }
 
+        /*
+         * إذا كان العددان لهما نفس عدد الخانات
+         * لا نريد تكرارًا معكوسًا:
+         *
+         * 24 × 31
+         * 31 × 24
+         *
+         * يعتبران نفس العملية من ناحية التدريب.
+         */
+        if (topDigits === bottomDigits) {
+
+            const reverseKey =
+                `${b}x${a}`;
+
+            if (used.has(reverseKey)) {
+                continue;
+            }
+        }
 
         used.add(key);
 
-        questions.push(q);
-    }
-}
-
-
-// =========================================================
-// بدء المستوى
-// =========================================================
-
-function startLevel() {
-
-    generateQuestions();
-
-    currentQuestionIndex = 0;
-
-    score = 0;
-
-    questionResults = [];
-
-    resultCard.style.display =
-        "none";
-
-    celebration.style.display =
-        "none";
-
-    loadQuestion();
-}
-
-
-// =========================================================
-// تحميل العملية
-// =========================================================
-
-function loadQuestion() {
-
-    currentQuestion =
-        questions[currentQuestionIndex];
-
-    currentStep = 0;
-
-    waitingForNextQuestion = false;
-
-    currentQuestionHadError = false;
-
-
-    answerInput.disabled = false;
-
-    checkAnswerButton.disabled = false;
-
-    answerInput.value = "";
-
-    feedback.textContent = "";
-
-    feedback.className =
-        "feedback";
-
-
-    numberAElement.textContent =
-        currentQuestion.a;
-
-    numberBElement.textContent =
-        currentQuestion.b;
-
-
-    levelTitle.textContent =
-        `المستوى ${currentLevel}`;
-
-
-    questionCounter.textContent =
-        `العملية ${currentQuestionIndex + 1} من ${TOTAL_QUESTIONS}`;
-
-
-    const progress =
-        (
-            currentQuestionIndex /
-            TOTAL_QUESTIONS
-        ) * 100;
-
-
-    progressFill.style.width =
-        `${progress}%`;
-
-
-    buildOperation();
-
-    updateStep();
-
-
-    setTimeout(() => {
-
-        answerInput.focus();
-
-    }, 100);
-}
-
-
-// =========================================================
-// إنشاء شكل العملية العمودية
-// =========================================================
-
-function buildOperation() {
-
-    partialResultsElement.innerHTML = "";
-
-    finalResultArea.innerHTML = "";
-
-
-    /*
-      عدد خانات العدد السفلي
-    */
-
-    const digits =
-        String(currentQuestion.b)
-            .split("")
-            .reverse();
-
-
-    /*
-      إذا كان العدد السفلي من رقم واحد:
-
-          1
-      ×   5
-      ─────
-          ?
-
-      لا نعرض الجداء الجزئي.
-    */
-
-    if (digits.length === 1) {
-
-        const finalLine =
-            document.createElement("div");
-
-        finalLine.className =
-            "final-line";
-
-
-        finalResultArea.appendChild(
-            finalLine
-        );
-
-
-        const finalRow =
-            document.createElement("div");
-
-        finalRow.className =
-            "final-row";
-
-
-        finalRow.innerHTML =
-            `<span class="final-value">?</span>`;
-
-
-        finalResultArea.appendChild(
-            finalRow
-        );
-
-
-        return;
+        result.push({
+            a,
+            b,
+            product: a * b
+        });
     }
 
-
-    /*
-      العدد السفلي من رقمين أو أكثر:
-
-      نعرض الجداءات الجزئية.
-    */
-
-    digits.forEach(
-        (digit, index) => {
-
-            const row =
-                document.createElement("div");
-
-            row.className =
-                "partial-row";
+    return result;
+}
 
 
-            /*
-              إزاحة بصرية فقط.
-              لا نضيف أصفار.
-            */
+/* =========================================================
+   تحديد هل الضرب يحتاج خطوات جزئية
+========================================================= */
 
-            row.style.paddingLeft =
-                `${index * 1.2}em`;
+function hasPartialSteps() {
 
-
-            row.dataset.index =
-                index;
-
-
-            row.innerHTML =
-                `<span class="partial-value">?</span>`;
-
-
-            partialResultsElement.appendChild(
-                row
-            );
-        }
-    );
-
-
-    // خط الجمع
-
-    const finalLine =
-        document.createElement("div");
-
-    finalLine.className =
-        "final-line";
-
-
-    finalResultArea.appendChild(
-        finalLine
-    );
-
-
-    // الناتج النهائي
-
-    const finalRow =
-        document.createElement("div");
-
-    finalRow.className =
-        "final-row";
-
-
-    finalRow.innerHTML =
-        `<span class="final-value">?</span>`;
-
-
-    finalResultArea.appendChild(
-        finalRow
+    return (
+        String(currentQuestion.b).length > 1
     );
 }
 
 
-// =========================================================
-// حساب النواتج الجزئية
-// =========================================================
+/* =========================================================
+   الحصول على النتائج الجزئية
+========================================================= */
 
 function getPartialProducts() {
 
@@ -528,617 +314,1102 @@ function getPartialProducts() {
             .split("")
             .reverse();
 
+    const partials = [];
 
-    return digits.map(
+    digits.forEach(
         (digit, index) => {
 
-            const number =
+            const value =
+                currentQuestion.a *
                 Number(digit);
 
+            partials.push({
+                value,
+                shift: index
+            });
+        }
+    );
 
-            const baseProduct =
-                currentQuestion.a * number;
+    return partials;
+}
 
 
-            return {
+/* =========================================================
+   بناء أعمدة العملية
+========================================================= */
 
-                digit: number,
+/*
+ * نستخدم 5 أعمدة رقمية ثابتة:
+ *
+ * col 1
+ * col 2
+ * col 3
+ * col 4
+ * col 5
+ *
+ * والوحدات دائماً في col 5.
+ *
+ * بهذه الطريقة لا تعتمد المحاذاة على عدد
+ * المسافات في النص.
+ */
 
-                product: baseProduct,
+function getDigitColumns() {
 
-                shift: index,
+    return [
+        2,
+        3,
+        4,
+        5,
+        6
+    ];
+}
 
-                displayProduct:
-                    baseProduct
-            };
+
+function getDigitsRightAligned(
+    number,
+    width = 5
+) {
+
+    const str =
+        String(number);
+
+    const arr =
+        new Array(width).fill("");
+
+    const start =
+        width - str.length;
+
+    for (
+        let i = 0;
+        i < str.length;
+        i++
+    ) {
+        arr[start + i] =
+            str[i];
+    }
+
+    return arr;
+}
+
+
+/*
+ * إنشاء صف أرقام عادي.
+ */
+function addNumberRow(
+    number,
+    extraClass = ""
+) {
+
+    const digits =
+        getDigitsRightAligned(number);
+
+    digits.forEach(
+        (digit, index) => {
+
+            const cell =
+                document.createElement("div");
+
+            cell.className =
+                `digit ${extraClass}`;
+
+            cell.style.gridColumn =
+                String(
+                    getDigitColumns()[index]
+                );
+
+            cell.textContent =
+                digit;
+
+            operationBoard.appendChild(cell);
         }
     );
 }
 
 
-// =========================================================
-// تحديث تعليمات الخطوة
-// =========================================================
+/*
+ * صف العدد الثاني مع علامة ×
+ *
+ * مثال:
+ *
+ *        2 4
+ *      × 1 3
+ */
+function addMultiplierRow() {
 
-function updateStep() {
-
-    const partialProducts =
-        getPartialProducts();
-
-
-    const numberOfPartialSteps =
-        partialProducts.length;
-
-
-    /*
-      ============================================
-      إذا كان العدد السفلي من رقم واحد
-      ============================================
-
-      مثال:
-
-          1
-      ×   5
-      ─────
-          ?
-
-      لا توجد خطوة جداء جزئي.
-      ننتقل مباشرة للناتج النهائي.
-    */
-
-    if (numberOfPartialSteps === 1) {
-
-        currentStep =
-            numberOfPartialSteps;
-
-
-        stepTitle.textContent =
-            "النتيجة";
-
-
-        stepInstruction.innerHTML =
-            `احسب: <strong>${currentQuestion.a} × ${currentQuestion.b}</strong>`;
-
-
-        answerInput.placeholder =
-            "اكتب ناتج الضرب";
-
-
-        return;
-    }
-
+    const digits =
+        getDigitsRightAligned(
+            currentQuestion.b
+        );
 
     /*
-      ============================================
-      العمليات متعددة الأرقام
-      ============================================
-    */
+     * علامة الضرب في العمود الذي قبل
+     * بداية الأرقام.
+     */
+    const symbol =
+        document.createElement("div");
 
-    if (
-        currentStep <
-        numberOfPartialSteps
-    ) {
+    symbol.className =
+        "multiply-symbol";
 
-        const step =
-            partialProducts[currentStep];
+    symbol.textContent = "×";
 
+    symbol.style.gridColumn = "3";
 
-        stepTitle.textContent =
-            `الخطوة ${currentStep + 1}`;
+    operationBoard.appendChild(symbol);
 
 
-        stepInstruction.innerHTML =
-            `احسب: <strong>${currentQuestion.a} × ${step.digit}</strong>`;
+    digits.forEach(
+        (digit, index) => {
 
+            const cell =
+                document.createElement("div");
 
-        answerInput.placeholder =
-            "اكتب ناتج الضرب";
+            cell.className =
+                "digit";
 
+            cell.style.gridColumn =
+                String(
+                    getDigitColumns()[index]
+                );
 
-        return;
-    }
+            cell.textContent =
+                digit;
 
-
-    /*
-      ============================================
-      خطوة الناتج النهائي
-      ============================================
-    */
-
-    stepTitle.textContent =
-        "النتيجة النهائية";
-
-
-    stepInstruction.innerHTML =
-        "الآن اجمع النواتج الجزئية واحسب الناتج النهائي.";
-
-
-    answerInput.placeholder =
-        "اكتب الناتج النهائي";
-
-
-    showPartialProducts();
+            operationBoard.appendChild(cell);
+        }
+    );
 }
 
 
-// =========================================================
-// إظهار النواتج الجزئية
-// =========================================================
+/* =========================================================
+   خط الفصل
+========================================================= */
 
-function showPartialProducts() {
+function addLine() {
 
-    const partialProducts =
-        getPartialProducts();
+    const line =
+        document.createElement("div");
+
+    line.className =
+        "operation-line";
+
+    operationBoard.appendChild(line);
+}
 
 
-    const rows =
-        partialResultsElement
-            .querySelectorAll(
-                ".partial-row"
+/* =========================================================
+   إنشاء خانات إدخال رقم
+========================================================= */
+
+function createAnswerRow(
+    expectedLength,
+    values,
+    activeIndex
+) {
+
+    const columns =
+        getDigitColumns();
+
+    const width =
+        columns.length;
+
+    /*
+     * نرسم خمس خانات ثابتة.
+     *
+     * الوحدات دائماً في أقصى اليمين.
+     */
+    for (
+        let i = 0;
+        i < width;
+        i++
+    ) {
+
+        const cell =
+            document.createElement("div");
+
+        /*
+         * العمود الخاص بالخانة.
+         */
+        cell.style.gridColumn =
+            String(columns[i]);
+
+        /*
+         * عدد الخانات الفعلية للنتيجة
+         * يبدأ من اليمين.
+         */
+        const answerStart =
+            width - expectedLength;
+
+        if (i < answerStart) {
+
+            cell.className =
+                "partial-empty";
+
+            operationBoard.appendChild(cell);
+
+            continue;
+        }
+
+
+        /*
+         * index داخل answerValues
+         */
+        const valueIndex =
+            i - answerStart;
+
+
+        /*
+         * إذا تم إدخال الرقم سابقاً
+         */
+        if (
+            values[valueIndex] !== ""
+        ) {
+
+            cell.className =
+                "answer-digit";
+
+            cell.textContent =
+                values[valueIndex];
+
+            operationBoard.appendChild(cell);
+
+            continue;
+        }
+
+
+        /*
+         * الخانة الحالية النشطة.
+         */
+        if (
+            valueIndex === activeIndex
+        ) {
+
+            const input =
+                document.createElement("input");
+
+            input.className =
+                "answer-slot";
+
+            input.type =
+                "text";
+
+            input.inputMode =
+                "numeric";
+
+            input.maxLength = 1;
+
+            input.autocomplete =
+                "off";
+
+            input.setAttribute(
+                "aria-label",
+                "أدخل الرقم"
             );
 
+            input.dataset.index =
+                String(valueIndex);
 
-    partialProducts.forEach(
-        (item, index) => {
+            input.addEventListener(
+                "input",
+                handleDigitInput
+            );
 
-            if (!rows[index]) {
+            cell.appendChild(input);
+
+            operationBoard.appendChild(cell);
+
+            /*
+             * نركز تلقائياً.
+             */
+            setTimeout(
+                () => input.focus(),
+                30
+            );
+
+            continue;
+        }
+
+
+        /*
+         * الخانات المتبقية تظهر كنقاط.
+         */
+        cell.className =
+            "answer-dot";
+
+        cell.textContent =
+            "•";
+
+        operationBoard.appendChild(cell);
+    }
+}
+
+
+/* =========================================================
+   معالجة إدخال رقم
+========================================================= */
+
+function handleDigitInput(event) {
+
+    const input =
+        event.target;
+
+    let value =
+        input.value
+            .replace(/\D/g, "");
+
+    if (value.length > 1) {
+        value =
+            value.charAt(0);
+    }
+
+    input.value =
+        value;
+
+    if (!value) {
+        return;
+    }
+
+    const index =
+        parseInt(
+            input.dataset.index,
+            10
+        );
+
+    answerValues[index] =
+        value;
+
+    /*
+     * الانتقال من اليمين إلى اليسار.
+     */
+    currentSlot =
+        index - 1;
+
+    /*
+     * إذا انتهت الخانات:
+     * لا ننتقل حتى يضغط الطفل على تحقق.
+     */
+    renderCurrentStep();
+}
+
+
+/* =========================================================
+   عرض العملية
+========================================================= */
+
+function renderOperation() {
+
+    operationBoard.innerHTML = "";
+
+    /*
+     * العدد العلوي
+     */
+    addNumberRow(
+        currentQuestion.a
+    );
+
+
+    /*
+     * العدد السفلي
+     */
+    addMultiplierRow();
+
+
+    /*
+     * خط واحد
+     */
+    addLine();
+
+
+    /*
+     * إذا كان الضرب من رقم واحد:
+     * ندخل النتيجة مباشرة.
+     */
+    if (!hasPartialSteps()) {
+
+        currentStage =
+            "final";
+
+        renderAnswerArea(
+            currentQuestion.product
+        );
+
+        return;
+    }
+
+
+    /*
+     * ضرب متعدد الأرقام:
+     * نبدأ بالرقم الموجود في الوحدات.
+     */
+    currentStage =
+        "partial";
+
+    currentPartialIndex =
+        0;
+
+    renderPartialStep();
+}
+
+
+/* =========================================================
+   عرض النتيجة الجزئية
+========================================================= */
+
+function renderPartialStep() {
+
+    const partials =
+        getPartialProducts();
+
+    const partial =
+        partials[currentPartialIndex];
+
+    /*
+     * نحتاج إلى إدخال نتيجة هذه العملية.
+     */
+    const expected =
+        String(partial.value);
+
+    answerValues =
+        new Array(
+            expected.length
+        ).fill("");
+
+    currentSlot =
+        expected.length - 1;
+
+    renderCurrentStep();
+}
+
+
+/* =========================================================
+   عرض الخطوة الحالية
+========================================================= */
+
+function renderCurrentStep() {
+
+    /*
+     * إعادة بناء العملية.
+     */
+    operationBoard.innerHTML = "";
+
+    addNumberRow(
+        currentQuestion.a
+    );
+
+    addMultiplierRow();
+
+    addLine();
+
+
+    if (
+        currentStage === "partial"
+    ) {
+
+        renderPartialRowsBeforeCurrent();
+
+        /*
+         * إضافة النتيجة الجزئية الحالية.
+         */
+        renderCurrentAnswerRow();
+
+        return;
+    }
+
+
+    /*
+     * النتيجة النهائية.
+     */
+    renderFinalAnswerRow();
+}
+
+
+/* =========================================================
+   عرض النتائج الجزئية السابقة
+========================================================= */
+
+function renderPartialRowsBeforeCurrent() {
+
+    const partials =
+        getPartialProducts();
+
+    /*
+     * النتائج السابقة فقط.
+     */
+    for (
+        let i = 0;
+        i < currentPartialIndex;
+        i++
+    ) {
+
+        renderFixedPartial(
+            partials[i].value,
+            partials[i].shift
+        );
+    }
+}
+
+
+/* =========================================================
+   رسم نتيجة جزئية مكتملة
+========================================================= */
+
+function renderFixedPartial(
+    value,
+    shift
+) {
+
+    const digits =
+        String(value)
+            .split("");
+
+    const columns =
+        getDigitColumns();
+
+    /*
+     * الإزاحة المدرسية:
+     *
+     * النتيجة الأولى:
+     *      72
+     *
+     * النتيجة الثانية:
+     *    24
+     *
+     * أي أن السطر الثاني ينتقل
+     * خانة إلى اليسار.
+     */
+
+    const rightMostColumn =
+        columns[columns.length - 1];
+
+    const shiftAmount =
+        shift;
+
+
+    digits.forEach(
+        (digit, index) => {
+
+            const positionFromRight =
+                digits.length -
+                1 -
+                index;
+
+            const columnIndex =
+                columns.length -
+                1 -
+                positionFromRight -
+                shiftAmount;
+
+            if (
+                columnIndex < 0
+            ) {
                 return;
             }
 
+            const cell =
+                document.createElement("div");
 
-            const value =
-                rows[index]
-                    .querySelector(
-                        ".partial-value"
-                    );
+            cell.className =
+                "partial-digit";
 
+            cell.style.gridColumn =
+                String(
+                    columns[columnIndex]
+                );
 
-            value.textContent =
-                item.product;
+            cell.textContent =
+                digit;
 
-
-            rows[index]
-                .style.paddingLeft =
-                `${index * 1.2}em`;
+            operationBoard.appendChild(cell);
         }
     );
 }
 
 
-// =========================================================
-// التحقق من الإجابة
-// =========================================================
+/* =========================================================
+   رسم خانة النتيجة الحالية
+========================================================= */
+
+function renderCurrentAnswerRow() {
+
+    const partials =
+        getPartialProducts();
+
+    const partial =
+        partials[currentPartialIndex];
+
+    const expected =
+        String(partial.value);
+
+    /*
+     * النتيجة الجزئية يجب أن تكون مزاحة
+     * حسب موقع الرقم المضروب.
+     */
+    const shift =
+        partial.shift;
+
+    renderShiftedAnswer(
+        expected,
+        shift
+    );
+}
+
+
+/* =========================================================
+   رسم نتيجة مزاحة مع نقاط ومربع
+========================================================= */
+
+function renderShiftedAnswer(
+    expected,
+    shift
+) {
+
+    const columns =
+        getDigitColumns();
+
+    const digits =
+        expected.split("");
+
+    const width =
+        columns.length;
+
+    /*
+     * موضع كل رقم.
+     */
+    digits.forEach(
+        (digit, index) => {
+
+            const positionFromRight =
+                digits.length -
+                1 -
+                index;
+
+            const columnIndex =
+                width -
+                1 -
+                positionFromRight -
+                shift;
+
+            if (
+                columnIndex < 0
+            ) {
+                return;
+            }
+
+            const cell =
+                document.createElement("div");
+
+            cell.style.gridColumn =
+                String(
+                    columns[columnIndex]
+                );
+
+
+            /*
+             * index داخل answerValues
+             */
+            const answerIndex =
+                index;
+
+
+            if (
+                answerValues[answerIndex] !== ""
+            ) {
+
+                cell.className =
+                    "answer-digit";
+
+                cell.textContent =
+                    answerValues[answerIndex];
+
+            } else if (
+                answerIndex === currentSlot
+            ) {
+
+                const input =
+                    document.createElement("input");
+
+                input.className =
+                    "answer-slot";
+
+                input.type =
+                    "text";
+
+                input.inputMode =
+                    "numeric";
+
+                input.maxLength = 1;
+
+                input.autocomplete =
+                    "off";
+
+                input.dataset.index =
+                    String(answerIndex);
+
+                input.addEventListener(
+                    "input",
+                    handleDigitInput
+                );
+
+                cell.appendChild(input);
+
+                setTimeout(
+                    () => input.focus(),
+                    30
+                );
+
+            } else {
+
+                cell.className =
+                    "answer-dot";
+
+                cell.textContent =
+                    "•";
+            }
+
+            operationBoard.appendChild(cell);
+        }
+    );
+}
+
+
+/* =========================================================
+   النتيجة النهائية
+========================================================= */
+
+function renderFinalAnswerRow() {
+
+    const expected =
+        String(
+            currentQuestion.product
+        );
+
+    const columns =
+        getDigitColumns();
+
+    const digits =
+        expected.split("");
+
+    const width =
+        columns.length;
+
+    digits.forEach(
+        (digit, index) => {
+
+            const positionFromRight =
+                digits.length -
+                1 -
+                index;
+
+            const columnIndex =
+                width -
+                1 -
+                positionFromRight;
+
+            const cell =
+                document.createElement("div");
+
+            cell.style.gridColumn =
+                String(
+                    columns[columnIndex]
+                );
+
+            if (
+                answerValues[index] !== ""
+            ) {
+
+                cell.className =
+                    "answer-digit";
+
+                cell.textContent =
+                    answerValues[index];
+
+            } else if (
+                index === currentSlot
+            ) {
+
+                const input =
+                    document.createElement("input");
+
+                input.className =
+                    "answer-slot";
+
+                input.type =
+                    "text";
+
+                input.inputMode =
+                    "numeric";
+
+                input.maxLength = 1;
+
+                input.autocomplete =
+                    "off";
+
+                input.dataset.index =
+                    String(index);
+
+                input.addEventListener(
+                    "input",
+                    handleDigitInput
+                );
+
+                cell.appendChild(input);
+
+                setTimeout(
+                    () => input.focus(),
+                    30
+                );
+
+            } else {
+
+                cell.className =
+                    "answer-dot";
+
+                cell.textContent =
+                    "•";
+            }
+
+            operationBoard.appendChild(cell);
+        }
+    );
+}
+
+
+/* =========================================================
+   التحقق
+========================================================= */
 
 function checkAnswer() {
 
-    if (waitingForNextQuestion) {
-        return;
-    }
+    /*
+     * هل كل الخانات مكتملة؟
+     */
+    if (
+        answerValues.length === 0 ||
+        answerValues.some(
+            value => value === ""
+        )
+    ) {
 
-
-    const value =
-        answerInput.value.trim();
-
-
-    if (value === "") {
-
-        feedback.textContent =
-            "✏️ اكتب الإجابة أولاً.";
-
-        feedback.className =
-            "feedback wrong";
-
-        answerInput.focus();
+        showMessage(
+            "✏️ أكمل كتابة النتيجة أولاً.",
+            "orange"
+        );
 
         return;
     }
 
 
     const userAnswer =
-        Number(value);
+        answerValues.join("");
 
 
-    const partialProducts =
-        getPartialProducts();
-
-
-    // =================================================
-    // إذا كان العدد السفلي من رقم واحد
-    // النتيجة مباشرة
-    // =================================================
-
+    /*
+     * الخطوة الجزئية
+     */
     if (
-        partialProducts.length === 1
+        currentStage === "partial"
     ) {
 
-        const correctFinal =
-            currentQuestion.answer;
+        const partials =
+            getPartialProducts();
+
+        const expected =
+            String(
+                partials[
+                    currentPartialIndex
+                ].value
+            );
 
 
         if (
-            userAnswer ===
-            correctFinal
+            userAnswer !== expected
         ) {
-
-            feedback.textContent =
-                "🎉 صحيح!";
-
-            feedback.className =
-                "feedback correct";
-
-
-            /*
-              لا نحسب العملية إلا إذا
-              لم يحدث أي خطأ فيها.
-            */
-
-            if (!currentQuestionHadError) {
-
-                score++;
-            }
-
-
-            showFinalResult(
-                correctFinal
-            );
-
-
-            setTimeout(() => {
-
-                nextQuestion();
-
-            }, 700);
-
-
-        } else {
-
-            feedback.textContent =
-                "❌ الناتج غير صحيح. حاول مرة أخرى.";
-
-            feedback.className =
-                "feedback wrong";
-
-
-            currentQuestionHadError = true;
-
-
-            recordFinalError(
-                userAnswer,
-                correctFinal
-            );
-
-
-            answerInput.select();
-        }
-
-
-        return;
-    }
-
-
-    // =================================================
-    // مرحلة النواتج الجزئية
-    // =================================================
-
-    if (
-        currentStep <
-        partialProducts.length
-    ) {
-
-        const step =
-            partialProducts[currentStep];
-
-
-        const correctAnswer =
-            step.product;
-
-
-        if (
-            userAnswer ===
-            correctAnswer
-        ) {
-
-            feedback.textContent =
-                "✅ إجابة صحيحة!";
-
-            feedback.className =
-                "feedback correct";
-
-
-            showCorrectPartial(
-                currentStep,
-                correctAnswer
-            );
-
-
-            currentStep++;
-
-
-            answerInput.value = "";
-
-
-            setTimeout(() => {
-
-                feedback.textContent = "";
-
-                updateStep();
-
-                answerInput.focus();
-
-            }, 600);
-
-
-        } else {
-
-            feedback.textContent =
-                "❌ غير صحيح. حاول مرة أخرى.";
-
-            feedback.className =
-                "feedback wrong";
-
 
             currentQuestionHadError =
                 true;
 
-
-            recordStepError(
-                currentStep,
-                userAnswer,
-                correctAnswer
+            showMessage(
+                `❌ غير صحيح. النتيجة الصحيحة هي ${expected}`,
+                "red"
             );
 
+            setTimeout(
+                () => {
 
-            answerInput.select();
+                    /*
+                     * إعادة نفس الخطوة
+                     * مع تسجيل الخطأ.
+                     */
+                    answerValues =
+                        new Array(
+                            expected.length
+                        ).fill("");
+
+                    currentSlot =
+                        expected.length - 1;
+
+                    renderCurrentStep();
+
+                },
+                900
+            );
+
+            return;
         }
 
+
+        /*
+         * الخطوة صحيحة.
+         */
+        showMessage(
+            "✅ صحيح!",
+            "green"
+        );
+
+
+        setTimeout(
+            () => {
+
+                currentPartialIndex++;
+
+                if (
+                    currentPartialIndex <
+                    partials.length
+                ) {
+
+                    /*
+                     * الانتقال للنتيجة الجزئية التالية.
+                     */
+                    renderPartialStep();
+
+                } else {
+
+                    /*
+                     * انتهت النتائج الجزئية.
+                     * الآن نطلب النتيجة النهائية.
+                     */
+                    currentStage =
+                        "final";
+
+                    answerValues =
+                        new Array(
+                            String(
+                                currentQuestion.product
+                            ).length
+                        ).fill("");
+
+                    currentSlot =
+                        answerValues.length - 1;
+
+                    renderCurrentStep();
+                }
+
+            },
+            600
+        );
 
         return;
     }
 
 
-    // =================================================
-    // مرحلة الناتج النهائي
-    // =================================================
-
-    const correctFinal =
-        currentQuestion.answer;
-
-
-    if (
-        userAnswer ===
-        correctFinal
-    ) {
-
-        feedback.textContent =
-            "🎉 صحيح!";
-
-        feedback.className =
-            "feedback correct";
-
-
-        /*
-          مهم:
-          إذا أخطأ الطفل في أي خطوة سابقة
-          فلا تُحسب العملية ضمن الـ 12 الصحيحة.
-        */
-
-        if (!currentQuestionHadError) {
-
-            score++;
-        }
-
-
-        showFinalResult(
-            correctFinal
+    /*
+     * التحقق من النتيجة النهائية.
+     */
+    const expectedFinal =
+        String(
+            currentQuestion.product
         );
 
 
-        setTimeout(() => {
-
-            nextQuestion();
-
-        }, 700);
-
-
-    } else {
-
-        feedback.textContent =
-            "❌ الناتج غير صحيح. حاول مرة أخرى.";
-
-        feedback.className =
-            "feedback wrong";
-
+    if (
+        userAnswer !== expectedFinal
+    ) {
 
         currentQuestionHadError =
             true;
 
-
-        recordFinalError(
-            userAnswer,
-            correctFinal
+        showMessage(
+            `❌ غير صحيح. النتيجة الصحيحة هي ${expectedFinal}`,
+            "red"
         );
 
+        setTimeout(
+            () => {
 
-        answerInput.select();
-    }
-}
+                answerValues =
+                    new Array(
+                        expectedFinal.length
+                    ).fill("");
 
+                currentSlot =
+                    expectedFinal.length - 1;
 
-// =========================================================
-// إظهار الناتج النهائي
-// =========================================================
+                renderCurrentStep();
 
-function showFinalResult(value) {
-
-    const finalValue =
-        finalResultArea
-            .querySelector(
-                ".final-value"
-            );
-
-
-    if (finalValue) {
-
-        finalValue.textContent =
-            value;
-
-        finalValue.classList.add(
-            "correct-result"
+            },
+            900
         );
-    }
-}
 
-
-// =========================================================
-// عرض الناتج الجزئي الصحيح
-// =========================================================
-
-function showCorrectPartial(
-    index,
-    value
-) {
-
-    const rows =
-        partialResultsElement
-            .querySelectorAll(
-                ".partial-row"
-            );
-
-
-    if (!rows[index]) {
         return;
     }
 
 
-    const valueElement =
-        rows[index]
-            .querySelector(
-                ".partial-value"
-            );
+    /*
+     * النتيجة صحيحة.
+     */
+    showMessage(
+        "🎉 صحيح!",
+        "green"
+    );
 
 
-    valueElement.textContent =
-        value;
+    /*
+     * العملية لا تحسب صحيحة إلا إذا
+     * لم يرتكب الطفل أي خطأ في أي خطوة.
+     */
+    if (
+        !currentQuestionHadError
+    ) {
+
+        score++;
+    }
 
 
-    valueElement.classList.add(
-        "correct-result"
+    saveQuestionResult();
+
+    setTimeout(
+        nextQuestion,
+        700
     );
 }
 
 
-// =========================================================
-// تسجيل خطأ في خطوة ضرب
-// =========================================================
+/* =========================================================
+   نتيجة العملية
+========================================================= */
 
-function recordStepError(
-    stepIndex,
-    userAnswer,
-    correctAnswer
-) {
-
-    let current =
-        questionResults[
-            currentQuestionIndex
-        ];
+const questionResults = [];
 
 
-    if (!current) {
+function saveQuestionResult() {
 
-        current = {
-
-            a: currentQuestion.a,
-
-            b: currentQuestion.b,
-
-            errors: [],
-
-            finalError: false
-        };
-
-
-        questionResults[
-            currentQuestionIndex
-        ] = current;
-    }
-
-
-    current.errors.push({
-
-        type: "multiplication",
-
-        step: stepIndex + 1,
-
-        userAnswer: userAnswer,
-
-        correctAnswer: correctAnswer
+    questionResults.push({
+        a: currentQuestion.a,
+        b: currentQuestion.b,
+        product: currentQuestion.product,
+        correct:
+            !currentQuestionHadError
     });
 }
 
 
-// =========================================================
-// تسجيل خطأ في الناتج النهائي
-// =========================================================
-
-function recordFinalError(
-    userAnswer,
-    correctAnswer
-) {
-
-    let current =
-        questionResults[
-            currentQuestionIndex
-        ];
-
-
-    if (!current) {
-
-        current = {
-
-            a: currentQuestion.a,
-
-            b: currentQuestion.b,
-
-            errors: [],
-
-            finalError: false
-        };
-
-
-        questionResults[
-            currentQuestionIndex
-        ] = current;
-    }
-
-
-    current.finalError = true;
-
-
-    current.finalUserAnswer =
-        userAnswer;
-
-
-    current.finalCorrectAnswer =
-        correctAnswer;
-}
-
-
-// =========================================================
-// الانتقال للعملية التالية
-// =========================================================
+/* =========================================================
+   العملية التالية
+========================================================= */
 
 function nextQuestion() {
 
-    if (waitingForNextQuestion) {
-        return;
-    }
-
-
-    waitingForNextQuestion = true;
-
-
     currentQuestionIndex++;
-
 
     if (
         currentQuestionIndex >=
@@ -1151,302 +1422,258 @@ function nextQuestion() {
     }
 
 
-    loadQuestion();
+    startQuestion();
 }
 
 
-// =========================================================
-// إنهاء المستوى
-// =========================================================
+/* =========================================================
+   بدء عملية
+========================================================= */
+
+function startQuestion() {
+
+    currentQuestion =
+        questions[
+            currentQuestionIndex
+        ];
+
+    currentQuestionHadError =
+        false;
+
+    currentStage =
+        "final";
+
+    currentPartialIndex =
+        0;
+
+    answerValues = [];
+
+    currentSlot = -1;
+
+    message.textContent = "";
+
+    message.style.color = "";
+
+    questionCounter.textContent =
+        `العملية ${
+            currentQuestionIndex + 1
+        } من ${TOTAL_QUESTIONS}`;
+
+    renderOperation();
+}
+
+
+/* =========================================================
+   الرسائل
+========================================================= */
+
+function showMessage(
+    text,
+    color
+) {
+
+    message.textContent =
+        text;
+
+    if (color === "green") {
+        message.style.color =
+            "#16833b";
+    }
+
+    if (color === "red") {
+        message.style.color =
+            "#d62828";
+    }
+
+    if (color === "orange") {
+        message.style.color =
+            "#d97706";
+    }
+}
+
+
+/* =========================================================
+   إنهاء المستوى
+========================================================= */
 
 function finishLevel() {
 
-    progressFill.style.width =
-        "100%";
+    checkAnswerButton.style.display =
+        "none";
+
+    operationBoard.style.display =
+        "none";
+
+    message.style.display =
+        "none";
+
+    questionCounter.style.display =
+        "none";
 
 
-    answerInput.disabled = true;
-
-    checkAnswerButton.disabled = true;
-
-
-    resultCard.style.display =
-        "block";
-
-
-    resultSummary.textContent =
-        `أجبت بشكل صحيح عن ${score} من ${TOTAL_QUESTIONS} عملية.`;
+    scoreText.textContent =
+        `نتيجتك: ${score} / ${TOTAL_QUESTIONS}`;
 
 
     reviewList.innerHTML = "";
 
 
-    // =================================================
-    // المستوى مكتمل 12/12
-    // =================================================
+    questionResults.forEach(
+        (item, index) => {
 
+            const div =
+                document.createElement("div");
+
+            div.className =
+                "review-item " +
+                (
+                    item.correct
+                        ? "review-correct"
+                        : "review-wrong"
+                );
+
+            div.textContent =
+                `${index + 1}. ${item.a} × ${item.b} = ${item.product} ` +
+                (
+                    item.correct
+                        ? "✓"
+                        : "✗"
+                );
+
+            reviewList.appendChild(div);
+        }
+    );
+
+
+    /*
+     * فتح المستوى التالي فقط إذا كانت
+     * جميع العمليات صحيحة.
+     */
     if (
         score === TOTAL_QUESTIONS
     ) {
 
-        unlockNextLevel();
+        if (
+            currentLevel <
+            MAX_LEVEL
+        ) {
+
+            const newUnlocked =
+                Math.max(
+                    getUnlockedLevel(),
+                    currentLevel + 1
+                );
+
+            localStorage.setItem(
+                PROGRESS_KEY,
+                String(newUnlocked)
+            );
+
+            unlockMessage.innerHTML =
+                `<p>🔓 تم فتح المستوى ${
+                    currentLevel + 1
+                }!</p>`;
+
+        } else {
+
+            unlockMessage.innerHTML =
+                `<p>🏆 ممتاز! لقد أكملت جميع مستويات الضرب!</p>`;
+        }
 
 
-        unlockMessage.textContent =
-            currentLevel < MAX_LEVEL
-                ? `🔓 تم فتح المستوى ${currentLevel + 1}!`
-                : "🏆 لقد أكملت جميع مستويات الضرب!";
-
-
-        showCelebration();
-
+        celebrate();
 
     } else {
 
-        unlockMessage.textContent =
-            "🔒 يجب الحصول على 12/12 لفتح المستوى التالي.";
+        unlockMessage.innerHTML =
+            `<p>
+                🔒 أكمل 12/12 بشكل صحيح لفتح المستوى التالي.
+             </p>`;
     }
 
 
-    buildReview();
+    resultCard.classList.add("show");
 }
 
 
-// =========================================================
-// فتح المستوى التالي
-// =========================================================
+/* =========================================================
+   الاحتفال
+========================================================= */
 
-function unlockNextLevel() {
+function celebrate() {
 
-    let savedLevel =
-        parseInt(
-            localStorage.getItem(
-                PROGRESS_KEY
-            )
-        ) || 1;
+    celebration.classList.add("show");
 
 
-    if (
-        currentLevel >= savedLevel &&
-        currentLevel < MAX_LEVEL
-    ) {
-
-        savedLevel =
-            currentLevel + 1;
-
-
-        localStorage.setItem(
-            PROGRESS_KEY,
-            savedLevel
-        );
-    }
-}
-
-
-// =========================================================
-// بطاقة المراجعة
-// =========================================================
-
-function buildReview() {
-
-    const errors =
-        questionResults.filter(
-            item =>
-                item &&
-                (
-                    item.errors.length > 0 ||
-                    item.finalError
-                )
-        );
-
-
-    if (errors.length === 0) {
-
-        const message =
-            document.createElement("div");
-
-
-        message.className =
-            "review-success";
-
-
-        message.textContent =
-            "🌟 ممتاز! لم تخطئ في أي عملية.";
-
-
-        reviewList.appendChild(
-            message
-        );
-
-
-        return;
-    }
-
-
-    const title =
-        document.createElement("h3");
-
-
-    title.textContent =
-        "📝 مراجعة الأخطاء";
-
-
-    reviewList.appendChild(
-        title
-    );
-
-
-    errors.forEach(
-        (item) => {
-
-            const card =
-                document.createElement("div");
-
-
-            card.className =
-                "review-item";
-
-
-            let html = `
-                <strong>
-                    العملية:
-                    ${item.a} × ${item.b}
-                </strong>
-            `;
-
-
-            if (
-                item.errors &&
-                item.errors.length
-            ) {
-
-                item.errors.forEach(
-                    error => {
-
-                        html += `
-                            <p>
-                                ❌ الخطوة ${error.step}:
-                                إجابتك
-                                <strong>${error.userAnswer}</strong>
-                                -
-                                الصحيح
-                                <strong>${error.correctAnswer}</strong>
-                            </p>
-                        `;
-                    }
-                );
-            }
-
-
-            if (item.finalError) {
-
-                html += `
-                    <p>
-                        ❌ الناتج النهائي:
-                        إجابتك
-                        <strong>${item.finalUserAnswer}</strong>
-                        -
-                        الصحيح
-                        <strong>${item.finalCorrectAnswer}</strong>
-                    </p>
-                `;
-            }
-
-
-            card.innerHTML =
-                html;
-
-
-            reviewList.appendChild(
-                card
-            );
-        }
-    );
-}
-
-
-// =========================================================
-// الاحتفال
-// =========================================================
-
-function showCelebration() {
-
-    celebration.style.display =
-        "flex";
-
-
-    createStars();
-
-    playApplause();
-
-
-    setTimeout(() => {
-
-        celebration.style.display =
-            "none";
-
-    }, 4000);
-}
-
-
-// =========================================================
-// النجوم
-// =========================================================
-
-function createStars() {
-
-    const symbols =
-        ["⭐", "🌟", "✨", "🎉"];
-
-
+    /*
+     * نجوم طائرة.
+     */
     for (
         let i = 0;
-        i < 35;
+        i < 24;
         i++
     ) {
 
         const star =
             document.createElement("div");
 
-
         star.className =
-            "flying-star";
-
+            "star";
 
         star.textContent =
-            symbols[
-                Math.floor(
-                    Math.random() *
-                    symbols.length
-                )
-            ];
-
+            "⭐";
 
         star.style.left =
-            `${Math.random() * 100}%`;
+            "50%";
 
+        star.style.top =
+            "50%";
 
-        star.style.animationDelay =
-            `${Math.random() * 1.5}s`;
+        const x =
+            randomInt(-250, 250);
 
+        const y =
+            randomInt(-300, 300);
 
-        document.body.appendChild(
-            star
+        star.style.setProperty(
+            "--x",
+            `${x}px`
         );
 
+        star.style.setProperty(
+            "--y",
+            `${y}px`
+        );
 
-        setTimeout(() => {
+        document.body.appendChild(star);
 
-            star.remove();
 
-        }, 3500);
+        setTimeout(
+            () => star.remove(),
+            1600
+        );
     }
+
+
+    playApplause();
+
+
+    setTimeout(
+        () => {
+
+            celebration.classList.remove(
+                "show"
+            );
+
+        },
+        1800
+    );
 }
 
 
-// =========================================================
-// صوت التصفيق
-// =========================================================
+/* =========================================================
+   صوت التصفيق
+========================================================= */
 
 function playApplause() {
 
@@ -1456,122 +1683,108 @@ function playApplause() {
             window.AudioContext ||
             window.webkitAudioContext;
 
-
         if (!AudioContext) {
             return;
         }
 
-
         const audio =
             new AudioContext();
 
-
-        const duration =
-            1.8;
+        const now =
+            audio.currentTime;
 
 
         for (
             let i = 0;
-            i < 25;
+            i < 10;
             i++
         ) {
 
             const oscillator =
                 audio.createOscillator();
 
-
             const gain =
                 audio.createGain();
 
-
-            oscillator.connect(gain);
-
-            gain.connect(
-                audio.destination
-            );
-
+            oscillator.type =
+                "triangle";
 
             oscillator.frequency.value =
-                1000 +
-                Math.random() * 1000;
-
+                500 +
+                Math.random() * 800;
 
             gain.gain.setValueAtTime(
                 0,
-                audio.currentTime +
-                i * 0.07
+                now + i * 0.08
             );
-
 
             gain.gain.linearRampToValueAtTime(
-                0.12,
-                audio.currentTime +
-                i * 0.07 +
-                0.01
+                0.15,
+                now +
+                    i * 0.08 +
+                    0.02
             );
-
 
             gain.gain.exponentialRampToValueAtTime(
                 0.001,
-                audio.currentTime +
-                i * 0.07 +
-                0.08
+                now +
+                    i * 0.08 +
+                    0.12
             );
 
+            oscillator.connect(gain);
+            gain.connect(audio.destination);
 
             oscillator.start(
-                audio.currentTime +
-                i * 0.07
+                now + i * 0.08
             );
-
 
             oscillator.stop(
-                audio.currentTime +
-                i * 0.07 +
-                0.1
+                now + i * 0.08 + 0.13
             );
         }
-
-
-        setTimeout(() => {
-
-            audio.close();
-
-        }, duration * 1000);
-
 
     } catch (error) {
 
         console.log(
-            "Audio error:",
+            "Audio unavailable:",
             error
         );
     }
 }
 
 
-// =========================================================
-// زر إعادة المستوى
-// =========================================================
+/* =========================================================
+   إعادة المستوى
+========================================================= */
 
 retryButton.addEventListener(
     "click",
     () => {
 
-        startLevel();
-
-
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
+        window.location.href =
+            `multiplication.html?level=${currentLevel}&v=${Date.now()}`;
     }
 );
 
 
-// =========================================================
-// زر التحقق
-// =========================================================
+/* =========================================================
+   العودة
+========================================================= */
+
+backButton.addEventListener(
+    "click",
+    () => {
+
+        window.location.href =
+            "multiplication-levels.html";
+    }
+);
+
+
+/* =========================================================
+   زر التحقق
+========================================================= */
 
 checkAnswerButton.addEventListener(
     "click",
@@ -1579,11 +1792,11 @@ checkAnswerButton.addEventListener(
 );
 
 
-// =========================================================
-// الضغط على Enter
-// =========================================================
+/* =========================================================
+   زر Enter
+========================================================= */
 
-answerInput.addEventListener(
+document.addEventListener(
     "keydown",
     event => {
 
@@ -1591,16 +1804,37 @@ answerInput.addEventListener(
             event.key === "Enter"
         ) {
 
-            event.preventDefault();
+            /*
+             * إذا كان التركيز داخل input
+             * والنتيجة مكتملة، نفذ تحقق.
+             */
+            if (
+                document.activeElement &&
+                document.activeElement.tagName ===
+                    "INPUT"
+            ) {
 
-            checkAnswer();
+                checkAnswer();
+            }
         }
     }
 );
 
 
-// =========================================================
-// تشغيل اللعبة
-// =========================================================
+/* =========================================================
+   بدء اللعبة
+========================================================= */
 
-startLevel();
+levelTitle.textContent =
+    `المستوى ${currentLevel}`;
+
+questions =
+    generateQuestions();
+
+questionResults.length = 0;
+
+score = 0;
+
+currentQuestionIndex = 0;
+
+startQuestion();
