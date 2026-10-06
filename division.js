@@ -1,117 +1,167 @@
 "use strict";
 
 /*
-========================================
+==================================================
 تعلم القسمة
-نظام القسمة العمودية المدرسية
-========================================
+القسمة العمودية بالطريقة المدرسية
+==================================================
 */
 
 const TOTAL_QUESTIONS = 12;
 const MAX_LEVEL = 10;
 
-const PROGRESS_KEY = "divisionUnlockedLevelV1";
+const PROGRESS_KEY =
+    "divisionUnlockedLevelV1";
 
-const params = new URLSearchParams(location.search);
 
-let level = Number(params.get("level")) || 1;
+/* ================================================
+   المستوى
+================================================ */
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+let level =
+    Number(params.get("level")) || 1;
 
 if (level < 1) level = 1;
 if (level > MAX_LEVEL) level = MAX_LEVEL;
 
 
 /*
-========================================
-عدد أرقام المقسوم والمقسوم عليه
-========================================
+==================================================
+عدد أرقام المقسوم / المقسوم عليه
+==================================================
 */
 
 const levelDigits = {
+
     1: [2, 1],
+
     2: [3, 1],
+
     3: [3, 1],
+
     4: [4, 1],
+
     5: [4, 2],
+
     6: [5, 1],
+
     7: [5, 2],
+
     8: [6, 2],
+
     9: [6, 2],
+
     10: [7, 2]
+
 };
 
 
 /*
-========================================
+==================================================
+العناصر
+==================================================
+*/
+
+const board =
+    document.getElementById(
+        "divisionBoard"
+    );
+
+const levelNumber =
+    document.getElementById(
+        "levelNumber"
+    );
+
+const questionNumber =
+    document.getElementById(
+        "questionNumber"
+    );
+
+const stepLabel =
+    document.getElementById(
+        "stepLabel"
+    );
+
+const instruction =
+    document.getElementById(
+        "instruction"
+    );
+
+const answerInput =
+    document.getElementById(
+        "answerInput"
+    );
+
+const checkButton =
+    document.getElementById(
+        "checkButton"
+    );
+
+const message =
+    document.getElementById(
+        "message"
+    );
+
+const finishCard =
+    document.getElementById(
+        "finishCard"
+    );
+
+const finishTitle =
+    document.getElementById(
+        "finishTitle"
+    );
+
+const finishText =
+    document.getElementById(
+        "finishText"
+    );
+
+
+/*
+==================================================
 حالة اللعبة
-========================================
+==================================================
 */
 
 let currentQuestion = 0;
+
 let score = 0;
 
 let currentProblem = null;
-let currentSteps = [];
 
-let currentStepIndex = 0;
+let divisionData = null;
 
+let currentStep = 0;
 
-/*
-========================================
-العناصر
-========================================
-*/
-
-const board = document.getElementById("divisionBoard");
-
-const levelNumber =
-    document.getElementById("levelNumber");
-
-const questionNumber =
-    document.getElementById("questionNumber");
-
-const stepLabel =
-    document.getElementById("stepLabel");
-
-const instruction =
-    document.getElementById("instruction");
-
-const answerInput =
-    document.getElementById("answerInput");
-
-const checkButton =
-    document.getElementById("checkButton");
-
-const message =
-    document.getElementById("message");
-
-const finishCard =
-    document.getElementById("finishCard");
-
-const finishTitle =
-    document.getElementById("finishTitle");
-
-const finishText =
-    document.getElementById("finishText");
+const usedProblems =
+    new Set();
 
 
 /*
-========================================
-توليد رقم عشوائي
-========================================
+==================================================
+رقم عشوائي
+==================================================
 */
 
 function randomInt(min, max) {
 
     return Math.floor(
-        Math.random() * (max - min + 1)
+        Math.random() *
+        (max - min + 1)
     ) + min;
 }
 
 
 /*
-========================================
-توليد عدد بعدد أرقام محدد
-========================================
+==================================================
+إنشاء عدد بعدد أرقام معين
+==================================================
 */
 
 function randomNumber(digits) {
@@ -119,114 +169,150 @@ function randomNumber(digits) {
     const min =
         digits === 1
             ? 1
-            : Math.pow(10, digits - 1);
+            : 10 ** (digits - 1);
 
     const max =
-        Math.pow(10, digits) - 1;
+        (10 ** digits) - 1;
 
     return randomInt(min, max);
 }
 
 
 /*
-========================================
-إنشاء عملية قسمة
-يجب أن يكون المقسوم أكبر من المقسوم عليه
-========================================
+==================================================
+إنشاء عملية
+==================================================
 */
 
 function generateProblem() {
 
-    const [dividendDigits, divisorDigits] =
-        levelDigits[level];
+    const [
+        dividendDigits,
+        divisorDigits
+    ] = levelDigits[level];
+
 
     let dividend;
     let divisor;
 
+
     do {
 
         dividend =
-            randomNumber(dividendDigits);
+            randomNumber(
+                dividendDigits
+            );
 
         divisor =
-            randomNumber(divisorDigits);
+            randomNumber(
+                divisorDigits
+            );
 
     } while (
-        divisor === 0 ||
+        divisor <= 0 ||
         divisor >= dividend
     );
 
+
     return {
+
         dividend,
         divisor
+
     };
 }
 
 
 /*
-========================================
-القسمة الطويلة الحقيقية
+==================================================
+خوارزمية القسمة الطويلة
 
-نحن لا نعرض فقط الناتج النهائي.
-بل نبني جميع خطوات القسمة.
-========================================
+مثال:
+
+2572 ÷ 3
+
+25 → 8 × 3 = 24 → 1
+17 → 5 × 3 = 15 → 2
+22 → 7 × 3 = 21 → 1
+==================================================
 */
 
-function buildDivisionSteps(dividend, divisor) {
+function buildDivision(dividend, divisor) {
 
     const digits =
         String(dividend)
             .split("")
             .map(Number);
 
-    const quotientDigits = [];
-
-    const steps = [];
 
     let current = 0;
 
-    for (let i = 0; i < digits.length; i++) {
+    let quotient = "";
+
+    const stages = [];
+
+
+    for (
+        let i = 0;
+        i < digits.length;
+        i++
+    ) {
 
         current =
-            current * 10 + digits[i];
+            current * 10 +
+            digits[i];
+
 
         /*
-        إذا كان العدد الحالي أصغر من المقسوم عليه
-        نضع صفرًا في الناتج فقط عندما نكون قد بدأنا
+        قبل بداية حاصل القسمة
         */
-        if (current < divisor) {
 
-            if (quotientDigits.length > 0) {
-
-                quotientDigits.push(0);
-
-            }
+        if (
+            current < divisor &&
+            quotient === ""
+        ) {
 
             continue;
         }
 
-        const quotientDigit =
-            Math.floor(current / divisor);
-
-        const product =
-            quotientDigit * divisor;
-
-        const remainder =
-            current - product;
-
-        quotientDigits.push(quotientDigit);
 
         /*
-        موقع الأرقام التي استعملناها
+        صفر داخل حاصل القسمة
         */
-        const usedStart =
-            i - String(current).length + 1;
 
-        steps.push({
+        if (
+            current < divisor
+        ) {
 
-            type: "division",
+            quotient += "0";
 
-            index: i,
+            continue;
+        }
+
+
+        const quotientDigit =
+            Math.floor(
+                current / divisor
+            );
+
+
+        const product =
+            quotientDigit *
+            divisor;
+
+
+        const remainder =
+            current -
+            product;
+
+
+        quotient +=
+            String(quotientDigit);
+
+
+        stages.push({
+
+            sourceIndex: i,
 
             current,
 
@@ -236,213 +322,242 @@ function buildDivisionSteps(dividend, divisor) {
 
             remainder,
 
-            broughtDigit:
-                i + 1 < digits.length
+            nextDigit:
+                i + 1 <
+                digits.length
                     ? digits[i + 1]
-                    : null,
-
-            /*
-            الخطوات المطلوبة من الطفل
-            */
-            answers: [
-
-                {
-                    type: "quotient",
-                    value: quotientDigit,
-                    text:
-                        `${current} ÷ ${divisor} = ؟`
-                },
-
-                {
-                    type: "product",
-                    value: product,
-                    text:
-                        `${quotientDigit} × ${divisor} = ؟`
-                },
-
-                {
-                    type: "remainder",
-                    value: remainder,
-                    text:
-                        `${current} − ${product} = ؟`
-                }
-
-            ]
+                    : null
 
         });
 
-        current = remainder;
+
+        current =
+            remainder;
     }
 
 
-    const quotient =
-        quotientDigits.join("");
-
     return {
-
-        dividend,
-
-        divisor,
 
         quotient,
 
         remainder: current,
 
-        steps
+        stages
 
     };
 }
 
 
 /*
-========================================
-بناء قائمة خطوات الطفل
-========================================
+==================================================
+إنشاء الخطوات التي يجب أن يحلها الطفل
+==================================================
 */
 
-function createStudentSteps(problem) {
+function buildStudentSteps(data) {
 
-    const result =
-        buildDivisionSteps(
-            problem.dividend,
-            problem.divisor
-        );
-
-    const studentSteps = [];
-
-    result.steps.forEach((step, index) => {
-
-        studentSteps.push({
-
-            type: "quotient",
-
-            value: step.quotientDigit,
-
-            divisionStep: index,
-
-            text:
-                `${step.current} ÷ ${problem.divisor} = ؟`
-
-        });
+    const steps = [];
 
 
-        studentSteps.push({
-
-            type: "product",
-
-            value: step.product,
-
-            divisionStep: index,
-
-            text:
-                `${step.quotientDigit} × ${problem.divisor} = ؟`
-
-        });
+    data.stages.forEach(
+        (stage, stageIndex) => {
 
 
-        studentSteps.push({
+            /*
+            1 — رقم حاصل القسمة
+            */
 
-            type: "remainder",
+            steps.push({
 
-            value: step.remainder,
+                type: "quotient",
 
-            divisionStep: index,
+                stageIndex,
 
-            text:
-                `${step.current} − ${step.product} = ؟`
+                answer:
+                    stage.quotientDigit,
 
-        });
+                text:
+                    `${stage.current} ÷ ` +
+                    `${currentProblem.divisor} = ؟`
 
-    });
+            });
 
-    return {
 
-        result,
+            /*
+            2 — حاصل الضرب
+            */
 
-        studentSteps
+            steps.push({
 
-    };
+                type: "product",
+
+                stageIndex,
+
+                answer:
+                    stage.product,
+
+                text:
+                    `${stage.quotientDigit} × ` +
+                    `${currentProblem.divisor} = ؟`
+
+            });
+
+
+            /*
+            3 — نتيجة الطرح
+            */
+
+            steps.push({
+
+                type: "remainder",
+
+                stageIndex,
+
+                answer:
+                    stage.remainder,
+
+                text:
+                    `${stage.current} − ` +
+                    `${stage.product} = ؟`
+
+            });
+
+        }
+    );
+
+
+    return steps;
 }
 
 
 /*
-========================================
-إنشاء خلية رقم
-========================================
+==================================================
+إنشاء خلية
+==================================================
 */
 
-function createCell(value = "") {
+function makeCell(text = "") {
 
     const cell =
         document.createElement("div");
 
-    cell.className = "cell";
+    cell.className =
+        "work-cell";
 
     cell.textContent =
-        value === null ||
-        value === undefined
-            ? ""
-            : value;
+        text;
 
     return cell;
 }
 
 
 /*
-========================================
+==================================================
 رسم رأس القسمة
-========================================
+
+2572 | 3
+     |---
+       857
+==================================================
 */
 
-function renderHeader(problem, result) {
-
-    board.innerHTML = "";
-
-    const top =
-        document.createElement("div");
-
-    top.className =
-        "division-top";
+function renderHeader() {
 
     const dividend =
+        String(
+            currentProblem.dividend
+        );
+
+
+    const dividendLength =
+        dividend.length;
+
+
+    const cellSize =
+        parseInt(
+            getComputedStyle(board)
+                .getPropertyValue(
+                    "--cell"
+                )
+        );
+
+
+    const dividerX =
+        dividendLength *
+        cellSize;
+
+
+    /*
+    الرأس
+    */
+
+    const head =
         document.createElement("div");
 
-    dividend.className =
+    head.className =
+        "division-head";
+
+
+    /*
+    المقسوم
+    */
+
+    const dividendBox =
+        document.createElement("div");
+
+    dividendBox.className =
         "dividend";
 
-    String(problem.dividend)
-        .split("")
-        .forEach((digit, index) => {
 
-            const cell =
-                document.createElement("div");
+    [...dividend].forEach(
+        (digit, index) => {
 
-            cell.className =
-                "digit";
+            const d =
+                document.createElement(
+                    "div"
+                );
 
-            cell.textContent =
+            d.className =
+                "dividend-digit";
+
+            d.textContent =
                 digit;
 
-            /*
-            تخزين رقم المقسوم
-            حتى نستطيع إظهار سهم الإنزال
-            من الرقم نفسه.
-            */
-
-            cell.dataset.index =
+            d.dataset.index =
                 index;
 
-            dividend.appendChild(cell);
+            dividendBox.appendChild(d);
 
-        });
+        }
+    );
 
 
-    const symbol =
+    head.appendChild(
+        dividendBox
+    );
+
+
+    /*
+    الخط العمودي
+    */
+
+    const vertical =
         document.createElement("div");
 
-    symbol.className =
-        "division-symbol";
+    vertical.className =
+        "vertical-line";
 
+    vertical.style.left =
+        `${dividerX}px`;
+
+    head.appendChild(
+        vertical
+    );
+
+
+    /*
+    المقسوم عليه
+    */
 
     const divisor =
         document.createElement("div");
@@ -451,15 +566,43 @@ function renderHeader(problem, result) {
         "divisor";
 
     divisor.textContent =
-        problem.divisor;
+        currentProblem.divisor;
 
-    symbol.appendChild(divisor);
+    divisor.style.left =
+        `${dividerX + 12}px`;
+
+    head.appendChild(
+        divisor
+    );
 
 
-    top.appendChild(dividend);
-    top.appendChild(symbol);
+    /*
+    الخط الأفقي
+    */
 
-    board.appendChild(top);
+    const horizontal =
+        document.createElement("div");
+
+    horizontal.className =
+        "horizontal-line";
+
+    horizontal.style.left =
+        `${dividerX}px`;
+
+    horizontal.style.top =
+        `52px`;
+
+    horizontal.style.width =
+        `${Math.max(
+            80,
+            String(currentProblem.divisor).length *
+            cellSize +
+            55
+        )}px`;
+
+    head.appendChild(
+        horizontal
+    );
 
 
     /*
@@ -472,344 +615,516 @@ function renderHeader(problem, result) {
     quotient.className =
         "quotient";
 
-    String(result.quotient)
-        .split("")
-        .forEach(digit => {
+    quotient.style.left =
+        `${dividerX + 12}px`;
 
-            const cell =
-                document.createElement("div");
 
-            cell.className =
-                "q-digit";
+    const quotientLength =
+        divisionData.quotient.length;
 
-            cell.textContent =
-                digit;
 
-            quotient.appendChild(cell);
+    for (
+        let i = 0;
+        i < quotientLength;
+        i++
+    ) {
 
-        });
+        const q =
+            document.createElement(
+                "div"
+            );
 
-    board.appendChild(quotient);
+        q.className =
+            "quotient-digit";
+
+        q.dataset.position =
+            i;
+
+        /*
+        لا نظهر النتيجة كاملة.
+        تظهر الأرقام تدريجيًا.
+        */
+
+        q.textContent = "";
+
+
+        quotient.appendChild(q);
+
+    }
+
+
+    head.appendChild(
+        quotient
+    );
+
+
+    board.appendChild(
+        head
+    );
 }
 
 
 /*
-========================================
-إنشاء سطر خطوات فارغ
-========================================
+==================================================
+وضع رقم في حاصل القسمة
+==================================================
 */
 
-function createStepRow(text, startColumn) {
+function putQuotientDigit(
+    stageIndex,
+    digit
+) {
 
-    const row =
-        document.createElement("div");
-
-    row.className =
-        "division-step";
-
-    const totalColumns =
-        Math.max(
-            currentProblem.dividend.toString().length + 2,
-            7
+    const quotientDigits =
+        board.querySelectorAll(
+            ".quotient-digit"
         );
 
-    row.style.setProperty(
-        "--columns",
-        totalColumns
-    );
 
-    for (let i = 0; i < totalColumns; i++) {
+    if (
+        quotientDigits[stageIndex]
+    ) {
+
+        quotientDigits[
+            stageIndex
+        ].textContent =
+            digit;
+
+    }
+}
+
+
+/*
+==================================================
+حساب موضع بداية الرقم
+==================================================
+*/
+
+function getRightAlignedStart(
+    text
+) {
+
+    const dividendLength =
+        String(
+            currentProblem.dividend
+        ).length;
+
+
+    return (
+        dividendLength -
+        String(text).length
+    );
+}
+
+
+/*
+==================================================
+رسم صف
+==================================================
+*/
+
+function renderRow(
+    container,
+    text,
+    start
+) {
+
+    const row =
+        document.createElement(
+            "div"
+        );
+
+    row.className =
+        "work-row";
+
+
+    const total =
+        String(
+            currentProblem.dividend
+        ).length;
+
+
+    for (
+        let i = 0;
+        i < total;
+        i++
+    ) {
 
         row.appendChild(
-            createCell("")
+            makeCell()
         );
 
     }
 
-    /*
-    وضع النص في الخلايا
-    */
 
-    const chars =
-        String(text).split("");
+    [...String(text)].forEach(
+        (char, index) => {
 
-    chars.forEach((char, i) => {
+            const pos =
+                start + index;
 
-        const column =
-            startColumn + i;
 
-        if (
-            column >= 0 &&
-            column < row.children.length
-        ) {
+            if (
+                row.children[pos]
+            ) {
 
-            row.children[column]
-                .textContent = char;
+                row.children[pos]
+                    .textContent =
+                    char;
+
+            }
 
         }
+    );
 
-    });
+
+    container.appendChild(
+        row
+    );
+
 
     return row;
 }
 
 
 /*
-========================================
-إضافة خط تحت عملية الطرح
-========================================
+==================================================
+خط الطرح
+==================================================
 */
 
-function createLine(width, startColumn) {
+function renderLine(
+    container,
+    length,
+    start
+) {
 
     const line =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
     line.className =
-        "step-line";
+        "work-line";
+
+
+    const cellSize =
+        parseInt(
+            getComputedStyle(board)
+                .getPropertyValue(
+                    "--cell"
+                )
+        );
+
 
     line.style.width =
-        `${width * 48}px`;
+        `${length * cellSize}px`;
+
 
     line.style.marginLeft =
-        `${startColumn * 48}px`;
+        `${start * cellSize}px`;
 
-    return line;
+
+    container.appendChild(
+        line
+    );
 }
 
 
 /*
-========================================
-إظهار سهم إنزال الرقم
-
-السهم يكون مرتبطًا بالرقم الأصلي
-في المقسوم.
-========================================
+==================================================
+السهم من الرقم الأصلي
+==================================================
 */
 
-function showBringDownArrow(index) {
+function renderArrow(
+    container,
+    sourceIndex
+) {
 
-    const dividend =
-        board.querySelector(".dividend");
-
-    if (!dividend) return;
-
-    const originalDigit =
-        dividend.querySelector(
-            `[data-index="${index}"]`
+    const cellSize =
+        parseInt(
+            getComputedStyle(board)
+                .getPropertyValue(
+                    "--cell"
+                )
         );
 
-    if (!originalDigit) return;
 
     const arrow =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
     arrow.className =
         "bring-arrow";
 
+
     arrow.textContent =
         "↓";
 
-    /*
-    موضع السهم تحت نفس الرقم
-    */
-
-    const left =
-        originalDigit.offsetLeft +
-        originalDigit.offsetWidth / 2 -
-        16;
-
-    const top =
-        originalDigit.offsetTop +
-        48;
 
     arrow.style.left =
-        `${left}px`;
+        `${sourceIndex * cellSize}px`;
+
+
+    /*
+    يوضع السهم تحت المقسوم
+    */
 
     arrow.style.top =
-        `${top}px`;
+        `42px`;
 
-    board.appendChild(arrow);
 
-    setTimeout(() => {
-
-        arrow.remove();
-
-    }, 1800);
+    container.appendChild(
+        arrow
+    );
 }
 
 
 /*
-========================================
-عرض خطوات العملية التي تم إنجازها
-========================================
+==================================================
+رسم العمل الذي تم إنجازه
+==================================================
 */
 
-function renderCompletedWork() {
+function renderWork() {
 
     /*
-    نعيد رسم الرأس
+    نحافظ على الرأس
     */
 
-    const result =
-        currentProblemData.result;
+    board.innerHTML = "";
 
-    renderHeader(
-        currentProblem,
-        result
-    );
+    renderHeader();
 
 
-    const stepsContainer =
-        document.createElement("div");
+    const work =
+        document.createElement(
+            "div"
+        );
 
-    stepsContainer.className =
-        "steps";
+    work.className =
+        "work-area";
+
 
     board.appendChild(
-        stepsContainer
+        work
     );
 
 
-    const completed =
-        currentStepIndex;
+    /*
+    نرسم المراحل التي أجاب عنها الطفل
+    */
+
+    let lastStage =
+        -1;
 
 
     for (
         let i = 0;
-        i < completed;
+        i < currentStep;
         i++
     ) {
 
         const studentStep =
-            currentSteps[i];
+            studentSteps[i];
 
-        const mathStep =
-            currentProblemData
-                .result.steps[
-                    studentStep.divisionStep
-                ];
+
+        const stage =
+            divisionData.stages[
+                studentStep.stageIndex
+            ];
 
 
         /*
-        لا نكرر نفس المرحلة أكثر من اللازم
+        إذا بدأنا مرحلة جديدة
         */
 
         if (
-            studentStep.type === "quotient"
+            studentStep.stageIndex !==
+            lastStage
         ) {
 
-            /*
-            حاصل القسمة موجود في الأعلى.
-            */
+            lastStage =
+                studentStep.stageIndex;
 
-            continue;
         }
 
 
+        /*
+        رقم حاصل القسمة
+        */
+
         if (
-            studentStep.type === "product"
+            studentStep.type ===
+            "quotient"
         ) {
 
-            const current =
-                mathStep.current;
+            putQuotientDigit(
+                studentStep.stageIndex,
+                studentStep.answer
+            );
 
-            const product =
-                mathStep.product;
+        }
 
+
+        /*
+        بعد إدخال حاصل الضرب
+        */
+
+        if (
+            studentStep.type ===
+            "product"
+        ) {
 
             /*
-            وضع حاصل الضرب تحت العدد الحالي
+            العدد الذي تتم عليه القسمة
             */
 
             const currentText =
-                String(current);
-
-            const productText =
-                String(product);
+                String(
+                    stage.current
+                );
 
 
             const start =
-                Math.max(
-                    0,
-                    currentProblem.dividend
-                        .toString()
-                        .length -
-                    currentText.length
+                getRightAlignedStart(
+                    currentText
                 );
 
 
-            const row =
-                createStepRow(
-                    productText,
-                    start
-                );
-
-            stepsContainer.appendChild(row);
-
-
-            const line =
-                createLine(
-                    productText.length,
-                    start
-                );
-
-            stepsContainer.appendChild(line);
-
-            continue;
-        }
-
-
-        if (
-            studentStep.type === "remainder"
-        ) {
-
-            const remainder =
-                mathStep.remainder;
-
-
-            const current =
-                mathStep.current;
-
-
-            const product =
-                mathStep.product;
-
-
-            const text =
-                String(remainder);
-
-
-            const start =
-                Math.max(
-                    0,
-                    currentProblem.dividend
-                        .toString()
-                        .length -
-                    text.length
-                );
-
-
-            const row =
-                createStepRow(
-                    text,
-                    start
-                );
-
-            stepsContainer.appendChild(row);
+            renderRow(
+                work,
+                currentText,
+                start
+            );
 
 
             /*
-            إذا كان هناك رقم سيتم إنزاله،
-            نضع السهم من الرقم الأصلي.
+            علامة الطرح
+            */
+
+            const minus =
+                document.createElement(
+                    "div"
+                );
+
+            minus.className =
+                "minus";
+
+            minus.textContent =
+                "−";
+
+            minus.style.left =
+                `${start * 48 - 27}px`;
+
+
+            work.appendChild(
+                minus
+            );
+
+
+            /*
+            حاصل الضرب
+            */
+
+            const productText =
+                String(
+                    stage.product
+                );
+
+
+            const productStart =
+                getRightAlignedStart(
+                    productText
+                );
+
+
+            renderRow(
+                work,
+                productText,
+                productStart
+            );
+
+
+            renderLine(
+                work,
+                productText.length,
+                productStart
+            );
+
+        }
+
+
+        /*
+        بعد نتيجة الطرح
+        */
+
+        if (
+            studentStep.type ===
+            "remainder"
+        ) {
+
+            const remainderText =
+                String(
+                    stage.remainder
+                );
+
+
+            const remainderStart =
+                getRightAlignedStart(
+                    remainderText
+                );
+
+
+            renderRow(
+                work,
+                remainderText,
+                remainderStart
+            );
+
+
+            /*
+            إذا بقي رقم في المقسوم
+            يتم إنزاله بسهم
             */
 
             if (
-                mathStep.broughtDigit !== null
+                stage.nextDigit !== null
             ) {
 
-                showBringDownArrow(
-                    mathStep.index + 1
+                renderArrow(
+                    work,
+                    stage.sourceIndex + 1
+                );
+
+
+                /*
+                إظهار العدد الجديد
+                */
+
+                const nextCurrent =
+                    stage.remainder * 10 +
+                    stage.nextDigit;
+
+
+                const nextText =
+                    String(
+                        nextCurrent
+                    );
+
+
+                const nextStart =
+                    getRightAlignedStart(
+                        nextText
+                    );
+
+
+                renderRow(
+                    work,
+                    nextText,
+                    nextStart
                 );
 
             }
@@ -817,68 +1132,40 @@ function renderCompletedWork() {
         }
 
     }
-
 }
 
 
 /*
-========================================
-رسم السؤال الحالي
-========================================
+==================================================
+تحديث سؤال الطفل
+==================================================
 */
 
-let currentProblemData = null;
-
-function renderCurrentQuestion() {
-
-    currentProblemData =
-        createStudentSteps(
-            currentProblem
-        );
-
-    currentSteps =
-        currentProblemData.studentSteps;
-
-
-    currentStepIndex = 0;
-
-    renderCompletedWork();
-
-    updateStepUI();
-}
-
-
-/*
-========================================
-تحديث واجهة الخطوة
-========================================
-*/
-
-function updateStepUI() {
+function updateUI() {
 
     if (
-        currentStepIndex >=
-        currentSteps.length
+        currentStep >=
+        studentSteps.length
     ) {
 
-        finishQuestion();
+        completeQuestion();
 
         return;
     }
 
 
     const step =
-        currentSteps[
-            currentStepIndex
+        studentSteps[
+            currentStep
         ];
 
 
     stepLabel.textContent =
-        `الخطوة ${currentStepIndex + 1} من ${currentSteps.length}`;
+        `الخطوة ${currentStep + 1} من ${studentSteps.length}`;
 
 
     instruction.textContent =
-        getInstruction(step);
+        step.text;
 
 
     answerInput.value = "";
@@ -887,71 +1174,25 @@ function updateStepUI() {
 
 
     message.textContent = "";
-    message.className = "message";
+
+    message.className =
+        "message";
 }
 
 
 /*
-========================================
-النص التعليمي
-========================================
-*/
-
-function getInstruction(step) {
-
-    const mathStep =
-        currentProblemData
-            .result
-            .steps[
-                step.divisionStep
-            ];
-
-
-    if (step.type === "quotient") {
-
-        return (
-            `${mathStep.current} ÷ ` +
-            `${currentProblem.divisor} = ؟`
-        );
-    }
-
-
-    if (step.type === "product") {
-
-        return (
-            `${mathStep.quotientDigit} × ` +
-            `${currentProblem.divisor} = ؟`
-        );
-    }
-
-
-    if (step.type === "remainder") {
-
-        return (
-            `${mathStep.current} − ` +
-            `${mathStep.product} = ؟`
-        );
-    }
-
-
-    return "اكتب الإجابة";
-}
-
-
-/*
-========================================
-التحقق
-========================================
+==================================================
+التحقق من الإجابة
+==================================================
 */
 
 function checkAnswer() {
 
-    const value =
-        Number(answerInput.value);
+    const input =
+        answerInput.value.trim();
 
-    if (
-        answerInput.value.trim() === ""
-    ) {
+
+    if (input === "") {
 
         message.textContent =
             "اكتب الإجابة أولاً.";
@@ -959,20 +1200,28 @@ function checkAnswer() {
         message.className =
             "message error";
 
+        answerInput.focus();
+
         return;
     }
 
 
+    const value =
+        Number(input);
+
+
     const correct =
-        currentSteps[
-            currentStepIndex
-        ].value;
+        studentSteps[
+            currentStep
+        ].answer;
 
 
-    if (value !== correct) {
+    if (
+        value !== correct
+    ) {
 
         message.textContent =
-            "❌ حاول مرة أخرى.";
+            "❌ إجابة غير صحيحة، حاول مرة أخرى.";
 
         message.className =
             "message error";
@@ -984,7 +1233,7 @@ function checkAnswer() {
 
 
     /*
-    إجابة صحيحة
+    صحيح
     */
 
     message.textContent =
@@ -994,36 +1243,36 @@ function checkAnswer() {
         "message success";
 
 
-    currentStepIndex++;
+    currentStep++;
 
+
+    /*
+    إظهار التغيير
+    */
 
     setTimeout(() => {
 
-        renderCompletedWork();
+        renderWork();
 
-        updateStepUI();
+        updateUI();
 
-    }, 600);
+    }, 500);
 }
 
 
 /*
-========================================
-انتهاء العملية
-========================================
+==================================================
+إنهاء العملية
+==================================================
 */
 
-function finishQuestion() {
+function completeQuestion() {
 
     score++;
 
 
-    /*
-    إذا انتهت العملية
-    */
-
     message.textContent =
-        "🎉 أحسنت! أكملت القسمة.";
+        "🎉 أحسنت! أكملت العملية.";
 
     message.className =
         "message success";
@@ -1044,29 +1293,27 @@ function finishQuestion() {
 
         }
 
-    }, 1100);
+    }, 1000);
 }
 
 
 /*
-========================================
+==================================================
 عملية جديدة
-========================================
+==================================================
 */
 
 function nextQuestion() {
 
     currentQuestion++;
 
+
     questionNumber.textContent =
         currentQuestion;
 
 
-    /*
-    لمنع تكرار العملية
-    */
-
     let attempts = 0;
+
 
     do {
 
@@ -1076,10 +1323,10 @@ function nextQuestion() {
         attempts++;
 
     } while (
-        attempts < 30 &&
         usedProblems.has(
             `${currentProblem.dividend}/${currentProblem.divisor}`
-        )
+        ) &&
+        attempts < 100
     );
 
 
@@ -1088,33 +1335,51 @@ function nextQuestion() {
     );
 
 
-    renderCurrentQuestion();
+    startProblem();
 }
 
 
 /*
-========================================
-العمليات المستخدمة
-========================================
+==================================================
+بدء العملية
+==================================================
 */
 
-const usedProblems =
-    new Set();
+function startProblem() {
+
+    divisionData =
+        buildDivision(
+            currentProblem.dividend,
+            currentProblem.divisor
+        );
+
+
+    /*
+    الخطوات التي سيجيب عنها الطفل
+    */
+
+    studentSteps =
+        buildStudentSteps(
+            divisionData
+        );
+
+
+    currentStep = 0;
+
+
+    renderWork();
+
+    updateUI();
+}
 
 
 /*
-========================================
+==================================================
 إنهاء المستوى
-========================================
+==================================================
 */
 
 function finishLevel() {
-
-    const percentage =
-        Math.round(
-            (score / TOTAL_QUESTIONS) * 100
-        );
-
 
     finishCard.style.display =
         "flex";
@@ -1127,12 +1392,11 @@ function finishLevel() {
         finishTitle.textContent =
             "🏆 ممتاز!";
 
-        finishText.textContent =
-            `أجبت عن ${score} من ${TOTAL_QUESTIONS} بشكل صحيح.`;
 
-        /*
-        فتح المستوى التالي
-        */
+        finishText.textContent =
+            `أجبت عن ${score} من ${TOTAL_QUESTIONS} بشكل صحيح. ` +
+            `تم فتح المستوى التالي.`;
+
 
         let unlocked =
             Number(
@@ -1157,15 +1421,14 @@ function finishLevel() {
 
         setTimeout(() => {
 
-            if (level < MAX_LEVEL) {
+            if (
+                level < MAX_LEVEL
+            ) {
 
                 location.href =
                     `division.html?level=${level + 1}`;
 
             } else {
-
-                finishCard.style.display =
-                    "none";
 
                 location.href =
                     "division-levels.html";
@@ -1174,65 +1437,65 @@ function finishLevel() {
 
         }, 2500);
 
+
     } else {
 
         finishTitle.textContent =
             "انتهى المستوى";
 
+
         finishText.textContent =
-            `نتيجتك: ${score}/${TOTAL_QUESTIONS} (${percentage}%).`;
+            `نتيجتك ${score}/${TOTAL_QUESTIONS}. ` +
+            `حاول مرة أخرى لإتقان المستوى.`;
+
 
         setTimeout(() => {
 
             finishCard.style.display =
                 "none";
 
-            startGame();
+
+            score = 0;
+
+            currentQuestion = 1;
+
+            usedProblems.clear();
+
+
+            questionNumber.textContent =
+                currentQuestion;
+
+
+            currentProblem =
+                generateProblem();
+
+
+            usedProblems.add(
+                `${currentProblem.dividend}/${currentProblem.divisor}`
+            );
+
+
+            startProblem();
 
         }, 2500);
+
     }
 }
 
 
 /*
-========================================
-بدء اللعبة
-========================================
+==================================================
+متغير الخطوات
+==================================================
 */
 
-function startGame() {
-
-    currentQuestion = 1;
-
-    score = 0;
-
-    usedProblems.clear();
-
-
-    questionNumber.textContent =
-        currentQuestion;
-
-    levelNumber.textContent =
-        level;
-
-
-    currentProblem =
-        generateProblem();
-
-
-    usedProblems.add(
-        `${currentProblem.dividend}/${currentProblem.divisor}`
-    );
-
-
-    renderCurrentQuestion();
-}
+let studentSteps = [];
 
 
 /*
-========================================
+==================================================
 زر التحقق
-========================================
+==================================================
 */
 
 checkButton.addEventListener(
@@ -1242,9 +1505,9 @@ checkButton.addEventListener(
 
 
 /*
-========================================
-Enter للتحقق
-========================================
+==================================================
+Enter
+==================================================
 */
 
 answerInput.addEventListener(
@@ -1264,9 +1527,27 @@ answerInput.addEventListener(
 
 
 /*
-========================================
-بدء التطبيق
-========================================
+==================================================
+بدء اللعبة
+==================================================
 */
 
-startGame();
+levelNumber.textContent =
+    level;
+
+currentQuestion = 1;
+
+questionNumber.textContent =
+    currentQuestion;
+
+
+currentProblem =
+    generateProblem();
+
+
+usedProblems.add(
+    `${currentProblem.dividend}/${currentProblem.divisor}`
+);
+
+
+startProblem();
