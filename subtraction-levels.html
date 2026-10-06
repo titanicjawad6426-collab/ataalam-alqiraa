@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>مستويات الطرح</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            text-align: center;
+        }
+
+        .page-header {
+            background: linear-gradient(
+                135deg,
+                #4facfe,
+                #00c6ff
+            );
+
+            color: white;
+
+            padding: 35px 20px;
+
+            border-radius: 0 0 35px 35px;
+        }
+
+        .page-header h1 {
+            margin: 0 0 10px;
+            font-size: 34px;
+        }
+
+        .page-header p {
+            margin: 0;
+            font-size: 21px;
+        }
+
+        .levels-container {
+
+            width: min(
+                92%,
+                600px
+            );
+
+            margin: 30px auto;
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    2,
+                    minmax(0, 1fr)
+                );
+
+            gap: 16px;
+        }
+
+        .level-button {
+
+            border: none;
+
+            min-height: 75px;
+
+            border-radius: 20px;
+
+            font-size: 22px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            background: #2196f3;
+
+            color: white;
+
+            box-shadow:
+                0 5px 12px
+                rgba(0,0,0,.15);
+
+            transition:
+                transform .15s,
+                opacity .15s;
+        }
+
+        .level-button:active {
+
+            transform: scale(.96);
+
+        }
+
+        .level-button.locked {
+
+            background: #bfc5cc;
+
+            color: #666;
+
+            cursor: not-allowed;
+
+            opacity: .75;
+
+        }
+
+        .back-button {
+
+            display: inline-block;
+
+            margin: 10px auto 30px;
+
+            padding: 14px 30px;
+
+            border-radius: 18px;
+
+            background: #555;
+
+            color: white;
+
+            text-decoration: none;
+
+            font-size: 19px;
+        }
+
+        @media (max-width: 500px) {
+
+            .page-header h1 {
+                font-size: 29px;
+            }
+
+            .levels-container {
+                gap: 12px;
+            }
+
+            .level-button {
+                min-height: 68px;
+                font-size: 19px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <header class="page-header">
+
+        <h1>
+            ➖ تعلم الطرح
+        </h1>
+
+        <p>
+            اختر المستوى
+        </p>
+
+    </header>
+
+
+    <main>
+
+        <div
+            id="levelsContainer"
+            class="levels-container"
+        ></div>
+
+
+        <a
+            href="math.html"
+            class="back-button"
+        >
+            ↩ العودة إلى الرياضيات
+        </a>
+
+    </main>
+
+
+    <script>
+
+        const MAX_LEVEL = 10;
+
+        const PROGRESS_KEY =
+            "subtractionUnlockedLevelV1";
+
+
+        let unlockedLevel =
+            parseInt(
+                localStorage.getItem(
+                    PROGRESS_KEY
+                ) || "1",
+                10
+            );
+
+
+        if (
+            unlockedLevel < 1
+        ) {
+
+            unlockedLevel = 1;
+
+        }
+
+
+        if (
+            unlockedLevel > MAX_LEVEL
+        ) {
+
+            unlockedLevel =
+                MAX_LEVEL;
+
+        }
+
+
+        const container =
+            document.getElementById(
+                "levelsContainer"
+            );
+
+
+        for (
+            let level = 1;
+            level <= MAX_LEVEL;
+            level++
+        ) {
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+
+            button.className =
+                "level-button";
+
+
+            if (
+                level <= unlockedLevel
+            ) {
+
+                button.textContent =
+                    `المستوى ${level}`;
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        window.location.href =
+                            `subtraction.html?level=${level}`;
+
+                    }
+                );
+
+            }
+
+            else {
+
+                button.textContent =
+                    `🔒 المستوى ${level}`;
+
+                button.classList.add(
+                    "locked"
+                );
+
+                button.disabled =
+                    true;
+
+            }
+
+
+            container.appendChild(
+                button
+            );
+
+        }
+
+    </script>
+
+</body>
+
+  </html>
