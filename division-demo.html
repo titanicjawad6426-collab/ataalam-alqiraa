@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>القسمة المطولة التفاعلية</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Tahoma, sans-serif;
+            background: #f5f7fb;
+            color: #111827;
+        }
+
+        .page {
+            width: min(900px, 100%);
+            margin: auto;
+            padding: 18px 12px 40px;
+        }
+
+        /* =========================
+           العنوان
+        ========================= */
+
+        .top-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .top-title h1 {
+            margin: 0;
+            font-size: clamp(24px, 5vw, 36px);
+        }
+
+        .top-title p {
+            margin: 10px 0 0;
+            color: #64748b;
+            font-size: 18px;
+        }
+
+        /* =========================
+           منطقة القسمة
+        ========================= */
+
+        .division-area {
+            width: min(700px, 100%);
+            margin: auto;
+            overflow-x: auto;
+            padding: 20px 5px 30px;
+        }
+
+        /*
+            شبكة العملية:
+
+            العمود 0 = 2
+            العمود 1 = 5
+            العمود 2 = 7
+            العمود 3 = 2
+
+            العمود 4 = خط القسمة
+            العمود 5 = الخارج / الناتج
+        */
+
+        .division {
+            --cell: clamp(52px, 11vw, 82px);
+
+            display: grid;
+
+            grid-template-columns:
+                var(--cell)
+                var(--cell)
+                var(--cell)
+                var(--cell)
+                12px
+                minmax(170px, 1fr);
+
+            grid-auto-rows: 58px;
+
+            width: max-content;
+            min-width: 100%;
+            direction: ltr;
+
+            position: relative;
+        }
+
+        /* =========================
+           الخانات الأصلية
+        ========================= */
+
+        .digit {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: clamp(32px, 7vw, 52px);
+            line-height: 1;
+
+            direction: ltr;
+        }
+
+        .original {
+            color: #111827;
+        }
+
+        /* =========================
+           خط القسمة
+        ========================= */
+
+        .division-line {
+            grid-column: 5;
+            grid-row: 1 / 9;
+
+            border-left: 4px solid #111827;
+
+            position: relative;
+        }
+
+        .division-line::after {
+            content: "";
+
+            position: absolute;
+
+            top: 58px;
+            left: 0;
+
+            width: calc(var(--cell) * 2.8);
+
+            border-top: 4px solid #111827;
+        }
+
+        /* =========================
+           المقسوم عليه
+        ========================= */
+
+        .divisor {
+            grid-column: 6;
+            grid-row: 1;
+
+            display: flex;
+            align-items: center;
+
+            padding-left: 25px;
+
+            color: #16a34a;
+
+            font-size: clamp(32px, 7vw, 52px);
+            font-weight: 600;
+        }
+
+        /* =========================
+           الناتج
+        ========================= */
+
+        .quotient {
+            grid-column: 6;
+            grid-row: 2;
+
+            display: flex;
+            align-items: center;
+
+            padding-left: 25px;
+
+            gap: 0;
+        }
+
+        .quotient-cell {
+            width: var(--cell);
+
+            height: 58px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: clamp(30px, 6vw, 48px);
+
+            color: #2563eb;
+        }
+
+        /* =========================
+           مربع الإدخال
+        ========================= */
+
+        .answer-input {
+            width: 44px;
+            height: 44px;
+
+            border: 3px solid #10b981;
+            border-radius: 10px;
+
+            outline: none;
+
+            text-align: center;
+
+            font-size: 30px;
+
+            color: #111827;
+
+            background: white;
+
+            padding: 0;
+        }
+
+        .answer-input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, .12);
+        }
+
+        .wrong {
+            animation: shake .25s;
+            border-color: #ef4444;
+        }
+
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        /* =========================
+           صفوف الطرح
+        ========================= */
+
+        .work-row {
+            display: contents;
+        }
+
+        .work-digit {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: clamp(30px, 6vw, 46px);
+        }
+
+        .red {
+            color: #dc2626;
+        }
+
+        .blue {
+            color: #2563eb;
+        }
+
+        .minus {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 30px;
+        }
+
+        /* =========================
+           الخطوط الأفقية
+        ========================= */
+
+        .sub-line {
+            position: absolute;
+
+            height: 3px;
+
+            background: #111827;
+        }
+
+        .line-1 {
+            left: 0;
+            top: 174px;
+            width: calc(var(--cell) * 2.8);
+        }
+
+        .line-2 {
+            left: 0;
+            top: 348px;
+            width: calc(var(--cell) * 2.8);
+        }
+
+        .line-3 {
+            left: calc(var(--cell) * 1.55);
+            top: 522px;
+            width: calc(var(--cell) * 2.1);
+        }
+
+        /* =========================
+           أسهم التنزيل
+        ========================= */
+
+        .arrow {
+            position: absolute;
+
+            width: 0;
+
+            border-left: 2px dashed #9333ea;
+
+            z-index: 3;
+        }
+
+        .arrow::after {
+            content: "";
+
+            position: absolute;
+
+            bottom: -1px;
+            left: -7px;
+
+            width: 0;
+            height: 0;
+
+            border-left: 7px solid transparent;
+            border-right: 7px solid transparent;
+            border-top: 13px solid #9333ea;
+        }
+
+        /*
+            السهم الأول:
+            من الرقم 7 الأصلي
+            إلى 7 التي تم تنزيلها
+        */
+
+        .arrow-1 {
+            left: calc(var(--cell) * 2.5);
+            top: 55px;
+            height: 150px;
+        }
+
+        /*
+            السهم الثاني:
+            من الرقم 2 الأصلي
+            إلى 2 التي تم تنزيلها
+        */
+
+        .arrow-2 {
+            left: calc(var(--cell) * 3.5);
+            top: 230px;
+            height: 150px;
+        }
+
+        /* =========================
+           الصفوف الخاصة بالعملية
+        ========================= */
+
+        .r-sub1 {
+            position: absolute;
+            top: 115px;
+            left: 0;
+
+            display: grid;
+
+            grid-template-columns:
+                var(--cell)
+                var(--cell)
+                var(--cell)
+                var(--cell);
+
+            width: calc(var(--cell) * 4);
+        }
+
+        .r-rem1 {
+            position: absolute;
+            top: 180px;
+            left: 0;
+
+            display: grid;
+
+            grid-template-columns:
+                var(--cell)
+                var(--cell)
+                var(--cell)
+                var(--cell);
+
+            width: calc(var(--cell) * 4);
+        }
+
+        .r-sub2 {
+            position: absolute;
+            top: 290px;
+            left: 0;
+
+            display: grid;
+
+            grid-template-columns:
+                var(--cell)
+                var(--cell)
+                var(--cell)
+                var(--cell);
+
+            width: calc(var(--cell) * 4);
+        }
+
+        .r-rem2 {
+            position: absolute;
+            top: 355px;
+            left: 0;
+
+            display: grid;
+
+            grid-template-columns:
+                var(--cell)
+                var(--cell)
+                var(--cell)
+                var(--cell);
+
+            width: calc(var(--cell) * 4);
+        }
+
+        .r-sub3 {
+            position: absolute;
+            top: 465px;
+            left: 0;
+
+            display: grid;
+
+            grid-template-columns:
+                var(--cell)
+                var(--cell)
+                var(--cell)
+                var(--cell);
+
+            width: calc(var(--cell) * 4);
+        }
+
+        .r-rem3 {
+            position: absolute;
+            top: 530px;
+            left: 0;
+
+            display: grid;
+
+            grid-template-columns:
+                var(--cell)
+                var(--cell)
+                var(--cell)
+                var(--cell);
+
+            width: calc(var(--cell) * 4);
+        }
+
+        /* =========================
+           الخانات الديناميكية
+        ========================= */
+
+        .dynamic {
+            width: var(--cell);
+
+            height: 58px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* =========================
+           بطاقة الخطوة
+        ========================= */
+
+        .step-card {
+            width: min(600px, 100%);
+
+            margin: 10px auto 0;
+
+            background: white;
+
+            border-radius: 28px;
+
+            padding: 28px 20px;
+
+            text-align: center;
+
+            box-shadow:
+                0 8px 30px rgba(15, 23, 42, .08);
+        }
+
+        .step-number {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .instruction {
+            margin: 14px 0;
+
+            font-size: 20px;
+
+            color: #334155;
+        }
+
+        .status {
+            min-height: 28px;
+
+            margin-top: 10px;
+
+            font-size: 16px;
+        }
+
+        .success {
+            color: #16a34a;
+        }
+
+        .error {
+            color: #dc2626;
+        }
+
+        .reset-btn {
+            margin-top: 16px;
+
+            padding: 11px 24px;
+
+            border: none;
+            border-radius: 12px;
+
+            background: #2563eb;
+            color: white;
+
+            font-size: 16px;
+
+            cursor: pointer;
+        }
+
+        .reset-btn:hover {
+            background: #1d4ed8;
+        }
+
+        /* =========================
+           إخفاء الخطوات التي لم تظهر
+        ========================= */
+
+        .hidden {
+            visibility: hidden;
+        }
+
+        /* =========================
+           الهاتف
+        ========================= */
+
+        @media (max-width: 600px) {
+
+            .page {
+                padding-left: 6px;
+                padding-right: 6px;
+            }
+
+            .division-area {
+                overflow-x: auto;
+            }
+
+            .division {
+                --cell: 55px;
+
+                margin: auto;
+            }
+
+            .step-card {
+                border-radius: 22px;
+                padding: 24px 14px;
+            }
+
+            .instruction {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <div class="top-title">
+        <h1>حل القسمة خطوة بخطوة</h1>
+        <p>أدخل كل رقم في مكانه داخل العملية</p>
+    </div>
+
+
+    <div class="division-area">
+
+        <div class="division" id="division">
+
+            <!-- الأرقام الأصلية -->
+            <div class="digit original" style="grid-column:1;grid-row:1;">2</div>
+            <div class="digit original" style="grid-column:2;grid-row:1;">5</div>
+            <div class="digit original" style="grid-column:3;grid-row:1;">7</div>
+            <div class="digit original" style="grid-column:4;grid-row:1;">2</div>
+
+
+            <!-- خط القسمة -->
+            <div class="division-line"></div>
+
+
+            <!-- المقسوم عليه -->
+            <div class="divisor">
+                3
+            </div>
+
+
+            <!-- الناتج -->
+            <div class="quotient">
+
+                <div class="quotient-cell" id="q1"></div>
+                <div class="quotient-cell" id="q2"></div>
+                <div class="quotient-cell" id="q3"></div>
+
+            </div>
+
+
+            <!-- الطرح الأول: 24 -->
+            <div class="r-sub1">
+
+                <div></div>
+
+                <div class="work-digit red">
+                    2
+                </div>
+
+                <div class="work-digit red">
+                    4
+                </div>
+
+                <div></div>
+
+            </div>
+
+
+            <!-- الباقي الأول: 01 -->
+            <div class="r-rem1">
+
+                <div></div>
+
+                <div class="work-digit blue">
+                    0
+                </div>
+
+                <div class="work-digit blue">
+                    1
+                </div>
+
+                <div></div>
+
+            </div>
+
+
+            <!-- الطرح الثاني: 17 - 15 -->
+
+            <div class="r-sub2">
+
+                <div></div>
+
+                <div class="work-digit red">
+                    1
+                </div>
+
+                <div class="work-digit red">
+                    5
+                </div>
+
+                <div></div>
+
+            </div>
+
+
+            <!-- الباقي الثاني: 02 -->
+            <div class="r-rem2">
+
+                <div></div>
+
+                <div class="work-digit blue">
+                    0
+                </div>
+
+                <div class="work-digit blue">
+                    2
+                </div>
+
+                <div></div>
+
+            </div>
+
+
+            <!-- الطرح الثالث: 21 -->
+            <div class="r-sub3">
+
+                <div></div>
+                <div></div>
+
+                <div class="work-digit red">
+                    2
+                </div>
+
+                <div class="work-digit red">
+                    1
+                </div>
+
+            </div>
+
+
+            <!-- الباقي النهائي: 01 -->
+            <div class="r-rem3">
+
+                <div></div>
+                <div></div>
+
+                <div class="work-digit blue">
+                    0
+                </div>
+
+                <div class="work-digit blue">
+                    1
+                </div>
+
+            </div>
+
+
+            <!-- خطوط الطرح -->
+            <div class="sub-line line-1"></div>
+            <div class="sub-line line-2"></div>
+            <div class="sub-line line-3"></div>
+
+
+            <!-- سهم تنزيل 7 -->
+            <div class="arrow arrow-1"></div>
+
+            <!-- سهم تنزيل 2 -->
+            <div class="arrow arrow-2"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- بطاقة التفاعل -->
+
+    <div class="step-card">
+
+        <div class="step-number" id="stepNumber">
+            الخطوة 1 من 6
+        </div>
+
+        <div class="instruction" id="instruction">
+            أدخل الرقم الأول في ناتج القسمة
+        </div>
+
+        <div id="inputArea"></div>
+
+        <div class="status" id="status"></div>
+
+        <button class="reset-btn" id="resetBtn">
+            إعادة المحاولة
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    /*
+     * ==========================================
+     * إعداد العملية
+     * ==========================================
+     */
+
+    const steps = [
+
+        {
+            answer: "8",
+            target: "q1",
+            text: "أدخل الرقم الأول في ناتج القسمة"
+        },
+
+        {
+            answer: "5",
+            target: "q2",
+            text: "أدخل الرقم التالي في ناتج القسمة"
+        },
+
+        {
+            answer: "7",
+            target: "q3",
+            text: "أدخل الرقم الأخير في ناتج القسمة"
+        },
+
+        {
+            answer: "2",
+            target: "download7",
+            text: "أدخل الرقم المُنزَل"
+        },
+
+        {
+            answer: "2",
+            target: "download2",
+            text: "أدخل الرقم المُنزَل الأخير"
+        },
+
+        {
+            answer: "1",
+            target: "final",
+            text: "أدخل الباقي النهائي"
+        }
+
+    ];
+
+
+    let currentStep = 0;
+
+
+    const stepNumber =
+        document.getElementById("stepNumber");
+
+    const instruction =
+        document.getElementById("instruction");
+
+    const inputArea =
+        document.getElementById("inputArea");
+
+    const status =
+        document.getElementById("status");
+
+    const resetBtn =
+        document.getElementById("resetBtn");
+
+
+    /*
+     * ==========================================
+     * إنشاء مربع الإدخال
+     * ==========================================
+     */
+
+    function createInput() {
+
+        inputArea.innerHTML = "";
+
+        const input =
+            document.createElement("input");
+
+        input.type = "text";
+
+        input.inputMode = "numeric";
+
+        input.maxLength = 1;
+
+        input.className = "answer-input";
+
+        input.autocomplete = "off";
+
+        input.setAttribute(
+            "aria-label",
+            "أدخل الرقم"
+        );
+
+        inputArea.appendChild(input);
+
+        input.focus();
+
+
+        input.addEventListener(
+            "input",
+            function () {
+
+                /*
+                 * السماح بالأرقام فقط
+                 */
+
+                this.value =
+                    this.value.replace(
+                        /[^0-9]/g,
+                        ""
+                    );
+
+
+                if (this.value.length === 0) {
+                    return;
+                }
+
+
+                const expected =
+                    steps[currentStep].answer;
+
+
+                /*
+                 * الإجابة صحيحة
+                 */
+
+                if (this.value === expected) {
+
+                    acceptAnswer(
+                        input
+                    );
+
+                }
+
+                /*
+                 * الإجابة خاطئة
+                 */
+
+                else {
+
+                    this.classList.add(
+                        "wrong"
+                    );
+
+                    status.textContent =
+                        "حاول مرة أخرى";
+
+                    status.className =
+                        "status error";
+
+                    setTimeout(
+                        () => {
+
+                            input.value = "";
+
+                            input.classList.remove(
+                                "wrong"
+                            );
+
+                            input.focus();
+
+                        },
+                        400
+                    );
+                }
+
+            }
+        );
+
+    }
+
+
+    /*
+     * ==========================================
+     * قبول الإجابة
+     * ==========================================
+     */
+
+    function acceptAnswer(input) {
+
+        const step =
+            steps[currentStep];
+
+
+        inputArea.innerHTML = "";
+
+
+        /*
+         * وضع الرقم في العملية
+         */
+
+        if (step.target === "q1") {
+
+            document.getElementById("q1")
+                .textContent = "8";
+
+        }
+
+        else if (step.target === "q2") {
+
+            document.getElementById("q2")
+                .textContent = "5";
+
+        }
+
+        else if (step.target === "q3") {
+
+            document.getElementById("q3")
+                .textContent = "7";
+
+        }
+
+        else if (step.target === "download7") {
+
+            createDownloadDigit(
+                "7",
+                3,
+                3
+            );
+
+        }
+
+        else if (step.target === "download2") {
+
+            createDownloadDigit(
+                "2",
+                4,
+                4
+            );
+
+        }
+
+        else if (step.target === "final") {
+
+            status.textContent =
+                "أحسنت! تمت القسمة بنجاح.";
+
+            status.className =
+                "status success";
+
+            instruction.textContent =
+                "الناتج 857 والباقي 1";
+
+            stepNumber.textContent =
+                "اكتملت العملية";
+
+            return;
+
+        }
+
+
+        currentStep++;
+
+        if (currentStep < steps.length) {
+
+            setTimeout(
+                updateStep,
+                250
+            );
+
+        }
+
+    }
+
+
+    /*
+     * ==========================================
+     * إنشاء رقم مُنزَل
+     * ==========================================
+     */
+
+    function createDownloadDigit(
+        number,
+        column,
+        row
+    ) {
+
+        const division =
+            document.getElementById(
+                "division"
+            );
+
+
+        /*
+         * في النموذج التجريبي:
+         * الرقم يوضع داخل العمود نفسه
+         * الذي نزل منه.
+         */
+
+        const digit =
+            document.createElement("div");
+
+        digit.className =
+            "work-digit dynamic blue";
+
+        digit.textContent =
+            number;
+
+
+        digit.style.position =
+            "absolute";
+
+
+        /*
+         * الرقم 7
+         */
+
+        if (number === "7") {
+
+            digit.style.left =
+                "calc(var(--cell) * 2)";
+
+            digit.style.top =
+                "180px";
+
+        }
+
+
+        /*
+         * الرقم 2
+         */
+
+        else {
+
+            digit.style.left =
+                "calc(var(--cell) * 3)";
+
+            digit.style.top =
+                "355px";
+
+        }
+
+
+        division.appendChild(
+            digit
+        );
+
+    }
+
+
+    /*
+     * ==========================================
+     * تحديث الخطوة
+     * ==========================================
+     */
+
+    function updateStep() {
+
+        const step =
+            steps[currentStep];
+
+
+        stepNumber.textContent =
+            `الخطوة ${currentStep + 1} من ${steps.length}`;
+
+
+        instruction.textContent =
+            step.text;
+
+
+        status.textContent =
+            "";
+
+
+        status.className =
+            "status";
+
+
+        createInput();
+
+    }
+
+
+    /*
+     * ==========================================
+     * إعادة العملية
+     * ==========================================
+     */
+
+    resetBtn.addEventListener(
+        "click",
+        function () {
+
+            currentStep = 0;
+
+
+            document.getElementById("q1")
+                .textContent = "";
+
+            document.getElementById("q2")
+                .textContent = "";
+
+            document.getElementById("q3")
+                .textContent = "";
+
+
+            /*
+             * حذف الأرقام الديناميكية
+             */
+
+            document
+                .querySelectorAll(
+                    ".division > .dynamic"
+                )
+                .forEach(
+                    element => element.remove()
+                );
+
+
+            status.textContent =
+                "";
+
+
+            updateStep();
+
+        }
+    );
+
+
+    /*
+     * ==========================================
+     * بدء العملية
+     * ==========================================
+     */
+
+    updateStep();
+
+</script>
+
+</body>
+  </html>
