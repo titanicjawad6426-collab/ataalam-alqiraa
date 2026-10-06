@@ -1,7 +1,8 @@
 "use strict";
 
+
 /* =========================================
-   إعدادات الضرب
+   إعدادات اللعبة
 ========================================= */
 
 const TOTAL_QUESTIONS = 12;
@@ -12,10 +13,9 @@ const PROGRESS_KEY =
     "multiplicationUnlockedLevelV1";
 
 
-/*
-   عدد خانات العدد الأول
-   وعدد خانات العدد الثاني
-*/
+/* =========================================
+   مستويات الضرب
+========================================= */
 
 const levelDigits = {
 
@@ -46,6 +46,31 @@ const levelDigits = {
    عناصر الصفحة
 ========================================= */
 
+const operationBoard =
+    document.getElementById(
+        "operationBoard"
+    );
+
+const numberARow =
+    document.getElementById(
+        "numberARow"
+    );
+
+const numberBRow =
+    document.getElementById(
+        "numberBRow"
+    );
+
+const separator =
+    document.getElementById(
+        "separator"
+    );
+
+const answerRow =
+    document.getElementById(
+        "answerRow"
+    );
+
 const levelNumber =
     document.getElementById(
         "levelNumber"
@@ -54,21 +79,6 @@ const levelNumber =
 const questionNumber =
     document.getElementById(
         "questionNumber"
-    );
-
-const numberA =
-    document.getElementById(
-        "numberA"
-    );
-
-const numberB =
-    document.getElementById(
-        "numberB"
-    );
-
-const answerRow =
-    document.getElementById(
-        "answerRow"
     );
 
 const checkAnswerButton =
@@ -83,7 +93,7 @@ const message =
 
 
 /* =========================================
-   المستوى الحالي
+   المستوى
 ========================================= */
 
 const params =
@@ -124,7 +134,6 @@ if (
 
     currentLevel =
         unlockedLevel;
-
 }
 
 
@@ -153,7 +162,7 @@ function randomNumber(
     digits
 ) {
 
-    if (digits <= 1) {
+    if (digits === 1) {
 
         return (
             Math.floor(
@@ -188,7 +197,7 @@ function randomNumber(
 
 
 /* =========================================
-   إنشاء العمليات
+   إنشاء 12 عملية بدون تكرار
 ========================================= */
 
 function generateQuestions() {
@@ -228,7 +237,9 @@ function generateQuestions() {
             `${a}x${b}`;
 
 
-        if (used.has(key)) {
+        if (
+            used.has(key)
+        ) {
             continue;
         }
 
@@ -237,86 +248,283 @@ function generateQuestions() {
 
 
         result.push({
-            a,
-            b,
-            answer: a * b
+
+            a: a,
+
+            b: b,
+
+            answer:
+                a * b
+
         });
 
     }
 
 
     return result;
+}
+
+
+/* =========================================
+   إنشاء رقم داخل عمود محدد
+========================================= */
+
+function createDigit(
+    digit,
+    column
+) {
+
+    const element =
+        document.createElement(
+            "div"
+        );
+
+
+    element.className =
+        "digit";
+
+
+    element.textContent =
+        digit;
+
+
+    element.style.gridColumn =
+        String(column);
+
+
+    return element;
+}
+
+
+/* =========================================
+   رسم العدد الأول
+========================================= */
+
+function renderNumberA() {
+
+    numberARow.innerHTML = "";
+
+
+    const value =
+        String(
+            currentQuestion.a
+        );
+
+
+    const length =
+        value.length;
+
+
+    /*
+       المحاذاة من اليمين.
+
+       إذا كان العدد:
+       2
+
+       سيكون في العمود 6.
+
+       إذا كان:
+       24
+
+       سيكون في العمودين 5 و 6.
+    */
+
+    const startColumn =
+        6 - length + 1;
+
+
+    for (
+        let i = 0;
+        i < length;
+        i++
+    ) {
+
+        const digit =
+            createDigit(
+                value[i],
+                startColumn + i
+            );
+
+
+        numberARow.appendChild(
+            digit
+        );
+
+    }
 
 }
 
 
 /* =========================================
-   عرض الأرقام
+   رسم العدد الثاني وعلامة الضرب
 ========================================= */
 
-function showQuestion() {
+function renderNumberB() {
 
-    currentQuestion =
-        questions[
-            currentQuestionIndex
-        ];
+    numberBRow.innerHTML = "";
 
 
-    numberA.textContent =
-        currentQuestion.a;
-
-    numberB.textContent =
-        currentQuestion.b;
-
-
-    questionNumber.textContent =
-        currentQuestionIndex + 1;
+    const value =
+        String(
+            currentQuestion.b
+        );
 
 
-    levelNumber.textContent =
-        currentLevel;
+    const length =
+        value.length;
+
+
+    const startColumn =
+        6 - length + 1;
 
 
     /*
-       عدد خانات النتيجة
+       علامة الضرب تكون مباشرة
+       إلى يسار العدد الثاني.
     */
 
-    const answerLength =
+    const symbolColumn =
+        startColumn - 1;
+
+
+    const symbol =
+        document.createElement(
+            "div"
+        );
+
+
+    symbol.className =
+        "multiply-symbol";
+
+
+    symbol.textContent =
+        "×";
+
+
+    symbol.style.gridColumn =
+        String(
+            symbolColumn
+        );
+
+
+    numberBRow.appendChild(
+        symbol
+    );
+
+
+    /*
+       رسم أرقام العدد الثاني
+    */
+
+    for (
+        let i = 0;
+        i < length;
+        i++
+    ) {
+
+        const digit =
+            createDigit(
+                value[i],
+                startColumn + i
+            );
+
+
+        numberBRow.appendChild(
+            digit
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   تحديد طول الخط حسب النتيجة
+========================================= */
+
+function setupSeparator() {
+
+    const answer =
         String(
             currentQuestion.answer
-        ).length;
+        );
+
+
+    const answerLength =
+        answer.length;
 
 
     /*
-       نضع خانة الإدخال
-       في أقصى اليمين
-       = خانة الوحدات
+       النتيجة دائماً تبدأ من
+       اليمين.
+
+       مثال:
+
+       16
+
+       العمود 5 + العمود 6
+
+       312
+
+       العمود 4 + 5 + 6
     */
 
-    currentSlot =
-        answerLength - 1;
+    const lineStart =
+        6 - answerLength + 1;
+
+
+    operationBoard.style.setProperty(
+        "--answer-length",
+        answerLength
+    );
+
+
+    operationBoard.style.setProperty(
+        "--line-start",
+        lineStart
+    );
+
+}
+
+
+/* =========================================
+   تجهيز خانات النتيجة
+========================================= */
+
+function setupAnswer() {
+
+    const answer =
+        String(
+            currentQuestion.answer
+        );
+
+
+    const length =
+        answer.length;
 
 
     answerValues =
         new Array(
-            answerLength
+            length
         ).fill("");
 
 
+    /*
+       البداية دائماً من خانة الوحدات
+       أي أقصى اليمين.
+    */
+
+    currentSlot =
+        length - 1;
+
+
     renderAnswer();
-
-
-    message.textContent =
-        "";
-
-    message.className =
-        "message";
 
 }
 
 
 /* =========================================
-   رسم خانات الإجابة
+   رسم النتيجة
 ========================================= */
 
 function renderAnswer() {
@@ -329,14 +537,12 @@ function renderAnswer() {
 
 
     /*
-       نضع النتيجة في
-       آخر أعمدة الشبكة
-       حتى تكون محاذية
-       مع أرقام العملية.
+       النتيجة محاذية تماماً
+       مع الأرقام الموجودة فوقها.
     */
 
     const startColumn =
-        6 - length;
+        6 - length + 1;
 
 
     for (
@@ -352,17 +558,17 @@ function renderAnswer() {
 
 
         cell.className =
-            "answer-digit";
+            "answer-cell";
 
 
         cell.style.gridColumn =
             String(
-                startColumn + i + 1
+                startColumn + i
             );
 
 
         /*
-           إذا كان الرقم قد كُتب
+           الرقم الذي تمت كتابته
         */
 
         if (
@@ -376,8 +582,7 @@ function renderAnswer() {
 
 
         /*
-           إذا كانت هذه هي
-           الخانة الحالية
+           خانة الكتابة الحالية
         */
 
         else if (
@@ -400,6 +605,10 @@ function renderAnswer() {
 
             input.inputMode =
                 "numeric";
+
+
+            input.pattern =
+                "[0-9]*";
 
 
             input.maxLength =
@@ -434,22 +643,24 @@ function renderAnswer() {
 
 
             /*
-               التركيز تلقائياً
+               فتح لوحة الأرقام
+               والتركيز مباشرة
             */
 
             setTimeout(
                 () => {
+
                     input.focus();
+
                 },
-                30
+                50
             );
 
         }
 
 
         /*
-           الخانات التي لم نصل
-           إليها بعد
+           الخانات التي لم نصل إليها
         */
 
         else {
@@ -474,10 +685,12 @@ function renderAnswer() {
 
 
 /* =========================================
-   إدخال رقم
+   عند كتابة الرقم
 ========================================= */
 
-function handleInput(event) {
+function handleInput(
+    event
+) {
 
     let value =
         event.target.value;
@@ -494,13 +707,14 @@ function handleInput(event) {
         );
 
 
-    if (!value) {
+    if (
+        value === ""
+    ) {
 
         event.target.value =
             "";
 
         return;
-
     }
 
 
@@ -513,8 +727,7 @@ function handleInput(event) {
 
 
     /*
-       تخزين الرقم في
-       المكان الحالي
+       تخزين الرقم في الخانة الحالية
     */
 
     answerValues[
@@ -523,8 +736,7 @@ function handleInput(event) {
 
 
     /*
-       الانتقال إلى الرقم
-       الذي قبله، أي إلى اليسار
+       الانتقال خانة إلى اليسار
     */
 
     currentSlot--;
@@ -539,7 +751,9 @@ function handleInput(event) {
    زر Enter
 ========================================= */
 
-function handleKeyDown(event) {
+function handleKeyDown(
+    event
+) {
 
     if (
         event.key === "Enter"
@@ -559,7 +773,8 @@ function handleKeyDown(event) {
 function checkAnswer() {
 
     /*
-       هل بقيت خانات فارغة؟
+       لا يمكن التحقق قبل
+       ملء جميع الخانات
     */
 
     if (
@@ -576,7 +791,6 @@ function checkAnswer() {
             "message wrong";
 
         return;
-
     }
 
 
@@ -615,16 +829,11 @@ function checkAnswer() {
     else {
 
         message.textContent =
-            "✗ حاول مرة أخرى";
+            "✗ إجابة خاطئة، حاول مرة أخرى";
 
         message.className =
             "message wrong";
 
-
-        /*
-           إعادة فتح الخانات
-           حتى يتمكن الطفل من التصحيح
-        */
 
         setTimeout(
             () => {
@@ -633,18 +842,14 @@ function checkAnswer() {
                     answerValues.length;
 
 
-                /*
-                   نرجع إلى الوحدات
-                */
-
-                currentSlot =
-                    length - 1;
-
-
                 answerValues =
                     new Array(
                         length
                     ).fill("");
+
+
+                currentSlot =
+                    length - 1;
 
 
                 renderAnswer();
@@ -675,7 +880,6 @@ function nextQuestion() {
         finishLevel();
 
         return;
-
     }
 
 
@@ -690,14 +894,14 @@ function nextQuestion() {
 
 function finishLevel() {
 
+    checkAnswerButton.disabled =
+        true;
+
+
     if (
         score ===
         TOTAL_QUESTIONS
     ) {
-
-        /*
-           فتح المستوى التالي
-        */
 
         if (
             currentLevel <
@@ -730,11 +934,10 @@ function finishLevel() {
 
 
         message.textContent =
-            `🎉 أحسنت! النتيجة ${score} من ${TOTAL_QUESTIONS}`;
+            `🎉 أحسنت! ${score} من ${TOTAL_QUESTIONS}`;
 
         message.className =
             "message correct";
-
 
     }
 
@@ -747,10 +950,6 @@ function finishLevel() {
             "message wrong";
 
     }
-
-
-    checkAnswerButton.disabled =
-        true;
 
 
     setTimeout(
@@ -778,7 +977,45 @@ function finishLevel() {
 
 
 /* =========================================
-   تشغيل اللعبة
+   عرض العملية
+========================================= */
+
+function showQuestion() {
+
+    currentQuestion =
+        questions[
+            currentQuestionIndex
+        ];
+
+
+    levelNumber.textContent =
+        currentLevel;
+
+
+    questionNumber.textContent =
+        currentQuestionIndex + 1;
+
+
+    renderNumberA();
+
+    renderNumberB();
+
+    setupSeparator();
+
+    setupAnswer();
+
+
+    message.textContent =
+        "";
+
+    message.className =
+        "message";
+
+}
+
+
+/* =========================================
+   بدء اللعبة
 ========================================= */
 
 function startGame() {
@@ -786,11 +1023,14 @@ function startGame() {
     questions =
         generateQuestions();
 
+
     currentQuestionIndex =
         0;
 
+
     score =
         0;
+
 
     showQuestion();
 
@@ -808,7 +1048,7 @@ checkAnswerButton.addEventListener(
 
 
 /* =========================================
-   بدء اللعبة
+   تشغيل اللعبة
 ========================================= */
 
 startGame();
