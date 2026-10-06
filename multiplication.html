@@ -12,6 +12,7 @@
     <title>تعلم الضرب</title>
 
     <style>
+
         * {
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
@@ -26,41 +27,42 @@
 
             font-family:
                 Arial,
-                "Tahoma",
+                Tahoma,
                 sans-serif;
 
-            color: #202124;
-
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            color: #171717;
         }
+
+
+        /* =====================================
+           العنوان
+        ===================================== */
 
         .header {
             width: 100%;
-            padding: 28px 15px 22px;
+
+            padding: 28px 15px 24px;
 
             text-align: center;
 
-            background: linear-gradient(
-                135deg,
-                #3f51b5,
-                #03a9f4
-            );
+            background:
+                linear-gradient(
+                    135deg,
+                    #3f51b5,
+                    #03a9f4
+                );
 
             color: white;
 
-            border-radius: 0 0 35px 35px;
+            border-radius:
+                0 0 35px 35px;
         }
 
         .header h1 {
             margin: 0;
 
-            font-size: clamp(
-                30px,
-                8vw,
-                46px
-            );
+            font-size:
+                clamp(30px, 8vw, 46px);
 
             font-weight: 800;
         }
@@ -68,244 +70,332 @@
         .header p {
             margin: 12px 0 0;
 
-            font-size: clamp(
-                20px,
-                5vw,
-                28px
-            );
+            font-size:
+                clamp(20px, 5vw, 28px);
         }
+
+
+        /* =====================================
+           رقم العملية
+        ===================================== */
 
         .progress {
             margin-top: 25px;
 
-            font-size: clamp(
-                18px,
-                5vw,
-                25px
-            );
+            text-align: center;
+
+            font-size:
+                clamp(19px, 5vw, 26px);
 
             color: #333;
         }
 
-        /* =================================
-           منطقة العملية
-        ================================= */
+
+        /* =====================================
+           منطقة التمرين
+        ===================================== */
 
         .exercise {
             width: 100%;
 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            margin-top: 42px;
 
-            margin-top: 45px;
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
         }
 
-        /*
-           شبكة ثابتة حتى تبقى الأرقام
-           فوق بعضها بشكل دقيق.
-        */
+
+        /* =====================================
+           لوحة العملية
+           
+           6 أعمدة ثابتة
+           جميع الصفوف تستخدم نفس الأعمدة
+           ===================================== */
 
         .operation-board {
-            direction: ltr;
 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            --cell-size:
+                clamp(42px, 11vw, 58px);
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(6, var(--cell-size));
+
+            grid-auto-rows:
+                var(--cell-size);
+
+            justify-content: center;
+
+            direction: ltr;
 
             width: max-content;
 
             margin: 0 auto;
         }
 
+
+        /* =====================================
+           صف الأرقام
+        ===================================== */
+
         .number-row {
+
             display: grid;
 
             grid-template-columns:
-                repeat(6, 48px);
+                repeat(6, var(--cell-size));
+
+            grid-column:
+                1 / 7;
+
+            height:
+                var(--cell-size);
 
             align-items: center;
-
-            min-height: 62px;
         }
+
 
         .digit {
-            width: 48px;
 
-            text-align: center;
+            width:
+                var(--cell-size);
 
-            font-size: 42px;
-
-            font-weight: 800;
-
-            line-height: 1;
-
-            color: #151515;
-        }
-
-        .multiply-symbol {
-            width: 48px;
-
-            text-align: center;
-
-            font-size: 38px;
-
-            font-weight: 800;
-
-            color: #151515;
-        }
-
-        /*
-           الصف الأول والثاني:
-           الأرقام تكون بمحاذاة اليمين
-           مثل الكتابة المدرسية.
-        */
-
-        .top-number {
-            grid-column:
-                4 / 7;
-        }
-
-        .bottom-number {
-            grid-column:
-                4 / 7;
-        }
-
-        .multiplier-symbol {
-            grid-column: 3;
-        }
-
-        /* =================================
-           الخط الفاصل
-        ================================= */
-
-        .separator {
-            width: 270px;
-
-            height: 5px;
-
-            background: #222;
-
-            border-radius: 5px;
-
-            margin:
-                12px auto
-                18px;
-        }
-
-        /* =================================
-           منطقة الإجابة
-        ================================= */
-
-        .answer-row {
-            direction: ltr;
-
-            display: grid;
-
-            grid-template-columns:
-                repeat(6, 48px);
-
-            align-items: center;
-
-            min-height: 64px;
-
-            margin-bottom: 20px;
-        }
-
-        .answer-digit {
-            width: 48px;
-            height: 56px;
+            height:
+                var(--cell-size);
 
             display: flex;
 
-            justify-content: center;
             align-items: center;
 
-            font-size: 42px;
+            justify-content: center;
 
-            font-weight: 800;
+            font-size:
+                clamp(38px, 9vw, 52px);
 
-            color: #151515;
+            font-weight: 900;
+
+            line-height: 1;
+
+            color: #111;
         }
 
-        /*
-           خانة الكتابة الحالية
-        */
+
+        /* =====================================
+           علامة الضرب
+        ===================================== */
+
+        .multiply-symbol {
+
+            width:
+                var(--cell-size);
+
+            height:
+                var(--cell-size);
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size:
+                clamp(32px, 8vw, 44px);
+
+            font-weight: 900;
+
+            color: #111;
+        }
+
+
+        /* =====================================
+           الخط الفاصل
+
+           يتم تحديد طوله من JavaScript
+           حسب عدد أرقام النتيجة
+        ===================================== */
+
+        .separator {
+
+            height: 5px;
+
+            background: #202020;
+
+            border-radius: 5px;
+
+            align-self: center;
+
+            grid-column:
+                var(--line-start)
+                /
+                span var(--answer-length);
+
+            width: 100%;
+
+            margin: 0;
+
+        }
+
+
+        /* =====================================
+           صف النتيجة
+        ===================================== */
+
+        .answer-row {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(6, var(--cell-size));
+
+            grid-column:
+                1 / 7;
+
+            height:
+                var(--cell-size);
+
+            align-items: center;
+
+            margin-top: 8px;
+        }
+
+
+        .answer-cell {
+
+            width:
+                var(--cell-size);
+
+            height:
+                var(--cell-size);
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size:
+                clamp(38px, 9vw, 52px);
+
+            font-weight: 900;
+
+            color: #111;
+        }
+
+
+        /* =====================================
+           النقاط
+        ===================================== */
+
+        .answer-dot {
+
+            font-size:
+                clamp(28px, 7vw, 38px);
+
+            color: #777;
+
+            font-weight: 700;
+        }
+
+
+        /* =====================================
+           خانة الإدخال
+        ===================================== */
 
         .answer-input {
-            width: 42px;
-            height: 54px;
+
+            width:
+                calc(
+                    var(--cell-size) - 8px
+                );
+
+            height:
+                calc(
+                    var(--cell-size) - 6px
+                );
 
             padding: 0;
 
-            border:
-                3px solid #287cff;
+            margin: 0;
 
-            border-radius: 8px;
+            border:
+                4px solid #08a77b;
+
+            border-radius: 12px;
 
             background: white;
 
             text-align: center;
 
-            font-size: 36px;
+            font-family:
+                Arial,
+                Tahoma,
+                sans-serif;
 
-            font-weight: 800;
+            font-size:
+                clamp(32px, 8vw, 46px);
+
+            font-weight: 900;
 
             color: #111;
 
             outline: none;
 
             direction: ltr;
-        }
-
-        .answer-input:focus {
-            border-color: #00a878;
 
             box-shadow:
-                0 0 0 4px
-                rgba(0, 168, 120, 0.15);
+                0 0 0 5px
+                rgba(
+                    8,
+                    167,
+                    123,
+                    0.14
+                );
         }
 
-        /*
-           النقطة التي تعني أن هناك
-           خانة لم تتم كتابتها بعد
-        */
 
-        .answer-dot {
-            width: 48px;
+        .answer-input:focus {
 
-            text-align: center;
+            border-color: #087f63;
 
-            font-size: 34px;
-
-            font-weight: 700;
-
-            color: #777;
+            box-shadow:
+                0 0 0 5px
+                rgba(
+                    8,
+                    167,
+                    123,
+                    0.20
+                );
         }
 
-        /* =================================
+
+        /* =====================================
            زر التحقق
-        ================================= */
+        ===================================== */
 
         .check-button {
-            margin-top: 35px;
 
-            width: min(
-                88vw,
-                360px
-            );
+            margin-top: 45px;
+
+            width:
+                min(88vw, 360px);
 
             min-height: 68px;
 
             border: none;
 
-            border-radius: 22px;
+            border-radius: 24px;
 
-            background: #1688ff;
+            background:
+                #1688ff;
 
             color: white;
 
-            font-size: 28px;
+            font-size:
+                clamp(25px, 7vw, 32px);
 
             font-weight: 800;
 
@@ -313,102 +403,100 @@
 
             box-shadow:
                 0 5px 12px
-                rgba(0, 0, 0, 0.15);
+                rgba(
+                    0,
+                    0,
+                    0,
+                    0.15
+                );
         }
+
 
         .check-button:active {
-            transform: scale(0.97);
+
+            transform:
+                scale(0.97);
         }
 
-        /* =================================
-           رسالة النتيجة
-        ================================= */
+
+        .check-button:disabled {
+
+            opacity: 0.6;
+
+            cursor: default;
+        }
+
+
+        /* =====================================
+           الرسالة
+        ===================================== */
 
         .message {
+
             min-height: 45px;
 
             margin-top: 20px;
 
             text-align: center;
 
-            font-size: 24px;
+            font-size:
+                clamp(21px, 5vw, 27px);
 
-            font-weight: 700;
+            font-weight: 800;
         }
+
 
         .correct {
             color: #00a878;
         }
 
+
         .wrong {
             color: #e53935;
         }
 
-        /* =================================
+
+        /* =====================================
            الهاتف
-        ================================= */
+        ===================================== */
 
         @media (max-width: 500px) {
 
-            .number-row,
-            .answer-row {
-                grid-template-columns:
-                    repeat(6, 40px);
+            .exercise {
+
+                margin-top: 32px;
             }
 
-            .digit,
-            .multiply-symbol,
-            .answer-digit,
-            .answer-dot {
-                width: 40px;
-            }
-
-            .digit {
-                font-size: 38px;
-            }
-
-            .multiply-symbol {
-                font-size: 34px;
-            }
-
-            .answer-digit {
-                font-size: 38px;
-            }
-
-            .answer-dot {
-                font-size: 30px;
-            }
-
-            .answer-input {
-                width: 36px;
-                height: 50px;
-
-                font-size: 32px;
-            }
 
             .separator {
-                width: 230px;
 
                 height: 4px;
             }
 
-            .exercise {
-                margin-top: 35px;
-            }
 
             .check-button {
-                margin-top: 28px;
+
+                margin-top: 38px;
             }
+
         }
+
     </style>
 </head>
 
 
 <body>
 
+
+    <!-- =====================================
+         العنوان
+    ====================================== -->
+
     <header class="header">
 
-        <h1>✖ تعلم الضرب</h1>
+        <h1>
+            ✖ تعلم الضرب
+        </h1>
 
         <p>
             المستوى
@@ -417,6 +505,10 @@
 
     </header>
 
+
+    <!-- =====================================
+         رقم العملية
+    ====================================== -->
 
     <div class="progress">
 
@@ -428,23 +520,25 @@
     </div>
 
 
+    <!-- =====================================
+         التمرين
+    ====================================== -->
+
     <main class="exercise">
 
-        <div class="operation-board">
+
+        <div
+            id="operationBoard"
+            class="operation-board"
+        >
+
 
             <!-- العدد الأول -->
 
             <div
                 id="numberARow"
                 class="number-row"
-            >
-                <span
-                    id="numberA"
-                    class="digit top-number"
-                >
-                    2
-                </span>
-            </div>
+            ></div>
 
 
             <!-- العدد الثاني -->
@@ -452,39 +546,29 @@
             <div
                 id="numberBRow"
                 class="number-row"
-            >
-
-                <span
-                    class="multiply-symbol multiplier-symbol"
-                >
-                    ×
-                </span>
-
-                <span
-                    id="numberB"
-                    class="digit bottom-number"
-                >
-                    5
-                </span>
-
-            </div>
+            ></div>
 
 
-            <!-- الخط -->
+            <!-- الخط الفاصل -->
 
-            <div class="separator"></div>
+            <div
+                id="separator"
+                class="separator"
+            ></div>
 
 
-            <!-- الإجابة -->
+            <!-- النتيجة -->
 
             <div
                 id="answerRow"
                 class="answer-row"
-            >
-            </div>
+            ></div>
+
 
         </div>
 
+
+        <!-- زر التحقق -->
 
         <button
             id="checkAnswer"
@@ -495,16 +579,19 @@
         </button>
 
 
+        <!-- الرسالة -->
+
         <div
             id="message"
             class="message"
         ></div>
 
+
     </main>
 
 
-    <script src="multiplication.js?v=21"></script>
+    <script src="multiplication.js?v=22"></script>
 
 </body>
 
-</html>
+    </html>
