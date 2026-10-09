@@ -1,114 +1,548 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>الاستماع والنطق</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#7c5ce7">
+  <title>الاستماع والنطق | تعلم القراءة للأطفال</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --purple: #7655df;
+      --green: #19b96b;
+      --ink: #30304b;
+    }
+
+    html {
+      min-height: 100%;
+      background: #f4f0ff;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      font-family: Tahoma, Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% 10%, #ffe6a8 0, transparent 24%),
+        radial-gradient(circle at 90% 25%, #d8f7ff 0, transparent 25%),
+        linear-gradient(145deg, #f9f2ff, #eaf8ff 55%, #fff5df);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px 12px 14px;
+      overflow-x: hidden;
+    }
+
+    .topbar {
+      width: 100%;
+      max-width: 540px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .home-link {
+      text-decoration: none;
+      color: white;
+      background: var(--purple);
+      border-radius: 14px;
+      padding: 10px 13px;
+      font-size: 14px;
+      font-weight: bold;
+      box-shadow: 0 4px 0 #573bb7;
+    }
+
+    .page-title {
+      margin: 0;
+      color: #6246c6;
+      font-size: clamp(17px, 5vw, 22px);
+      text-align: center;
+    }
+
+    .counter {
+      background: white;
+      color: #684acb;
+      font-weight: bold;
+      border-radius: 14px;
+      padding: 9px 11px;
+      font-size: 13px;
+      white-space: nowrap;
+      box-shadow: 0 3px 10px #43307812;
+    }
+
+    .flashcard {
+      width: 100%;
+      max-width: 540px;
+      height: min(78dvh, 690px);
+      min-height: 440px;
+      flex: 1 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 15px;
+      border-radius: 30px;
+      background: rgba(255, 255, 255, 0.94);
+      border: 3px solid white;
+      box-shadow: 0 12px 30px #4f39851b;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .decoration {
+      position: absolute;
+      font-size: 25px;
+      opacity: 0.75;
+      pointer-events: none;
+    }
+
+    .decoration.one {
+      top: 12px;
+      right: 12px;
+    }
+
+    .decoration.two {
+      top: 48px;
+      left: 14px;
+    }
+
+    .photo-wrap {
+      width: 100%;
+      flex: 1 1 auto;
+      min-height: 0;
+      position: relative;
+      border-radius: 23px;
+      overflow: hidden;
+      background: linear-gradient(140deg, #d9f4ff, #fff0c9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .animal-photo {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      inset: 0;
+    }
+
+    .animal-fallback {
+      font-size: clamp(90px, 24vw, 155px);
+      line-height: 1;
+      display: none;
+    }
+
+    .photo-wrap.image-error .animal-fallback {
+      display: block;
+    }
+
+    .photo-wrap.image-error .animal-photo {
+      display: none;
+    }
+
+    .photo-label {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      background: rgba(255, 255, 255, 0.92);
+      color: #5941ac;
+      padding: 8px 12px;
+      border-radius: 14px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .word {
+      font-size: clamp(35px, 10vw, 55px);
+      font-weight: bold;
+      color: #303d83;
+      margin: 13px 0 4px;
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    .instruction {
+      font-size: 13px;
+      color: #77758d;
+      margin: 0 0 10px;
+      text-align: center;
+    }
+
+    .speaker {
+      width: 68px;
+      height: 68px;
+      flex: 0 0 68px;
+      border: 0;
+      border-radius: 50%;
+      background: var(--green);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 31px;
+      cursor: pointer;
+      box-shadow: 0 6px 0 #11894c;
+      transition: transform 0.12s, box-shadow 0.12s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .speaker:active,
+    .speaker.playing {
+      transform: translateY(4px) scale(0.96);
+      box-shadow: 0 2px 0 #11894c;
+    }
+
+    .speaker.playing {
+      animation: soundPulse 0.7s infinite alternate;
+    }
+
+    @keyframes soundPulse {
+      from { transform: scale(1); }
+      to { transform: scale(1.07); }
+    }
+
+    .navigation {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      margin-top: 15px;
+    }
+
+    .nav-button {
+      width: 57px;
+      height: 52px;
+      flex: 0 0 57px;
+      border: none;
+      border-radius: 18px;
+      color: white;
+      background: var(--purple);
+      font-size: 31px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #5438b0;
+      transition: transform 0.12s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .nav-button:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #5438b0;
+    }
+
+    .dots {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #d8d0f5;
+      border: none;
+      padding: 0;
+    }
+
+    .dot.active {
+      width: 19px;
+      border-radius: 8px;
+      background: var(--purple);
+    }
+
+    .status {
+      min-height: 20px;
+      margin: 8px 0 0;
+      font-size: 12px;
+      color: #6d638e;
+      text-align: center;
+    }
+
+    @media (max-height: 650px) {
+      body {
+        padding: 6px 8px;
+      }
+
+      .topbar {
+        margin-bottom: 6px;
+      }
+
+      .flashcard {
+        height: 76dvh;
+        min-height: 370px;
+        padding: 10px;
+      }
+
+      .word {
+        margin: 7px 0 1px;
+      }
+
+      .instruction {
+        margin-bottom: 6px;
+      }
+
+      .speaker {
+        width: 55px;
+        height: 55px;
+        flex-basis: 55px;
+      }
+
+      .navigation {
+        margin-top: 10px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
 </head>
 
 <body>
+  <header class="topbar">
+    <a class="home-link" href="arabic.html" aria-label="العودة إلى دروس العربية">⌂ الرئيسية</a>
+    <h1 class="page-title">🔊 الاستماع والنطق</h1>
+    <div class="counter" id="counter">1 / 12</div>
+  </header>
 
-<header>
-    <h1>🔊 الاستماع والنطق</h1>
-    <p>استمع وتعلم النطق الصحيح</p>
-</header>
+  <main class="flashcard" aria-label="بطاقة تعلم الحيوان">
+    <span class="decoration one">⭐</span>
+    <span class="decoration two">🌈</span>
 
-<main class="container">
-
-    <div class="content-box">
-
-        <h2>🔤 الحروف</h2>
-
-        <div class="letter-grid">
-
-            <button class="letter" onclick="playLetter('أ', 'ألف')">🔊 أ</button>
-            <button class="letter" onclick="playLetter('ب', 'باء')">🔊 ب</button>
-            <button class="letter" onclick="playLetter('ت', 'تاء')">🔊 ت</button>
-            <button class="letter" onclick="playLetter('ث', 'ثاء')">🔊 ث</button>
-            <button class="letter" onclick="playLetter('ج', 'جيم')">🔊 ج</button>
-            <button class="letter" onclick="playLetter('ح', 'حاء')">🔊 ح</button>
-            <button class="letter" onclick="playLetter('خ', 'خاء')">🔊 خ</button>
-            <button class="letter" onclick="playLetter('د', 'دال')">🔊 د</button>
-
-        </div>
-
+    <div class="photo-wrap" id="photoWrap">
+      <img class="animal-photo" id="animalPhoto" src="" alt="">
+      <div class="animal-fallback" id="animalFallback" aria-hidden="true">🦁</div>
+      <div class="photo-label">🐾 تعرّف على الحيوان</div>
     </div>
 
+    <div class="word" id="word" lang="ar">أَسَدٌ</div>
+    <p class="instruction">استمع إلى الكلمة، ثم حاول نطقها 🌟</p>
 
-    <div class="content-box">
+    <button class="speaker" id="speakButton" type="button"
+      aria-label="استمع إلى نطق الكلمة" title="استمع إلى الكلمة">
+      <span aria-hidden="true">🔊</span>
+    </button>
 
-        <h2>📝 كلمات</h2>
+    <nav class="navigation" aria-label="التنقل بين البطاقات">
+      <button class="nav-button" id="prevButton" type="button"
+        aria-label="البطاقة السابقة" title="البطاقة السابقة">❯</button>
 
-        <div class="letter-grid">
+      <div class="dots" id="dots" aria-label="موضع البطاقة"></div>
 
-            <button class="letter" onclick="speak('أسد')">🦁 أسد</button>
-            <button class="letter" onclick="speak('بيت')">🏠 بيت</button>
-            <button class="letter" onclick="speak('كتاب')">📖 كتاب</button>
-            <button class="letter" onclick="speak('قلم')">🖊️ قلم</button>
+      <button class="nav-button" id="nextButton" type="button"
+        aria-label="البطاقة التالية" title="البطاقة التالية">❮</button>
+    </nav>
 
-        </div>
+    <p class="status" id="status" aria-live="polite"></p>
+  </main>
 
-    </div>
+  <script>
+    /*
+      يمكنك إضافة كلمات جديدة إلى القائمة animals.
+      image: رابط صورة الحيوان.
+      emoji: صورة بديلة إذا تعذر تحميل الصورة.
+    */
 
+    const animals = [
+      {
+        word: "أَسَدٌ",
+        spoken: "أَسَد",
+        emoji: "🦁",
+        image: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=1000&q=85"
+      },
+      {
+        word: "بَطَّةٌ",
+        spoken: "بَطَّة",
+        emoji: "🦆",
+        image: "https://images.unsplash.com/photo-1555852095-64e7428df0fa?auto=format&fit=crop&w=1000&q=85"
+      },
+      {
+        word: "بِطْرِيقٌ",
+        spoken: "بِطْرِيق",
+        emoji: "🐧",
+        image: "https://images.unsplash.com/photo-1551986782-d0169b3f8fa7?auto=format&fit=crop&w=1000&q=85"
+      },
+      {
+        word: "قِطٌّ",
+        spoken: "قِطّ",
+        emoji: "🐈",
+        image: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=1000&q=85"
+      },
+      {
+        word: "كَلْبٌ",
+        spoken: "كَلْب",
+        emoji: "🐕",
+        image: "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=1000&q=85"
+      },
+      {
+        word: "فِيلٌ",
+        spoken: "فِيل",
+        emoji: "🐘",
+        image: "https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?auto=format&fit=crop&w=1000&q=85"
+      },
+      {
+        word: "أَرْنَبٌ",
+        spoken: "أَرْنَب",
+        emoji: "🐇",
+        image: "https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?auto=format&fit=crop&w=1000&q=85"
+      },
+      {
+        word: "بَقَرَةٌ",
+        spoken: "بَقَرَة",
+        emoji: "🐄",
+        image: "https://images.unsplash.com/photo-1524024973431-2ad916746881?auto=format&fit=crop&w=1000&q=85"
+      },
+      {
+        word: "حِصَانٌ",
+        spoken: "حِصَان",
+        emoji: "🐎",
+        image: "https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&w=1000&q=85"
+      },
+      {
+        word: "زَرَافَةٌ",
+        spoken: "زَرَافَة",
+        emoji: "🦒",
+        image: "https://images.unsplash.com/photo-1547721064-da6cfb341d50?auto=format&fit=crop&w=1000&q=85"
+      },
+      {
+        word: "قِرْدٌ",
+        spoken: "قِرْد",
+        emoji: "🐒",
+        image: "https://images.unsplash.com/photo-1540573133985-87b6da6d54a9?auto=format&fit=crop&w=1000&q=85"
+      },
+      {
+        word: "عُصْفُورٌ",
+        spoken: "عُصْفُور",
+        emoji: "🐦",
+        image: "https://images.unsplash.com/photo-1444464666168-49d633b86797?auto=format&fit=crop&w=1000&q=85"
+      }
+    ];
 
-    <a href="arabic.html" class="back-button">
-        ↩️ العودة إلى العربية
-    </a>
+    let currentIndex = 0;
 
-</main>
+    const photoWrap = document.getElementById("photoWrap");
+    const animalPhoto = document.getElementById("animalPhoto");
+    const animalFallback = document.getElementById("animalFallback");
+    const wordElement = document.getElementById("word");
+    const counter = document.getElementById("counter");
+    const dots = document.getElementById("dots");
+    const speakButton = document.getElementById("speakButton");
+    const status = document.getElementById("status");
 
+    function showCard(index) {
+      currentIndex = (index + animals.length) % animals.length;
+      const animal = animals[currentIndex];
 
-<script>
+      wordElement.textContent = animal.word;
+      animalFallback.textContent = animal.emoji;
+      animalPhoto.alt = "صورة " + animal.spoken;
+      animalPhoto.src = animal.image;
 
-/* تشغيل صوت الحرف من مجلد audio */
+      photoWrap.classList.remove("image-error");
+      counter.textContent = (currentIndex + 1) + " / " + animals.length;
+      status.textContent = "";
 
-function playLetter(letter, audioName) {
+      dots.replaceChildren();
 
-    try {
-
-        const audio = new Audio(
-            "audio/" + encodeURIComponent(audioName) + ".mp3"
-        );
-
-        audio.play().catch(function(error) {
-
-            console.log("تعذر تشغيل الملف الصوتي:", error);
-
-            // إذا تعذر تشغيل MP3، نستعمل النطق الآلي كبديل
-            speak(letter);
-
-        });
-
-    } catch (error) {
-
-        console.log("خطأ في تشغيل الصوت:", error);
-
-        speak(letter);
+      animals.forEach((item, i) => {
+        const dot = document.createElement("span");
+        dot.className = "dot" + (i === currentIndex ? " active" : "");
+        dot.setAttribute("aria-hidden", "true");
+        dots.appendChild(dot);
+      });
     }
-}
 
+    animalPhoto.addEventListener("error", () => {
+      photoWrap.classList.add("image-error");
+    });
 
-/* نطق الكلمات */
+    animalPhoto.addEventListener("load", () => {
+      photoWrap.classList.remove("image-error");
+    });
 
-function speak(text) {
-
-    if ("speechSynthesis" in window) {
-
-        speechSynthesis.cancel();
-
-        const speech = new SpeechSynthesisUtterance(text);
-
-        speech.lang = "ar-SA";
-        speech.rate = 0.75;
-
-        speechSynthesis.speak(speech);
-
+    function stopSpeaking() {
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
+      speakButton.classList.remove("playing");
     }
 
-}
+    function speakWord() {
+      if (!("speechSynthesis" in window) ||
+          typeof SpeechSynthesisUtterance === "undefined") {
+        status.textContent = "النطق الصوتي غير مدعوم في هذا المتصفح.";
+        return;
+      }
 
-</script>
+      stopSpeaking();
 
+      const animal = animals[currentIndex];
+      const utterance = new SpeechSynthesisUtterance(animal.spoken);
+      utterance.lang = "ar";
+      utterance.rate = 0.75;
+      utterance.pitch = 1.0;
+      utterance.volume = 1.0;
+
+      const voices = window.speechSynthesis.getVoices();
+      const arabicVoice = voices.find(voice =>
+        voice.lang && voice.lang.toLowerCase().startsWith("ar")
+      );
+
+      if (arabicVoice) {
+        utterance.voice = arabicVoice;
+      } else {
+        status.textContent =
+          "لا يوجد صوت عربي مناسب على الهاتف. تحقق من إعدادات تحويل النص إلى كلام.";
+      }
+
+      utterance.onstart = () => {
+        speakButton.classList.add("playing");
+      };
+
+      utterance.onend = () => {
+        speakButton.classList.remove("playing");
+      };
+
+      utterance.onerror = () => {
+        speakButton.classList.remove("playing");
+        status.textContent = "تعذر تشغيل الصوت. حاول مرة أخرى.";
+      };
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    document.getElementById("prevButton").addEventListener("click", () => {
+      stopSpeaking();
+      showCard(currentIndex - 1);
+    });
+
+    document.getElementById("nextButton").addEventListener("click", () => {
+      stopSpeaking();
+      showCard(currentIndex + 1);
+    });
+
+    speakButton.addEventListener("click", speakWord);
+
+    // عرض البطاقة الأولى
+    showCard(0);
+  </script>
 </body>
 </html>
