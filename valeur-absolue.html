@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>القيمة المطلقة والأعداد المتعاكسة</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f2f6fc;
+    margin: 0;
+    padding: 15px;
+}
+
+.container {
+    max-width: 700px;
+    margin: auto;
+}
+
+.header {
+    background: linear-gradient(135deg,#2563eb,#7c3aed);
+    color: white;
+    padding: 22px;
+    border-radius: 18px;
+    text-align: center;
+}
+
+.header h1 {
+    font-size: 23px;
+    margin: 5px;
+}
+
+.header p {
+    margin: 8px 0 0;
+}
+
+.info {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 15px 0;
+    flex-wrap: wrap;
+}
+
+.info div {
+    background: white;
+    padding: 12px;
+    border-radius: 12px;
+    flex: 1;
+    text-align: center;
+    font-weight: bold;
+}
+
+.progress {
+    height: 12px;
+    background: #ddd;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: #22c55e;
+    transition: 0.3s;
+}
+
+.exercise {
+    background: white;
+    padding: 22px;
+    border-radius: 18px;
+    box-shadow: 0 3px 12px #00000010;
+    text-align: center;
+}
+
+.category {
+    color: #2563eb;
+    font-weight: bold;
+    font-size: 17px;
+}
+
+.question {
+    font-size: 23px;
+    font-weight: bold;
+    margin: 25px 0;
+    direction: ltr;
+}
+
+.answers {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.answer {
+    border: 2px solid #dbe3ef;
+    background: #f8fafc;
+    padding: 16px 8px;
+    border-radius: 12px;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+    direction: ltr;
+    min-height: 55px;
+}
+
+.answer:active {
+    transform: scale(.97);
+}
+
+.answer:disabled {
+    cursor: default;
+}
+
+.answer.correct {
+    background: #dcfce7;
+    border-color: #16a34a;
+    color: #166534;
+}
+
+.answer.wrong {
+    background: #fee2e2;
+    border-color: #dc2626;
+    color: #991b1b;
+}
+
+.feedback {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 12px;
+    display: none;
+    font-size: 17px;
+    line-height: 1.8;
+}
+
+.feedback.good {
+    display: block;
+    background: #dcfce7;
+    color: #166534;
+}
+
+.feedback.bad {
+    display: block;
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.next-btn,
+.restart-btn,
+.back-btn {
+    border: none;
+    padding: 14px 25px;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.next-btn {
+    background: #2563eb;
+    color: white;
+    width: 100%;
+    display: none;
+}
+
+.restart-btn {
+    background: #16a34a;
+    color: white;
+}
+
+.back-btn {
+    background: #64748b;
+    color: white;
+    display: block;
+    width: 100%;
+}
+
+.result {
+    display: none;
+    background: white;
+    padding: 25px;
+    border-radius: 18px;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.result h2 {
+    color: #2563eb;
+}
+
+.score {
+    font-size: 40px;
+    font-weight: bold;
+    color: #16a34a;
+    margin: 15px;
+}
+
+.result-list {
+    text-align: right;
+    margin-top: 20px;
+}
+
+.result-item {
+    background: #f8fafc;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 10px;
+    line-height: 1.8;
+}
+
+.result-item.good {
+    border-right: 5px solid #16a34a;
+}
+
+.result-item.bad {
+    border-right: 5px solid #dc2626;
+}
+
+.math {
+    direction: ltr;
+    font-weight: bold;
+}
+
+@media(max-width:400px) {
+
+    .answers {
+        grid-template-columns: 1fr;
+    }
+
+    .question {
+        font-size: 20px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <h1>📐 القيمة المطلقة والأعداد المتعاكسة</h1>
+
+        <p>La valeur absolue et les nombres opposés</p>
+
+        <p>اختبر معلوماتك من خلال تمارين تفاعلية</p>
+
+    </div>
+
+    <div class="info">
+
+        <div>
+            السؤال
+            <span id="current">1</span>
+            /
+            <span id="total">10</span>
+        </div>
+
+        <div>
+            النتيجة:
+            <span id="score">0</span>
+        </div>
+
+    </div>
+
+    <div class="progress">
+        <div class="progress-bar" id="progress"></div>
+    </div>
+
+    <div class="exercise" id="exercise">
+
+        <div class="category" id="category"></div>
+
+        <div class="question" id="question"></div>
+
+        <div class="answers" id="answers"></div>
+
+        <div class="feedback" id="feedback"></div>
+
+        <button class="next-btn" id="next">
+            السؤال الموالي ←
+        </button>
+
+    </div>
+
+    <div class="result" id="result">
+
+        <h2>🎉 انتهت التمارين!</h2>
+
+        <div class="score" id="finalScore"></div>
+
+        <p id="message"></p>
+
+        <div class="result-list" id="resultList"></div>
+
+        <button class="restart-btn" onclick="startQuiz()">
+            🔄 إعادة التمارين
+        </button>
+
+    </div>
+
+    <a href="math.html">
+        <button class="back-btn">العودة إلى الرياضيات</button>
+    </a>
+
+</div>
+
+<script>
+
+const TOTAL = 10;
+
+let questions = [];
+let current = 0;
+let score = 0;
+let results = [];
+
+const $ = id => document.getElementById(id);
+
+
+// إنشاء أسئلة عشوائية
+
+function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+
+function makeQuestion(type, number) {
+
+    let correct;
+    let question;
+    let category;
+    let explanation;
+
+    if (type === 0) {
+
+        category = "Valeur absolue";
+
+        correct = Math.abs(number);
+
+        question = `
+            Quelle est la valeur absolue de
+            <span class="math">(${number})</span> ?
+        `;
+
+        explanation = `
+            القيمة المطلقة هي المسافة عن الصفر.
+            <br>
+            <span class="math">|${number}| = ${correct}</span>
+        `;
+
+    }
+
+    else if (type === 1) {
+
+        category = "Nombres opposés";
+
+        correct = -number;
+
+        question = `
+            Quel est l'opposé de
+            <span class="math">(${number})</span> ?
+        `;
+
+        explanation = `
+            العدد المعاكس له نفس القيمة المطلقة
+            وإشارة مخالفة.
+            <br>
+            <span class="math">Opposé de ${number} = ${correct}</span>
+        `;
+
+    }
+
+    else if (type === 2) {
+
+        category = "Distance à zéro";
+
+        correct = Math.abs(number);
+
+        question = `
+            Quelle est la distance entre
+            <span class="math">(${number})</span>
+            et zéro ?
+        `;
+
+        explanation = `
+            المسافة عن الصفر تساوي القيمة المطلقة.
+            <br>
+            <span class="math">|${number}| = ${correct}</span>
+        `;
+
+    }
+
+    else {
+
+        category = "Vrai ou Faux";
+
+        const opposite = Math.random() < 0.5;
+
+        correct = opposite ? "Vrai" : "Faux";
+
+        question = opposite
+            ? `<span class="math">${number}</span> et
+               <span class="math">${-number}</span>
+               sont opposés.`
+            : `<span class="math">${number}</span> et
+               <span class="math">${number}</span>
+               sont opposés.`;
+
+        explanation = opposite
+            ? "صحيح، العددان متعاكسان لأن لهما نفس القيمة المطلقة وإشارتين مختلفتين."
+            : "خطأ، العددان لهما نفس الإشارة، ولذلك فهما ليسا متعاكسين.";
+
+    }
+
+    return {
+        category,
+        question,
+        correct,
+        explanation
+    };
+
+}
+
+
+// إنشاء اختيارات مختلفة
+
+function generateAnswers(correct, type) {
+
+    let options = [correct];
+
+    if (type === 3) {
+        options = ["Vrai", "Faux"];
+        return options.sort(() => Math.random() - 0.5);
+    }
+
+    while (options.length < 4) {
+
+        let value = correct + randomInt(-5, 5);
+
+        if (!options.includes(value)) {
+            options.push(value);
+        }
+
+    }
+
+    return options.sort(() => Math.random() - 0.5);
+
+}
+
+
+// تجهيز التمارين
+
+function generateQuestions() {
+
+    let list = [];
+
+    for (let i = 0; i < TOTAL; i++) {
+
+        let type = i % 4;
+
+        let number = randomInt(-12, 12);
+
+        if (number === 0) number = 5;
+
+        let q = makeQuestion(type, number);
+
+        q.type = type;
+
+        q.options = generateAnswers(q.correct, type);
+
+        list.push(q);
+
+    }
+
+    return list.sort(() => Math.random() - 0.5);
+
+}
+
+
+// بدء التمارين
+
+function startQuiz() {
+
+    questions = generateQuestions();
+
+    current = 0;
+    score = 0;
+    results = [];
+
+    $("score").textContent = 0;
+
+    $("exercise").style.display = "block";
+    $("result").style.display = "none";
+
+    $("total").textContent = TOTAL;
+
+    showQuestion();
+
+}
+
+
+// عرض السؤال
+
+function showQuestion() {
+
+    let q = questions[current];
+
+    $("current").textContent = current + 1;
+
+    $("category").textContent = q.category;
+
+    $("question").innerHTML = q.question;
+
+    $("feedback").style.display = "none";
+
+    $("feedback").className = "feedback";
+
+    $("next").style.display = "none";
+
+    $("progress").style.width =
+        (current / TOTAL * 100) + "%";
+
+    let answers = $("answers");
+
+    answers.innerHTML = "";
+
+    q.options.forEach(option => {
+
+        let button = document.createElement("button");
+
+        button.className = "answer";
+
+        button.textContent = option;
+
+        button.addEventListener("click", () => {
+            checkAnswer(option, button);
+        });
+
+        answers.appendChild(button);
+
+    });
+
+}
+
+
+// تصحيح الجواب
+
+function checkAnswer(selected, button) {
+
+    let q = questions[current];
+
+    let correct = String(selected) === String(q.correct);
+
+    if (correct) {
+        score++;
+        $("score").textContent = score;
+    }
+
+    let allButtons = $("answers").children;
+
+    Array.from(allButtons).forEach(btn => {
+
+        btn.disabled = true;
+
+        if (String(btn.textContent) === String(q.correct)) {
+            btn.classList.add("correct");
+        }
+
+    });
+
+    if (!correct) {
+        button.classList.add("wrong");
+    }
+
+    results.push({
+        question: q.question,
+        selected: selected,
+        correct: q.correct,
+        success: correct
+    });
+
+    let feedback = $("feedback");
+
+    feedback.style.display = "block";
+
+    feedback.className =
+        correct ? "feedback good" : "feedback bad";
+
+    feedback.innerHTML = correct
+        ? "✅ أحسنت! إجابة صحيحة<br>" + q.explanation
+        : "❌ إجابة غير صحيحة<br>" +
+          "الجواب الصحيح: <b>" + q.correct +
+          "</b><br>" + q.explanation;
+
+    $("next").style.display = "block";
+
+}
+
+
+// السؤال الموالي
+
+$("next").addEventListener("click", () => {
+
+    current++;
+
+    if (current < TOTAL) {
+        showQuestion();
+    } else {
+        finishQuiz();
+    }
+
+});
+
+
+// النتيجة النهائية
+
+function finishQuiz() {
+
+    $("exercise").style.display = "none";
+
+    $("result").style.display = "block";
+
+    $("progress").style.width = "100%";
+
+    $("finalScore").textContent =
+        score + " / " + TOTAL;
+
+    $("message").textContent =
+        score >= 8
+        ? "🌟 ممتاز! لديك فهم جيد للدرس."
+        : score >= 5
+        ? "👏 جيد! واصل التدريب لتحسين مستواك."
+        : "💪 حاول مرة أخرى، ستتحسن بالتدريب.";
+
+    let list = $("resultList");
+
+    list.innerHTML = "<h3>تفاصيل إجاباتك:</h3>";
+
+    results.forEach((r, index) => {
+
+        let item = document.createElement("div");
+
+        item.className =
+            "result-item " +
+            (r.success ? "good" : "bad");
+
+        item.innerHTML = `
+            <b>السؤال ${index + 1}</b>
+            <br>
+            ${r.question}
+            <br>
+            جوابك:
+            <span class="math">${r.selected}</span>
+            <br>
+            الجواب الصحيح:
+            <span class="math">${r.correct}</span>
+            <br>
+            ${r.success ? "✅ صحيح" : "❌ خطأ"}
+        `;
+
+        list.appendChild(item);
+
+    });
+
+}
+
+
+// تشغيل الصفحة
+
+startQuiz();
+
+</script>
+
+</body>
+</html>
