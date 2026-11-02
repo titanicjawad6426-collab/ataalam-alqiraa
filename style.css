@@ -686,3 +686,7 @@ footer {
     }
 
 }
+.main-button.valeur {
+    background-color: #16a34a;
+    color: white;
+}
