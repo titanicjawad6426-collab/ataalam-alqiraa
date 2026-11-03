@@ -21,6 +21,7 @@ const APP_FILES = [
     "./arabic-words.html",
     "./arabic-exercises.html",
     "./arabic-word-game.html",
+    "./arabic-arrange-game.html",
 
     // ================================
     // اللغة الفرنسية
