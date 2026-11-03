@@ -20,6 +20,7 @@ const APP_FILES = [
     "./arabic-syllables.html",
     "./arabic-words.html",
     "./arabic-exercises.html",
+    "./arabic-word-game.html",
 
     // ================================
     // اللغة الفرنسية
