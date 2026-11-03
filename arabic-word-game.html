@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>لعبة اختر الصورة الصحيحة</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background: #f1f7fd;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    max-width: 700px;
+    margin: auto;
+    padding: 15px;
+}
+
+.game-box {
+    background: white;
+    border-radius: 25px;
+    padding: 22px 15px;
+    margin: 25px 0;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(0,0,0,.07);
+}
+
+.info {
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.info span {
+    background: #eaf5ff;
+    padding: 12px;
+    border-radius: 12px;
+}
+
+.question {
+    font-size: 22px;
+    margin: 25px 0;
+}
+
+.listen-btn {
+    background: #2196f3;
+    color: white;
+    border: none;
+    border-radius: 16px;
+    padding: 18px 30px;
+    font-size: 23px;
+    cursor: pointer;
+}
+
+.options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.option {
+    background: white;
+    border: 3px solid #dce8f3;
+    border-radius: 20px;
+    min-height: 140px;
+    cursor: pointer;
+    font-family: Arial;
+}
+
+.option .emoji {
+    display: block;
+    font-size: 48px;
+    margin-bottom: 12px;
+}
+
+.option .name {
+    font-size: 19px;
+}
+
+.option.correct {
+    background: #d9f8df;
+    border-color: #36b65b;
+}
+
+.option.wrong {
+    background: #ffe1e1;
+    border-color: #e74c3c;
+}
+
+.option:disabled {
+    cursor: default;
+}
+
+#message {
+    font-size: 23px;
+    font-weight: bold;
+    min-height: 55px;
+    margin: 25px 0;
+}
+
+.next-btn, .restart-btn {
+    display: none;
+    background: #20a76b;
+    color: white;
+    border: none;
+    padding: 16px 30px;
+    border-radius: 15px;
+    font-size: 20px;
+    margin: 10px auto;
+    cursor: pointer;
+}
+
+.start-btn {
+    background: #ff9800;
+    color: white;
+    border: none;
+    border-radius: 15px;
+    padding: 18px 35px;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.result {
+    font-size: 26px;
+    font-weight: bold;
+    line-height: 2;
+}
+
+.back {
+    display: block;
+    background: #34495e;
+    color: white;
+    text-decoration: none;
+    padding: 17px;
+    border-radius: 16px;
+    text-align: center;
+    max-width: 300px;
+    margin: 25px auto;
+    font-size: 19px;
+}
+
+@media(max-width:380px) {
+    .option {
+        min-height: 115px;
+    }
+
+    .option .emoji {
+        font-size: 37px;
+    }
+
+    .option .name {
+        font-size: 16px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🎮 اختر الصورة الصحيحة</h1>
+    <p>استمع إلى الكلمة واختر صورتها</p>
+</header>
+
+<main class="container">
+
+<div class="game-box">
+
+    <div id="welcome">
+        <h2>🌟 هل أنت مستعد؟</h2>
+
+        <p>استمع إلى الكلمة ثم اختر الصورة الصحيحة.</p>
+
+        <p>🏆 أجب عن 10 أسئلة واجمع النجوم!</p>
+
+        <button class="start-btn" onclick="startGame()">
+            ابدأ اللعب 🚀
+        </button>
+    </div>
+
+    <div id="game" style="display:none">
+
+        <div class="info">
+            <span id="progress">السؤال 1 / 10</span>
+            <span id="score">⭐ 0</span>
+        </div>
+
+        <div class="question">
+            🔊 استمع جيداً ثم اختر الصورة
+        </div>
+
+        <button class="listen-btn" onclick="listen()">
+            🔊 استمع إلى الكلمة
+        </button>
+
+        <div class="options" id="options"></div>
+
+        <div id="message"></div>
+
+        <button class="next-btn" id="next"
+            onclick="nextQuestion()">
+            السؤال التالي ➡️
+        </button>
+
+    </div>
+
+    <div id="finish" style="display:none">
+
+        <h2>🎉 انتهت اللعبة!</h2>
+
+        <div class="result" id="final-result"></div>
+
+        <button class="restart-btn" id="restart"
+            onclick="startGame()">
+            🔄 العب مرة أخرى
+        </button>
+
+    </div>
+
+</div>
+
+<a href="arabic-words.html" class="back">
+    ↩️ العودة إلى الكلمات العربية
+</a>
+
+</main>
+
+<script>
+
+// بنك الكلمات المصورة
+
+const words = [
+
+["🦁","أَسَد"],
+["🐯","نَمِر"],
+["🐘","فِيل"],
+["🐒","قِرْد"],
+["🐰","أَرْنَب"],
+["🐴","حِصَان"],
+["🐄","بَقَرَة"],
+["🦒","زَرَافَة"],
+["🐈","قِطَّة"],
+["🐕","كَلْب"],
+
+["🍎","تُفَّاح"],
+["🍌","مَوْز"],
+["🍊","بُرْتُقَال"],
+["🍇","عِنَب"],
+["🍓","فَرَاوِلَة"],
+["🍉","بِطِّيخ"],
+["🍒","كَرَز"],
+["🍍","أَنَانَاس"],
+
+["🥕","جَزَر"],
+["🥔","بَطَاطِس"],
+["🍅","طَمَاطِم"],
+["🥒","خِيَار"],
+["🧅","بَصَل"],
+
+["🚪","بَاب"],
+["🪑","كُرْسِيّ"],
+["🛏️","سَرِير"],
+["🔑","مِفْتَاح"],
+["💡","مِصْبَاح"],
+
+["📖","كِتَاب"],
+["🖊️","قَلَم"],
+["📓","دَفْتَر"],
+["🎒","حَقِيبَة"],
+["📏","مِسْطَرَة"],
+
+["☀️","شَمْس"],
+["🌙","قَمَر"],
+["⭐","نَجْمَة"],
+["🌳","شَجَرَة"],
+["🌹","وَرْدَة"],
+["🌊","بَحْر"],
+
+["🚗","سَيَّارَة"],
+["🚂","قِطَار"],
+["✈️","طَائِرَة"],
+["🚢","سَفِينَة"],
+["🚲","دَرَّاجَة"],
+
+["👨","أَب"],
+["👩","أُمّ"],
+["👦","أَخ"],
+["👧","أُخْت"],
+["👴","جَدّ"],
+["👵","جَدَّة"],
+
+["🍞","خُبْز"],
+["🥛","حَلِيب"],
+["🥚","بَيْض"],
+["🧀","جُبْن"],
+["🐟","سَمَك"],
+["🍯","عَسَل"]
+
+];
+
+let questions = [];
+let current = 0;
+let score = 0;
+let answered = false;
+let selectedWord = null;
+
+
+// خلط العناصر
+
+function shuffle(array) {
+
+    return array.sort(() => Math.random() - 0.5);
+
+}
+
+
+// بدء اللعبة
+
+function startGame() {
+
+    if ("speechSynthesis" in window) {
+        speechSynthesis.cancel();
+    }
+
+    questions = shuffle([...words]).slice(0, 10);
+
+    current = 0;
+    score = 0;
+
+    document.getElementById("welcome").style.display = "none";
+    document.getElementById("finish").style.display = "none";
+    document.getElementById("game").style.display = "block";
+
+    showQuestion();
+
+}
+
+
+// عرض السؤال
+
+function showQuestion() {
+
+    answered = false;
+
+    selectedWord = questions[current];
+
+    document.getElementById("progress").textContent =
+        "السؤال " + (current + 1) + " / 10";
+
+    document.getElementById("score").textContent =
+        "⭐ " + score;
+
+    document.getElementById("message").textContent = "";
+
+    document.getElementById("next").style.display = "none";
+
+    const options = [selectedWord];
+
+    const others = shuffle(
+        words.filter(w => w[1] !== selectedWord[1])
+    ).slice(0, 2);
+
+    options.push(...others);
+
+    shuffle(options);
+
+    const box = document.getElementById("options");
+
+    box.innerHTML = "";
+
+    options.forEach(word => {
+
+        const button = document.createElement("button");
+
+        button.className = "option";
+
+        button.innerHTML = `
+            <span class="emoji">${word[0]}</span>
+            <span class="name">${word[1]}</span>
+        `;
+
+        button.onclick = () => checkAnswer(word, button);
+
+        box.appendChild(button);
+
+    });
+
+    // تشغيل السؤال تلقائيا بعد لحظة
+    setTimeout(listen, 500);
+
+}
+
+
+// نطق الكلمة
+
+function listen() {
+
+    if (!selectedWord || !("speechSynthesis" in window)) {
+        return;
+    }
+
+    speechSynthesis.cancel();
+
+    const speech = new SpeechSynthesisUtterance(selectedWord[1]);
+
+    speech.lang = "ar-SA";
+    speech.rate = 0.75;
+
+    speechSynthesis.speak(speech);
+
+}
+
+
+// التحقق من الإجابة
+
+function checkAnswer(word, button) {
+
+    if (answered) return;
+
+    answered = true;
+
+    const buttons = document.querySelectorAll(".option");
+
+    buttons.forEach(btn => btn.disabled = true);
+
+    const message = document.getElementById("message");
+
+    if (word[1] === selectedWord[1]) {
+
+        score++;
+
+        button.classList.add("correct");
+
+        message.textContent = "🌟 أحسنت! إجابة صحيحة";
+
+        message.style.color = "#159447";
+
+    } else {
+
+        button.classList.add("wrong");
+
+        buttons.forEach(btn => {
+
+            if (btn.querySelector(".name").textContent === selectedWord[1]) {
+                btn.classList.add("correct");
+            }
+
+        });
+
+        message.textContent = "❌ حاول مرة أخرى في السؤال القادم";
+
+        message.style.color = "#d32f2f";
+
+    }
+
+    document.getElementById("score").textContent =
+        "⭐ " + score;
+
+    document.getElementById("next").style.display = "inline-block";
+
+}
+
+
+// الانتقال للسؤال التالي
+
+function nextQuestion() {
+
+    if (!answered) return;
+
+    if ("speechSynthesis" in window) {
+        speechSynthesis.cancel();
+    }
+
+    current++;
+
+    if (current < 10) {
+
+        showQuestion();
+
+    } else {
+
+        finishGame();
+
+    }
+
+}
+
+
+// نهاية اللعبة
+
+function finishGame() {
+
+    document.getElementById("game").style.display = "none";
+
+    document.getElementById("finish").style.display = "block";
+
+    let stars = "⭐".repeat(score);
+
+    let message = "";
+
+    if (score === 10) {
+        message = "🏆 ممتاز! إجابات رائعة";
+    } else if (score >= 7) {
+        message = "👏 أحسنت! أداء جيد جداً";
+    } else if (score >= 4) {
+        message = "👍 جيد! واصل التعلم";
+    } else {
+        message = "💪 حاول مرة أخرى وستنجح";
+    }
+
+    document.getElementById("final-result").innerHTML =
+        message + "<br>" +
+        "نتيجتك: " + score + " من 10<br>" +
+        stars;
+
+    document.getElementById("restart").style.display = "inline-block";
+
+}
+
+</script>
+
+</body>
+</html>
