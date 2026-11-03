@@ -1,54 +1,167 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>المقاطع العربية</title>
+
+    <title>تعلم المقاطع العربية</title>
+
     <link rel="stylesheet" href="style.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f1f7fd;
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            background: linear-gradient(120deg, #2196f3, #00c6d7);
+            color: white;
+            text-align: center;
+            padding: 25px 10px;
+            border-radius: 0 0 35px 35px;
+        }
+
+        header h1 {
+            margin: 5px;
+            font-size: 27px;
+        }
+
+        header p {
+            font-size: 17px;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 25px auto;
+            padding: 12px;
+        }
+
+        .content-box {
+            background: white;
+            border-radius: 25px;
+            padding: 22px 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.07);
+        }
+
+        .content-box h2 {
+            text-align: center;
+            font-size: 25px;
+            margin-bottom: 25px;
+        }
+
+        .letter-card {
+            border-bottom: 2px solid #edf1f6;
+            padding: 18px 5px;
+        }
+
+        .letter-card:last-child {
+            border-bottom: none;
+        }
+
+        .letter-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #1976d2;
+            margin-bottom: 15px;
+        }
+
+        .syllable-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .syllable {
+            min-height: 90px;
+            border: 2px solid #dce8f3;
+            border-radius: 17px;
+            background: white;
+            font-family: Arial, sans-serif;
+            font-size: 31px;
+            color: #222;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .syllable span {
+            display: block;
+            font-size: 13px;
+            color: #777;
+            margin-top: 8px;
+        }
+
+        .syllable:active {
+            background: #dceeff;
+            transform: scale(0.95);
+        }
+
+        .syllable.playing {
+            background: #e1f2ff;
+            border-color: #2196f3;
+            color: #0875c9;
+        }
+
+        .back-button {
+            display: block;
+            text-align: center;
+            background: #34495e;
+            color: white;
+            text-decoration: none;
+            padding: 18px;
+            border-radius: 18px;
+            font-size: 20px;
+            margin: 25px auto;
+            max-width: 320px;
+        }
+
+        .instructions {
+            text-align: center;
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 380px) {
+            .syllable {
+                font-size: 26px;
+                min-height: 80px;
+            }
+
+            .syllable-grid {
+                gap: 6px;
+            }
+        }
+
+    </style>
 </head>
 
 <body>
 
 <header>
-    <h1>🧩 المقاطع العربية</h1>
-    <p>تعلم تركيب المقاطع والكلمات</p>
+    <h1>🧩 تعلم المقاطع العربية</h1>
+    <p>استمع إلى المقاطع وتعلم نطقها</p>
 </header>
 
 <main class="container">
 
     <div class="content-box">
 
-        <h2>مقاطع بسيطة</h2>
+        <h2>🔊 المقاطع الصوتية</h2>
 
-        <div class="letter-grid">
+        <p class="instructions">
+            اضغط على أي مقطع للاستماع إلى نطقه
+        </p>
 
-            <button class="letter" onclick="speak('با')">با</button>
-            <button class="letter" onclick="speak('بو')">بو</button>
-            <button class="letter" onclick="speak('بي')">بي</button>
-
-            <button class="letter" onclick="speak('ما')">ما</button>
-            <button class="letter" onclick="speak('مو')">مو</button>
-            <button class="letter" onclick="speak('مي')">مي</button>
-
-            <button class="letter" onclick="speak('سا')">سا</button>
-            <button class="letter" onclick="speak('سو')">سو</button>
-            <button class="letter" onclick="speak('سي')">سي</button>
-
-        </div>
-
-    </div>
-
-    <div class="content-box">
-
-        <h2>📚 تركيب كلمة</h2>
-
-        <p>مَ + دْ + رَ + سَ + ة = مَدْرَسَة</p>
-
-        <button
-            class="open-button"
-            onclick="speak('مدرسة')">
-            🔊 استمع
-        </button>
+        <div id="syllables"></div>
 
     </div>
 
@@ -59,20 +172,134 @@
 </main>
 
 <script>
-function speak(text) {
 
-    if ("speechSynthesis" in window) {
+const letters = [
+
+    ["أ", "أَا", "أُو", "إِي"],
+
+    ["ب", "بَا", "بُو", "بِي"],
+    ["ت", "تَا", "تُو", "تِي"],
+    ["ث", "ثَا", "ثُو", "ثِي"],
+
+    ["ج", "جَا", "جُو", "جِي"],
+    ["ح", "حَا", "حُو", "حِي"],
+    ["خ", "خَا", "خُو", "خِي"],
+
+    ["د", "دَا", "دُو", "دِي"],
+    ["ذ", "ذَا", "ذُو", "ذِي"],
+
+    ["ر", "رَا", "رُو", "رِي"],
+    ["ز", "زَا", "زُو", "زِي"],
+
+    ["س", "سَا", "سُو", "سِي"],
+    ["ش", "شَا", "شُو", "شِي"],
+
+    ["ص", "صَا", "صُو", "صِي"],
+    ["ض", "ضَا", "ضُو", "ضِي"],
+
+    ["ط", "طَا", "طُو", "طِي"],
+    ["ظ", "ظَا", "ظُو", "ظِي"],
+
+    ["ع", "عَا", "عُو", "عِي"],
+    ["غ", "غَا", "غُو", "غِي"],
+
+    ["ف", "فَا", "فُو", "فِي"],
+    ["ق", "قَا", "قُو", "قِي"],
+
+    ["ك", "كَا", "كُو", "كِي"],
+    ["ل", "لَا", "لُو", "لِي"],
+    ["م", "مَا", "مُو", "مِي"],
+
+    ["ن", "نَا", "نُو", "نِي"],
+    ["هـ", "هَا", "هُو", "هِي"],
+
+    ["و", "وَا", "وُو", "وِي"],
+    ["ي", "يَا", "يُو", "يِي"]
+
+];
+
+const container = document.getElementById("syllables");
+
+letters.forEach((letter, index) => {
+
+    const card = document.createElement("div");
+
+    card.className = "letter-card";
+
+    card.innerHTML = `
+        <div class="letter-title">
+            الحرف ${letter[0]}
+        </div>
+
+        <div class="syllable-grid">
+
+            <button class="syllable"
+                data-sound="${letter[1]}">
+                ${letter[1]}
+                <span>مد بالألف</span>
+            </button>
+
+            <button class="syllable"
+                data-sound="${letter[2]}">
+                ${letter[2]}
+                <span>مد بالواو</span>
+            </button>
+
+            <button class="syllable"
+                data-sound="${letter[3]}">
+                ${letter[3]}
+                <span>مد بالياء</span>
+            </button>
+
+        </div>
+    `;
+
+    container.appendChild(card);
+
+});
+
+
+// تشغيل صوت المقطع عند الضغط
+
+document.querySelectorAll(".syllable").forEach(button => {
+
+    button.addEventListener("click", function() {
+
+        const text = this.dataset.sound;
+
+        if (!("speechSynthesis" in window)) {
+            alert("متصفحك لا يدعم تشغيل النطق الصوتي");
+            return;
+        }
 
         speechSynthesis.cancel();
+
+        document.querySelectorAll(".syllable").forEach(btn => {
+            btn.classList.remove("playing");
+        });
+
+        this.classList.add("playing");
 
         const speech = new SpeechSynthesisUtterance(text);
 
         speech.lang = "ar-SA";
-        speech.rate = 0.75;
+        speech.rate = 0.65;
+        speech.pitch = 1;
+
+        speech.onend = () => {
+            this.classList.remove("playing");
+        };
+
+        speech.onerror = () => {
+            this.classList.remove("playing");
+        };
 
         speechSynthesis.speak(speech);
-    }
-}
+
+    });
+
+});
+
 </script>
 
 </body>
