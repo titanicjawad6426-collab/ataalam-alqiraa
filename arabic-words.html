@@ -1,12 +1,140 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>الكلمات العربية</title>
+<title>الكلمات العربية</title>
 
-    <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css">
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background: #f1f7fd;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    max-width: 850px;
+    margin: auto;
+    padding: 12px;
+}
+
+.content-box {
+    background: white;
+    border-radius: 25px;
+    padding: 22px 15px;
+    margin: 25px 0;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.07);
+}
+
+.content-box h2 {
+    text-align: center;
+    font-size: 26px;
+    margin: 10px 0 30px;
+}
+
+.category-title {
+    font-size: 23px;
+    text-align: center;
+    margin: 25px 0;
+    color: #263b50;
+}
+
+.word-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.word-card {
+    background: white;
+    border: 2px solid #dce7f1;
+    border-radius: 22px;
+    min-height: 145px;
+    padding: 12px 5px;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    transition: 0.2s;
+    color: #111;
+}
+
+.word-card:active {
+    background: #e7f4ff;
+    transform: scale(0.96);
+}
+
+.word-card.active {
+    background: #e5f3ff;
+    border-color: #2196f3;
+}
+
+.word-image {
+    display: block;
+    font-size: 43px;
+    margin-bottom: 10px;
+}
+
+.word-text {
+    display: block;
+    font-size: 25px;
+    font-weight: normal;
+}
+
+.word-card.active .word-text {
+    color: #0875c9;
+}
+
+#selected-word {
+    text-align: center;
+    font-size: 30px;
+    color: #1976d2;
+    font-weight: bold;
+    min-height: 45px;
+    margin: 20px 0;
+}
+
+.sound-message {
+    text-align: center;
+    color: #777;
+    font-size: 17px;
+}
+
+.back-button {
+    display: block;
+    max-width: 320px;
+    margin: 30px auto;
+    text-align: center;
+}
+
+@media(max-width:380px) {
+
+    .word-grid {
+        gap: 7px;
+    }
+
+    .word-card {
+        min-height: 125px;
+        padding: 8px 3px;
+    }
+
+    .word-image {
+        font-size: 35px;
+    }
+
+    .word-text {
+        font-size: 21px;
+    }
+
+}
+
+</style>
 </head>
 
 <body>
@@ -20,46 +148,13 @@
 
     <div class="content-box">
 
-        <h2>📚 كلمات سهلة</h2>
+        <h2>📚 تعلم الكلمات المصورة</h2>
 
-        <div class="letter-grid">
+        <p class="sound-message">
+            اضغط على الصورة أو الكلمة للاستماع إلى نطقها 🔊
+        </p>
 
-            <button class="letter" onclick="speakWord('أَسَد')">
-                🦁<br>
-                أَسَد
-            </button>
-
-            <button class="letter" onclick="speakWord('بَيْت')">
-                🏠<br>
-                بَيْت
-            </button>
-
-            <button class="letter" onclick="speakWord('كِتَاب')">
-                📖<br>
-                كِتَاب
-            </button>
-
-            <button class="letter" onclick="speakWord('شَمْس')">
-                ☀️<br>
-                شَمْس
-            </button>
-
-            <button class="letter" onclick="speakWord('قَلَم')">
-                🖊️<br>
-                قَلَم
-            </button>
-
-            <button class="letter" onclick="speakWord('سَمَكَة')">
-                🐟<br>
-                سَمَكَة
-            </button>
-            
-            <button class="letter" onclick="speakWord('سَمَكَة')">
-                🐟<br>
-                سَمَكَة
-            </button>
-
-        </div>
+        <div id="words-container"></div>
 
     </div>
 
@@ -67,12 +162,12 @@
 
         <h2>🔊 استمع إلى الكلمة</h2>
 
-        <p>
-            اضغط على أي كلمة لسماع نطقها.
-        </p>
-
         <p id="selected-word">
             اختر كلمة من الأعلى 👆
+        </p>
+
+        <p class="sound-message" id="sound-status">
+            اضغط على أي كلمة لسماع نطقها
         </p>
 
     </div>
@@ -87,31 +182,249 @@
     <p>🌟 تعلم كلمة جديدة كل يوم 🌟</p>
 </footer>
 
+
 <script>
-function speakWord(word) {
+
+// جميع الكلمات والمجموعات
+
+const categories = [
+
+{
+    title: "🐾 عالم الحيوانات",
+    words: [
+        ["🦁","أَسَد"],
+        ["🐯","نَمِر"],
+        ["🐘","فِيل"],
+        ["🐒","قِرْد"],
+        ["🐰","أَرْنَب"],
+        ["🐴","حِصَان"],
+        ["🐄","بَقَرَة"],
+        ["🦒","زَرَافَة"],
+        ["🐈","قِطَّة"],
+        ["🐕","كَلْب"]
+    ]
+},
+
+{
+    title: "🍎 الفواكه",
+    words: [
+        ["🍎","تُفَّاح"],
+        ["🍌","مَوْز"],
+        ["🍊","بُرْتُقَال"],
+        ["🍇","عِنَب"],
+        ["🍓","فَرَاوِلَة"],
+        ["🍉","بِطِّيخ"],
+        ["🍐","إِجَّاص"],
+        ["🍒","كَرَز"],
+        ["🥭","مَانْجَا"],
+        ["🍍","أَنَانَاس"]
+    ]
+},
+
+{
+    title: "🥕 الخضروات",
+    words: [
+        ["🥕","جَزَر"],
+        ["🥔","بَطَاطِس"],
+        ["🍅","طَمَاطِم"],
+        ["🥒","خِيَار"],
+        ["🧅","بَصَل"],
+        ["🥬","خَسّ"],
+        ["🌶️","فِلْفِل"],
+        ["🥦","بْرُوكُولِي"]
+    ]
+},
+
+{
+    title: "🏠 المنزل",
+    words: [
+        ["🚪","بَاب"],
+        ["🪟","نَافِذَة"],
+        ["🪑","كُرْسِيّ"],
+        ["🛋️","أَرِيكَة"],
+        ["🛏️","سَرِير"],
+        ["🪞","مِرْآة"],
+        ["🔑","مِفْتَاح"],
+        ["🕰️","سَاعَة"],
+        ["🍽️","طَاوِلَة"],
+        ["💡","مِصْبَاح"]
+    ]
+},
+
+{
+    title: "🎒 المدرسة",
+    words: [
+        ["📖","كِتَاب"],
+        ["🖊️","قَلَم"],
+        ["📓","دَفْتَر"],
+        ["📏","مِسْطَرَة"],
+        ["🎒","حَقِيبَة"],
+        ["✏️","قَلَمُ رَصَاص"],
+        ["🧽","مِمْحَاة"],
+        ["📚","كُتُب"]
+    ]
+},
+
+{
+    title: "🌳 الطبيعة",
+    words: [
+        ["☀️","شَمْس"],
+        ["🌙","قَمَر"],
+        ["⭐","نَجْمَة"],
+        ["🌳","شَجَرَة"],
+        ["🌹","وَرْدَة"],
+        ["🌊","بَحْر"],
+        ["⛰️","جَبَل"],
+        ["🌧️","مَطَر"]
+    ]
+},
+
+{
+    title: "🚗 وسائل النقل",
+    words: [
+        ["🚗","سَيَّارَة"],
+        ["🚂","قِطَار"],
+        ["✈️","طَائِرَة"],
+        ["🚢","سَفِينَة"],
+        ["🚲","دَرَّاجَة"],
+        ["🚌","حَافِلَة"],
+        ["🚑","سَيَّارَةُ إِسْعَاف"],
+        ["🚁","مِرْوَحِيَّة"]
+    ]
+},
+
+{
+    title: "👨‍👩‍👧 الأسرة",
+    words: [
+        ["👨","أَب"],
+        ["👩","أُمّ"],
+        ["👦","أَخ"],
+        ["👧","أُخْت"],
+        ["👴","جَدّ"],
+        ["👵","جَدَّة"],
+        ["👶","طِفْل"],
+        ["👨‍👩‍👧","عَائِلَة"]
+    ]
+},
+
+{
+    title: "🍽️ الطعام",
+    words: [
+        ["🍞","خُبْز"],
+        ["🥛","حَلِيب"],
+        ["🥚","بَيْض"],
+        ["🧀","جُبْن"],
+        ["🐟","سَمَك"],
+        ["🍯","عَسَل"],
+        ["🍚","أَرُزّ"],
+        ["🍲","حَسَاء"]
+    ]
+}
+
+];
+
+
+// إنشاء البطاقات تلقائيا
+
+const container = document.getElementById("words-container");
+
+categories.forEach(category => {
+
+    const section = document.createElement("section");
+
+    const title = document.createElement("h3");
+
+    title.className = "category-title";
+    title.textContent = category.title;
+
+    section.appendChild(title);
+
+    const grid = document.createElement("div");
+
+    grid.className = "word-grid";
+
+    category.words.forEach(word => {
+
+        const button = document.createElement("button");
+
+        button.className = "word-card";
+        button.type = "button";
+
+        const picture = document.createElement("span");
+        picture.className = "word-image";
+        picture.textContent = word[0];
+
+        const name = document.createElement("span");
+        name.className = "word-text";
+        name.textContent = word[1];
+
+        button.appendChild(picture);
+        button.appendChild(name);
+
+        button.addEventListener("click", function() {
+
+            speakWord(word[1], button);
+
+        });
+
+        grid.appendChild(button);
+
+    });
+
+    section.appendChild(grid);
+
+    container.appendChild(section);
+
+});
+
+
+// تشغيل الصوت
+
+function speakWord(word, button) {
 
     const display = document.getElementById("selected-word");
 
-    display.textContent = "🔊 " + word;
+    const status = document.getElementById("sound-status");
 
-    if ("speechSynthesis" in window) {
+    display.textContent = word;
 
-        speechSynthesis.cancel();
+    status.textContent = "🔊 استمع إلى نطق الكلمة";
 
-        const speech = new SpeechSynthesisUtterance(word);
+    document.querySelectorAll(".word-card").forEach(card => {
+        card.classList.remove("active");
+    });
 
-        speech.lang = "ar-SA";
-        speech.rate = 0.75;
-        speech.pitch = 1;
+    button.classList.add("active");
 
-        speechSynthesis.speak(speech);
+    if (!("speechSynthesis" in window)) {
 
-    } else {
+        status.textContent = "الصوت غير مدعوم في هذا المتصفح";
 
-        alert("الصوت غير مدعوم في هذا المتصفح.");
-
+        return;
     }
+
+    speechSynthesis.cancel();
+
+    const speech = new SpeechSynthesisUtterance(word);
+
+    speech.lang = "ar-SA";
+
+    speech.rate = 0.75;
+
+    speech.pitch = 1;
+
+    speech.onend = function() {
+        status.textContent = "أحسنت! اختر كلمة أخرى 🌟";
+    };
+
+    speech.onerror = function() {
+        status.textContent = "تعذر تشغيل الصوت. تحقق من إعدادات الصوت.";
+    };
+
+    speechSynthesis.speak(speech);
+
 }
+
 </script>
 
 </body>
