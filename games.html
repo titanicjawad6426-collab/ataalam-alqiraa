@@ -1,1106 +1,203 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الألعاب التعليمية</title>
+<link rel="stylesheet" href="style.css">
 
-    <meta charset="UTF-8">
+<style>
+*{box-sizing:border-box}
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#f1f7ff;
+    text-align:center;
+}
 
-    <title>الألعاب التعليمية</title>
+header{
+    padding:25px 10px;
+    background:linear-gradient(135deg,#2196f3,#673ab7);
+    color:white;
+}
 
-    <link rel="stylesheet"
-          href="style.css">
+header h1{margin:0 0 10px}
 
+.container{
+    width:95%;
+    max-width:850px;
+    margin:20px auto;
+}
+
+.languages{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+    margin:20px 0;
+}
+
+.languages button{
+    border:0;
+    padding:12px 20px;
+    border-radius:12px;
+    background:#fff;
+    font-size:17px;
+    cursor:pointer;
+    box-shadow:0 2px 6px #ccc;
+}
+
+.languages button.active{
+    background:#2196f3;
+    color:white;
+}
+
+.games-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(145px,1fr));
+    gap:15px;
+}
+
+.game-card{
+    background:white;
+    padding:20px 10px;
+    border-radius:18px;
+    box-shadow:0 3px 10px #ddd;
+    cursor:pointer;
+    border:2px solid transparent;
+    transition:.2s;
+}
+
+.game-card:active{transform:scale(.96)}
+
+.game-card .icon{
+    font-size:45px;
+    display:block;
+    margin-bottom:10px;
+}
+
+.game-card h3{
+    font-size:17px;
+    margin:8px 0;
+    color:#333;
+}
+
+.game-card p{
+    font-size:13px;
+    color:#666;
+}
+
+.game-card.new{
+    border-color:#4caf50;
+}
+
+.badge{
+    background:#4caf50;
+    color:white;
+    padding:4px 9px;
+    border-radius:20px;
+    font-size:12px;
+}
+
+#game-area,#result-area{
+    display:none;
+    background:white;
+    border-radius:18px;
+    padding:20px 12px;
+    margin-top:20px;
+    box-shadow:0 3px 12px #ddd;
+}
+
+#question{
+    font-size:28px;
+    margin:25px 0;
+    font-weight:bold;
+}
+
+.answers{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(80px,1fr));
+    gap:12px;
+    max-width:500px;
+    margin:20px auto;
+}
+
+.answer-btn{
+    background:#e3f2fd;
+    border:2px solid #90caf9;
+    border-radius:14px;
+    padding:16px 8px;
+    font-size:25px;
+    cursor:pointer;
+}
+
+.answer-btn:disabled{
+    opacity:.75;
+    cursor:default;
+}
+
+.answer-btn.correct{
+    background:#c8e6c9;
+    border-color:#4caf50;
+}
+
+.answer-btn.wrong{
+    background:#ffcdd2;
+    border-color:#f44336;
+}
+
+.action-btn{
+    border:0;
+    border-radius:12px;
+    padding:13px 22px;
+    margin:8px;
+    font-size:17px;
+    background:#2196f3;
+    color:white;
+    cursor:pointer;
+}
+
+.back-btn{
+    background:#607d8b;
+}
+
+#feedback{
+    font-size:20px;
+    font-weight:bold;
+    min-height:35px;
+    margin:15px;
+}
+
+.score-box{
+    background:#e3f2fd;
+    padding:12px;
+    border-radius:12px;
+    font-size:19px;
+}
+
+.section-title{
+    margin:30px 0 15px;
+    color:#333;
+}
+
+@media(max-width:400px){
+    .game-card{padding:15px 5px}
+    .game-card .icon{font-size:38px}
+}
+</style>
 </head>
-
 
 <body>
 
-
 <header>
-
     <h1>🎮 الألعاب التعليمية</h1>
-
-    <p>
-        تعلم والعب واجمع النقاط ⭐
-    </p>
-
+    <p>تعلم والعب واجمع النقاط ⭐</p>
 </header>
-
 
 <main class="container">
 
+    <h2>🌍 اختر اللغة</h2>
 
-    <!-- =====================
-         اختيار اللغة
-    ====================== -->
-
-    <div class="content-box">
-
-        <h2>🌍 اختر اللغة</h2>
-
-
-        <div class="language-grid">
-
-
-            <button
-                class="language-button"
-                onclick="selectLanguage('ar')">
-
-                🇲🇦
-
-                <span>
-                    العربية
-                </span>
-
-            </button>
-
-
-            <button
-                class="language-button"
-                onclick="selectLanguage('fr')">
-
-                🇫🇷
-
-                <span>
-                    Français
-                </span>
-
-            </button>
-
-
-            <button
-                class="language-button"
-                onclick="selectLanguage('en')">
-
-                🇬🇧
-
-                <span>
-                    English
-                </span>
-
-            </button>
-
-
-        </div>
-
-    </div>
-
-
-
-    <!-- =====================
-         قائمة الألعاب
-    ====================== -->
-
-    <div
-        id="games-menu"
-        class="content-box">
-
-
-        <h2>
-            🕹️ اختر لعبة
-        </h2>
-
-
-        <div class="app-grid">
-
-
-            <button
-                class="app-card"
-                onclick="startGame('letters')">
-
-                <span class="card-icon">
-                    🔤
-                </span>
-
-                <span class="card-title">
-                    اختيار الحرف
-                </span>
-
-            </button>
-
-
-            <button
-                class="app-card"
-                onclick="startGame('pictures')">
-
-                <span class="card-icon">
-                    🖼️
-                </span>
-
-                <span class="card-title">
-                    مطابقة الكلمات
-                </span>
-
-            </button>
-
-
-            <button
-                class="app-card"
-                onclick="startGame('order')">
-
-                <span class="card-icon">
-                    🔢
-                </span>
-
-                <span class="card-title">
-                    ترتيب الحروف
-                </span>
-
-            </button>
-
-
-            <button
-                class="app-card"
-                onclick="startGame('missing')">
-
-                <span class="card-icon">
-                    🧩
-                </span>
-
-                <span class="card-title">
-                    الكلمة الناقصة
-                </span>
-
-            </button>
-
-
-        </div>
-
-
-    </div>
-
-
-
-    <!-- =====================
-         منطقة اللعبة
-    ====================== -->
-
-    <div
-        id="game-area"
-        class="content-box"
-        style="display:none;">
-
-
-        <div
-            style="
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            flex-wrap:wrap;
-            gap:10px;
-            margin-bottom:20px;
-            ">
-
-
-            <strong>
-                ⭐ النقاط:
-                <span id="score">
-                    0
-                </span>
-            </strong>
-
-
-            <strong>
-                السؤال:
-                <span id="question-number">
-                    1
-                </span>
-                /
-                <span id="total">
-                    5
-                </span>
-            </strong>
-
-
-        </div>
-
-
-
-        <div
-            id="game-content"
-            style="text-align:center;">
-
-
-        </div>
-
-
-
-        <p
-            id="feedback"
-            style="
-            min-height:30px;
-            font-size:20px;
-            font-weight:bold;
-            ">
-
-
-        </p>
-
-
-
-        <button
-            id="next-button"
-            class="open-button"
-            onclick="nextQuestion()"
-            style="display:none;">
-
-            السؤال التالي ➡️
-
-        </button>
-
-
-
-        <br><br>
-
-
-        <button
-            class="back-button"
-            onclick="showGamesMenu()">
-
-            🎮 العودة إلى الألعاب
-
-        </button>
-
-
-    </div>
-
-
-
-    <!-- =====================
-         النتيجة
-    ====================== -->
-
-    <div
-        id="result-area"
-        class="content-box"
-        style="display:none;text-align:center;">
-
-
-        <div
-            style="font-size:70px;">
-
-            🏆
-
-        </div>
-
-
-        <h2>
-            أحسنت!
-        </h2>
-
-
-        <p
-            id="final-result"
-            style="font-size:28px;">
-
-        </p>
-
-
-        <button
-            class="open-button"
-            onclick="restartGame()">
-
-            🔄 العب مرة أخرى
-
-        </button>
-
-
-        <br><br>
-
-
-        <button
-            class="back-button"
-            onclick="showGamesMenu()">
-
-            🎮 ألعاب أخرى
-
-        </button>
-
-
-    </div>
-
-
-    <br>
-
-
-    <a
-        href="index.html"
-        class="back-button">
-
-        🏠 العودة إلى الرئيسية
-
-    </a>
-
-
-</main>
-
-
-
-<script>
-
-
-/* =========================
-   إعدادات اللعبة
-========================= */
-
-
-let language = "ar";
-
-let currentGame = "";
-
-let currentQuestion = 0;
-
-let score = 0;
-
-let answered = false;
-
-
-
-/* =========================
-   بيانات الألعاب
-========================= */
-
-
-const data = {
-
-
-    ar: {
-
-
-        letters: [
-
-            {
-                image: "🍎",
-                question: "ما الحرف الذي تبدأ به كلمة تفاحة؟",
-                answers: ["أ", "ب", "ت"],
-                correct: "ت"
-            },
-
-            {
-                image: "🐱",
-                question: "ما الحرف الذي تبدأ به كلمة قطة؟",
-                answers: ["ق", "ك", "م"],
-                correct: "ق"
-            },
-
-            {
-                image: "🏠",
-                question: "ما الحرف الذي تبدأ به كلمة بيت؟",
-                answers: ["ب", "ت", "س"],
-                correct: "ب"
-            },
-
-            {
-                image: "📖",
-                question: "ما الحرف الذي تبدأ به كلمة كتاب؟",
-                answers: ["ك", "ب", "م"],
-                correct: "ك"
-            },
-
-            {
-                image: "☀️",
-                question: "ما الحرف الذي تبدأ به كلمة شمس؟",
-                answers: ["ش", "س", "ص"],
-                correct: "ش"
-            }
-
-        ],
-
-
-        pictures: [
-
-            {
-                image: "🐱",
-                question: "اختر الكلمة المناسبة للصورة",
-                answers: ["قطة", "بيت", "شمس"],
-                correct: "قطة"
-            },
-
-            {
-                image: "🏠",
-                question: "اختر الكلمة المناسبة للصورة",
-                answers: ["كتاب", "بيت", "قلم"],
-                correct: "بيت"
-            },
-
-            {
-                image: "☀️",
-                question: "اختر الكلمة المناسبة للصورة",
-                answers: ["شمس", "قمر", "باب"],
-                correct: "شمس"
-            },
-
-            {
-                image: "📖",
-                question: "اختر الكلمة المناسبة للصورة",
-                answers: ["كتاب", "كرسي", "باب"],
-                correct: "كتاب"
-            },
-
-            {
-                image: "🍎",
-                question: "اختر الكلمة المناسبة للصورة",
-                answers: ["تفاحة", "قطة", "بيت"],
-                correct: "تفاحة"
-            }
-
-        ],
-
-
-        missing: [
-
-            {
-                image: "🐱",
-                question: "أكمل الكلمة: ق _ ة",
-                answers: ["ط", "ت", "ب"],
-                correct: "ط"
-            },
-
-            {
-                image: "🏠",
-                question: "أكمل الكلمة: ب _ ت",
-                answers: ["ي", "ا", "و"],
-                correct: "ي"
-            },
-
-            {
-                image: "☀️",
-                question: "أكمل الكلمة: ش _ س",
-                answers: ["م", "ب", "ت"],
-                correct: "م"
-            },
-
-            {
-                image: "📖",
-                question: "أكمل الكلمة: ك _ اب",
-                answers: ["ت", "ب", "م"],
-                correct: "ت"
-            },
-
-            {
-                image: "🍎",
-                question: "أكمل الكلمة: ت _ احة",
-                answers: ["ف", "ب", "م"],
-                correct: "ف"
-            }
-
-        ]
-
-    },
-
-
-    fr: {
-
-
-        letters: [
-
-            {
-                image: "🍎",
-                question: "Quelle lettre commence « pomme » ?",
-                answers: ["P", "B", "M"],
-                correct: "P"
-            },
-
-            {
-                image: "🐱",
-                question: "Quelle lettre commence « chat » ?",
-                answers: ["C", "A", "S"],
-                correct: "C"
-            },
-
-            {
-                image: "🏠",
-                question: "Quelle lettre commence « maison » ?",
-                answers: ["M", "B", "C"],
-                correct: "M"
-            },
-
-            {
-                image: "📖",
-                question: "Quelle lettre commence « livre » ?",
-                answers: ["L", "B", "M"],
-                correct: "L"
-            },
-
-            {
-                image: "☀️",
-                question: "Quelle lettre commence « soleil » ?",
-                answers: ["S", "C", "P"],
-                correct: "S"
-            }
-
-        ],
-
-
-        pictures: [
-
-            {
-                image: "🐱",
-                question: "Choisis le bon mot",
-                answers: ["chat", "maison", "soleil"],
-                correct: "chat"
-            },
-
-            {
-                image: "🏠",
-                question: "Choisis le bon mot",
-                answers: ["livre", "maison", "chat"],
-                correct: "maison"
-            },
-
-            {
-                image: "☀️",
-                question: "Choisis le bon mot",
-                answers: ["soleil", "chat", "livre"],
-                correct: "soleil"
-            },
-
-            {
-                image: "📖",
-                question: "Choisis le bon mot",
-                answers: ["livre", "maison", "chien"],
-                correct: "livre"
-            },
-
-            {
-                image: "🍎",
-                question: "Choisis le bon mot",
-                answers: ["pomme", "chat", "maison"],
-                correct: "pomme"
-            }
-
-        ],
-
-
-        missing: [
-
-            {
-                image: "🐱",
-                question: "Complète : c _ at",
-                answers: ["h", "a", "o"],
-                correct: "h"
-            },
-
-            {
-                image: "🏠",
-                question: "Complète : m _ ison",
-                answers: ["a", "e", "i"],
-                correct: "a"
-            },
-
-            {
-                image: "☀️",
-                question: "Complète : s _ leil",
-                answers: ["o", "a", "u"],
-                correct: "o"
-            },
-
-            {
-                image: "📖",
-                question: "Complète : l _ vre",
-                answers: ["i", "a", "o"],
-                correct: "i"
-            },
-
-            {
-                image: "🍎",
-                question: "Complète : p _ mme",
-                answers: ["o", "a", "e"],
-                correct: "o"
-            }
-
-        ]
-
-    },
-
-
-    en: {
-
-
-        letters: [
-
-            {
-                image: "🍎",
-                question: "Which letter starts Apple?",
-                answers: ["A", "B", "C"],
-                correct: "A"
-            },
-
-            {
-                image: "🐱",
-                question: "Which letter starts Cat?",
-                answers: ["C", "D", "B"],
-                correct: "C"
-            },
-
-            {
-                image: "🏠",
-                question: "Which letter starts House?",
-                answers: ["H", "K", "M"],
-                correct: "H"
-            },
-
-            {
-                image: "📖",
-                question: "Which letter starts Book?",
-                answers: ["B", "P", "D"],
-                correct: "B"
-            },
-
-            {
-                image: "☀️",
-                question: "Which letter starts Sun?",
-                answers: ["S", "T", "U"],
-                correct: "S"
-            }
-
-        ],
-
-
-        pictures: [
-
-            {
-                image: "🐱",
-                question: "Choose the correct word",
-                answers: ["cat", "house", "sun"],
-                correct: "cat"
-            },
-
-            {
-                image: "🏠",
-                question: "Choose the correct word",
-                answers: ["book", "house", "cat"],
-                correct: "house"
-            },
-
-            {
-                image: "☀️",
-                question: "Choose the correct word",
-                answers: ["sun", "cat", "book"],
-                correct: "sun"
-            },
-
-            {
-                image: "📖",
-                question: "Choose the correct word",
-                answers: ["book", "house", "dog"],
-                correct: "book"
-            },
-
-            {
-                image: "🍎",
-                question: "Choose the correct word",
-                answers: ["apple", "cat", "house"],
-                correct: "apple"
-            }
-
-        ],
-
-
-        missing: [
-
-            {
-                image: "🐱",
-                question: "Complete: c _ t",
-                answers: ["a", "o", "e"],
-                correct: "a"
-            },
-
-            {
-                image: "🏠",
-                question: "Complete: h _ use",
-                answers: ["o", "a", "i"],
-                correct: "o"
-            },
-
-            {
-                image: "☀️",
-                question: "Complete: s _ n",
-                answers: ["u", "a", "e"],
-                correct: "u"
-            },
-
-            {
-                image: "📖",
-                question: "Complete: b _ ok",
-                answers: ["o", "a", "i"],
-                correct: "o"
-            },
-
-            {
-                image: "🍎",
-                question: "Complete: _ pple",
-                answers: ["a", "o", "e"],
-                correct: "a"
-            }
-
-        ]
-
-    }
-
-};
-
-
-
-/* =========================
-   اختيار اللغة
-========================= */
-
-
-function selectLanguage(selectedLanguage) {
-
-    language = selectedLanguage;
-
-    document.documentElement.lang = language;
-
-    if (language === "ar") {
-
-        document.documentElement.dir = "rtl";
-
-    } else {
-
-        document.documentElement.dir = "ltr";
-
-    }
-
-}
-
-
-
-/* =========================
-   بدء اللعبة
-========================= */
-
-
-function startGame(game) {
-
-    currentGame = game;
-
-    currentQuestion = 0;
-
-    score = 0;
-
-    answered = false;
-
-
-    document.getElementById("games-menu")
-        .style.display = "none";
-
-
-    document.getElementById("game-area")
-        .style.display = "block";
-
-
-    document.getElementById("result-area")
-        .style.display = "none";
-
-
-    loadQuestion();
-
-}
-
-
-
-/* =========================
-   تحميل السؤال
-========================= */
-
-
-function loadQuestion() {
-
-    const questions =
-        data[language][currentGame];
-
-
-    const question =
-        questions[currentQuestion];
-
-
-    document.getElementById("score")
-        .textContent = score;
-
-
-    document.getElementById("question-number")
-        .textContent = currentQuestion + 1;
-
-
-    document.getElementById("total")
-        .textContent = questions.length;
-
-
-    document.getElementById("feedback")
-        .textContent = "";
-
-
-    document.getElementById("next-button")
-        .style.display = "none";
-
-
-    answered = false;
-
-
-    const gameContent =
-        document.getElementById("game-content");
-
-
-    gameContent.innerHTML = "";
-
-
-    const image =
-        document.createElement("div");
-
-
-    image.style.fontSize = "70px";
-
-    image.style.marginBottom = "20px";
-
-    image.textContent = question.image;
-
-
-    gameContent.appendChild(image);
-
-
-
-    const title =
-        document.createElement("h2");
-
-
-    title.textContent =
-        question.question;
-
-
-    gameContent.appendChild(title);
-
-
-
-    const answers =
-        document.createElement("div");
-
-
-    answers.className =
-        "app-grid";
-
-
-    question.answers.forEach(function(answer) {
-
-
-        const button =
-            document.createElement("button");
-
-
-        button.className =
-            "app-card";
-
-
-        button.style.aspectRatio =
-            "1 / 1";
-
-
-        button.innerHTML =
-            '<span class="card-title">' +
-            answer +
-            '</span>';
-
-
-        button.onclick =
-            function() {
-
-                checkAnswer(answer, button);
-
-            };
-
-
-        answers.appendChild(button);
-
-    });
-
-
-    gameContent.appendChild(answers);
-
-}
-
-
-
-/* =========================
-   فحص الإجابة
-========================= */
-
-
-function checkAnswer(answer, button) {
-
-    if (answered) {
-
-        return;
-
-    }
-
-
-    answered = true;
-
-
-    const question =
-        data[language][currentGame][currentQuestion];
-
-
-    if (answer === question.correct) {
-
-        score++;
-
-
-        button.style.borderColor =
-            "#22c55e";
-
-
-        button.style.background =
-            "#dcfce7";
-
-
-        document.getElementById("feedback")
-            .textContent =
-            "🎉 إجابة صحيحة! أحسنت!";
-
-
-    } else {
-
-        button.style.borderColor =
-            "#ef4444";
-
-
-        button.style.background =
-            "#fee2e2";
-
-
-        document.getElementById("feedback")
-            .textContent =
-            "💡 حاول مرة أخرى في السؤال التالي.";
-
-    }
-
-
-    document.getElementById("score")
-        .textContent = score;
-
-
-    document.getElementById("next-button")
-        .style.display = "inline-block";
-
-}
-
-
-
-/* =========================
-   السؤال التالي
-========================= */
-
-
-function nextQuestion() {
-
-    currentQuestion++;
-
-
-    const questions =
-        data[language][currentGame];
-
-
-    if (currentQuestion >= questions.length) {
-
-        showResult();
-
-    } else {
-
-        loadQuestion();
-
-    }
-
-}
-
-
-
-/* =========================
-   عرض النتيجة
-========================= */
-
-
-function showResult() {
-
-    document.getElementById("game-area")
-        .style.display = "none";
-
-
-    document.getElementById("result-area")
-        .style.display = "block";
-
-
-    const total =
-        data[language][currentGame].length;
-
-
-    document.getElementById("final-result")
-        .textContent =
-        "⭐ نتيجتك: " +
-        score +
-        " / " +
-        total;
-
-}
-
-
-
-/* =========================
-   إعادة اللعبة
-========================= */
-
-
-function restartGame() {
-
-    currentQuestion = 0;
-
-    score = 0;
-
-    answered = false;
-
-
-    document.getElementById("result-area")
-        .style.display = "none";
-
-
-    document.getElementById("game-area")
-        .style.display = "block";
-
-
-    loadQuestion();
-
-}
-
-
-
-/* =========================
-   العودة لقائمة الألعاب
-========================= */
-
-
-function showGamesMenu() {
-
-    document.getElementById("game-area")
-        .style.display = "none";
-
-
-    document.getElementById("result-area")
-        .style.display = "none";
-
-
-    document.getElementById("games-menu")
-        .style.display = "block";
-
-}
-
-
-</script>
-
-
-</body>
-
-    </html>
+    <div class="languages">
+        <button class="active" onclick="selectLanguage('ar',
