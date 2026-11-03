@@ -1,51 +1,184 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تعلم القراءة</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>تعلم القراءة</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+.reading-section {
+    background: white;
+    border-radius: 18px;
+    padding: 18px;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.reading-text {
+    font-size: 32px;
+    font-weight: bold;
+    color: #1976d2;
+    margin: 25px 0;
+    line-height: 1.8;
+}
+
+.reading-button {
+    border: none;
+    border-radius: 12px;
+    padding: 13px 20px;
+    margin: 6px;
+    font-size: 18px;
+    cursor: pointer;
+    color: white;
+    background: #2196f3;
+}
+
+.listen-button {
+    background: #ff9800;
+}
+
+.mic-button {
+    background: #e53935;
+}
+
+.next-button {
+    background: #4caf50;
+}
+
+.clear-button {
+    background: #607d8b;
+}
+
+.reading-result {
+    background: #f1f8e9;
+    border-radius: 12px;
+    padding: 15px;
+    margin-top: 15px;
+    font-size: 18px;
+    line-height: 1.8;
+    min-height: 50px;
+}
+
+.reading-score {
+    background: #e3f2fd;
+    border-radius: 12px;
+    padding: 12px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.reading-status {
+    margin: 12px;
+    font-weight: bold;
+    color: #555;
+}
+
+.reading-button:disabled {
+    opacity: 0.5;
+}
+</style>
 </head>
 
 <body>
 
 <header>
     <h1>📖 تعلم القراءة</h1>
-    <p>اقرأ الكلمات والجمل واستمع إليها</p>
+    <p>اقرأ الكلمات والجمل ودع التطبيق يستمع إليك</p>
 </header>
 
 <main class="container">
 
-    <div class="content-box">
+    <div class="reading-section">
 
-        <h2>📚 كلمات</h2>
+        <h2>🎤 اقرأ بنفسك</h2>
 
-        <p style="font-size: 30px;">أَسَد 🦁</p>
+        <div class="reading-score">
+            الكلمة: <span id="wordNumber">1</span>
+            من <span id="totalWords">6</span>
+            ⭐ الصحيحة: <span id="score">0</span>
+        </div>
 
-        <button class="open-button" onclick="speak('أسد')">
-            🔊 استمع
+        <p id="instruction">
+            اقرأ الكلمة التالية بصوت واضح:
+        </p>
+
+        <div class="reading-text" id="targetText">
+            أَسَدٌ 🦁
+        </div>
+
+        <button class="reading-button listen-button"
+                onclick="speakTarget()">
+            🔊 استمع إلى النطق الصحيح
         </button>
 
-        <hr style="margin: 25px 0;">
+        <br>
 
-        <p style="font-size: 30px;">بَيْت 🏠</p>
+        <button class="reading-button mic-button"
+                id="startButton"
+                onclick="startListening()">
+            🎤 ابدأ القراءة
+        </button>
 
-        <button class="open-button" onclick="speak('بيت')">
-            🔊 استمع
+        <button class="reading-button clear-button"
+                onclick="resetCurrent()">
+            🔄 أعد المحاولة
+        </button>
+
+        <div class="reading-status" id="status">
+            اضغط على الميكروفون ثم اقرأ بصوت واضح.
+        </div>
+
+        <div class="reading-result" id="result">
+            في انتظار قراءتك...
+        </div>
+
+        <button class="reading-button next-button"
+                id="nextButton"
+                onclick="nextWord()"
+                style="display:none;">
+            الكلمة التالية ←
         </button>
 
     </div>
 
-    <div class="content-box">
+    <div class="reading-section">
 
-        <h2>📖 جملة قصيرة</h2>
+        <h2>📖 تدريب على قراءة الجمل</h2>
 
-        <p style="font-size: 26px;">
+        <p class="reading-text" id="sentence">
             هَذَا بَيْتٌ جَمِيلٌ.
         </p>
 
-        <button class="open-button" onclick="speak('هذا بيت جميل')">
+        <button class="reading-button listen-button"
+                onclick="speakSentence()">
             🔊 استمع إلى الجملة
+        </button>
+
+        <button class="reading-button mic-button"
+                onclick="listenSentence()">
+            🎤 اقرأ الجملة
+        </button>
+
+        <div class="reading-result" id="sentenceResult">
+            اقرأ الجملة ثم شاهد ما تعرّف عليه التطبيق.
+        </div>
+
+    </div>
+
+    <div class="reading-section" id="finalResult"
+         style="display:none;">
+
+        <h2>🎉 أحسنت! انتهى التدريب</h2>
+
+        <p id="finalScore"></p>
+
+        <button class="reading-button next-button"
+                onclick="restartGame()">
+            🔄 أعد التدريب
         </button>
 
     </div>
@@ -57,20 +190,369 @@
 </main>
 
 <script>
+
+// الكلمات التي سيتدرب الطفل على قراءتها
+const words = [
+    { text: "أَسَدٌ", simple: "أسد", image: "🦁" },
+    { text: "بَيْتٌ", simple: "بيت", image: "🏠" },
+    { text: "قَلَمٌ", simple: "قلم", image: "✏️" },
+    { text: "شَمْسٌ", simple: "شمس", image: "☀️" },
+    { text: "قَمَرٌ", simple: "قمر", image: "🌙" },
+    { text: "سَمَكَةٌ", simple: "سمكة", image: "🐟" }
+];
+
+let current = 0;
+let score = 0;
+let completed = false;
+let recognition = null;
+let listening = false;
+
+const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+// تحويل النص إلى صيغة مبسطة للمقارنة
+function normalizeArabic(text) {
+
+    return text
+        .replace(/[\u064B-\u065F\u0670]/g, "")
+        .replace(/[إأآٱ]/g, "ا")
+        .replace(/ة/g, "ه")
+        .replace(/[.,،؛؟!]/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+// عرض الكلمة
+function showWord() {
+
+    const item = words[current];
+
+    document.getElementById("targetText").textContent =
+        item.text + " " + item.image;
+
+    document.getElementById("wordNumber").textContent =
+        current + 1;
+
+    document.getElementById("score").textContent = score;
+
+    document.getElementById("result").textContent =
+        "في انتظار قراءتك...";
+
+    document.getElementById("status").textContent =
+        "اضغط على الميكروفون ثم اقرأ بصوت واضح.";
+
+    document.getElementById("nextButton").style.display =
+        "none";
+
+    document.getElementById("startButton").disabled = false;
+
+    completed = false;
+}
+
+// النطق الآلي
+function speakTarget() {
+
+    const item = words[current];
+
+    speak(item.simple);
+}
+
 function speak(text) {
 
-    if ("speechSynthesis" in window) {
+    if (!("speechSynthesis" in window)) {
+        alert("النطق الآلي غير متوفر في هذا المتصفح.");
+        return;
+    }
 
-        speechSynthesis.cancel();
+    speechSynthesis.cancel();
 
-        const speech = new SpeechSynthesisUtterance(text);
+    const speech = new SpeechSynthesisUtterance(text);
 
-        speech.lang = "ar-SA";
-        speech.rate = 0.7;
+    speech.lang = "ar-SA";
+    speech.rate = 0.7;
 
-        speechSynthesis.speak(speech);
+    speechSynthesis.speak(speech);
+}
+
+// إنشاء أداة التعرف على الصوت
+function createRecognition() {
+
+    if (!SpeechRecognition) {
+        return null;
+    }
+
+    const rec = new SpeechRecognition();
+
+    rec.lang = "ar-SA";
+    rec.continuous = false;
+    rec.interimResults = false;
+    rec.maxAlternatives = 3;
+
+    return rec;
+}
+
+// بدء الاستماع للكلمة
+function startListening() {
+
+    if (!SpeechRecognition) {
+
+        document.getElementById("status").textContent =
+            "متصفحك لا يدعم التعرف على الصوت. جرّب Google Chrome.";
+
+        return;
+    }
+
+    if (listening) return;
+
+    recognition = createRecognition();
+
+    if (!recognition) return;
+
+    listening = true;
+
+    document.getElementById("status").textContent =
+        "🎤 أستمع إليك الآن... اقرأ الكلمة.";
+
+    document.getElementById("result").textContent =
+        "تحدث الآن...";
+
+    document.getElementById("startButton").disabled = true;
+
+    recognition.onresult = function(event) {
+
+        const alternatives = Array.from(
+            event.results[0]
+        ).map(item => item.transcript);
+
+        checkPronunciation(alternatives);
+    };
+
+    recognition.onerror = function(event) {
+
+        let message = "لم أتمكن من سماعك. حاول مرة أخرى.";
+
+        if (event.error === "not-allowed") {
+            message = "يجب السماح باستخدام الميكروفون من إعدادات المتصفح.";
+        } else if (event.error === "network") {
+            message = "تعذر الاتصال بخدمة التعرف على الصوت. تحقق من الإنترنت.";
+        } else if (event.error === "no-speech") {
+            message = "لم أسمع صوتاً. اقترب من الهاتف وحاول مجدداً.";
+        }
+
+        document.getElementById("status").textContent = message;
+
+        document.getElementById("startButton").disabled = false;
+    };
+
+    recognition.onend = function() {
+
+        listening = false;
+
+        document.getElementById("startButton").disabled =
+            false;
+    };
+
+    try {
+        recognition.start();
+    } catch (error) {
+
+        listening = false;
+
+        document.getElementById("startButton").disabled =
+            false;
+
+        document.getElementById("status").textContent =
+            "تعذر تشغيل الميكروفون. حاول مرة أخرى.";
     }
 }
+
+// مقارنة النطق بالكلمة المطلوبة
+function checkPronunciation(alternatives) {
+
+    const item = words[current];
+
+    const expected = normalizeArabic(item.simple);
+
+    const heard = alternatives.map(normalizeArabic);
+
+    document.getElementById("result").textContent =
+        "سمعت منك: " + alternatives[0];
+
+    const correct = heard.some(text => {
+
+        return text === expected;
+    });
+
+    if (correct) {
+
+        if (!completed) {
+            score++;
+        }
+
+        completed = true;
+
+        document.getElementById("result").innerHTML =
+            "⭐ ممتاز! نطقك للكلمة صحيح.<br>" +
+            "الكلمة التي سمعتها: " + alternatives[0];
+
+        document.getElementById("result").style.background =
+            "#e8f5e9";
+
+        document.getElementById("status").textContent =
+            "أحسنت! يمكنك الانتقال إلى الكلمة التالية.";
+
+        document.getElementById("score").textContent = score;
+
+        document.getElementById("nextButton").style.display =
+            "inline-block";
+
+    } else {
+
+        document.getElementById("result").innerHTML =
+            "🙂 أحسنت المحاولة!<br>" +
+            "سمعت: " + alternatives[0] +
+            "<br>حاول قراءة الكلمة مرة أخرى.";
+
+        document.getElementById("result").style.background =
+            "#fff3e0";
+
+        document.getElementById("status").textContent =
+            "حاول مرة أخرى بهدوء.";
+    }
+}
+
+// الانتقال للكلمة التالية
+function nextWord() {
+
+    if (!completed) return;
+
+    current++;
+
+    if (current >= words.length) {
+
+        document.getElementById("finalResult").style.display =
+            "block";
+
+        document.getElementById("finalScore").textContent =
+            "لقد قرأت " + score + " كلمات صحيحة من أصل " +
+            words.length + " كلمات. ⭐";
+
+        document.getElementById("targetText").textContent =
+            "🎉 أحسنت!";
+
+        document.getElementById("instruction").textContent =
+            "انتهى التدريب.";
+
+        document.getElementById("nextButton").style.display =
+            "none";
+
+        return;
+    }
+
+    showWord();
+}
+
+// إعادة المحاولة
+function resetCurrent() {
+
+    if (recognition && listening) {
+        recognition.abort();
+    }
+
+    listening = false;
+    completed = false;
+
+    document.getElementById("startButton").disabled = false;
+
+    document.getElementById("result").style.background =
+        "#f1f8e9";
+
+    showWord();
+}
+
+// الجملة
+function speakSentence() {
+
+    speak("هذا بيت جميل");
+}
+
+function listenSentence() {
+
+    if (!SpeechRecognition) {
+
+        document.getElementById("sentenceResult").textContent =
+            "متصفحك لا يدعم التعرف على الصوت. جرّب Google Chrome.";
+
+        return;
+    }
+
+    const rec = createRecognition();
+
+    document.getElementById("sentenceResult").textContent =
+        "🎤 أستمع إلى قراءتك...";
+
+    rec.onresult = function(event) {
+
+        const heard = event.results[0][0].transcript;
+
+        const expected = normalizeArabic("هذا بيت جميل");
+
+        const actual = normalizeArabic(heard);
+
+        if (actual === expected) {
+
+            document.getElementById("sentenceResult").textContent =
+                "⭐ ممتاز! قرأت الجملة بشكل صحيح.";
+
+        } else {
+
+            document.getElementById("sentenceResult").textContent =
+                "سمعت: " + heard +
+                ". حاول قراءة الجملة مرة أخرى.";
+        }
+    };
+
+    rec.onerror = function() {
+
+        document.getElementById("sentenceResult").textContent =
+            "تعذر سماع الجملة. تحقق من الميكروفون والإنترنت.";
+    };
+
+    try {
+        rec.start();
+    } catch (error) {
+
+        document.getElementById("sentenceResult").textContent =
+            "تعذر تشغيل الميكروفون. حاول مرة أخرى.";
+    }
+}
+
+// إعادة التدريب
+function restartGame() {
+
+    current = 0;
+    score = 0;
+    completed = false;
+
+    document.getElementById("finalResult").style.display =
+        "none";
+
+    document.getElementById("instruction").textContent =
+        "اقرأ الكلمة التالية بصوت واضح:";
+
+    document.getElementById("totalWords").textContent =
+        words.length;
+
+    showWord();
+}
+
+// تشغيل الصفحة
+document.getElementById("totalWords").textContent =
+    words.length;
+
+showWord();
+
 </script>
 
 </body>
