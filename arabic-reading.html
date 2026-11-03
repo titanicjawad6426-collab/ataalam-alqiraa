@@ -3,92 +3,161 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#2878d0">
+
 <title>تعلم القراءة العربية</title>
+
 <link rel="stylesheet" href="style.css">
 
 <style>
-*{box-sizing:border-box}
+*{
+    box-sizing:border-box;
+}
 
 body{
     margin:0;
-    background:#f1f7ff;
+    background:#f0f6ff;
     font-family:Arial,sans-serif;
     text-align:center;
+    color:#263238;
 }
 
 header{
-    background:linear-gradient(135deg,#2196f3,#673ab7);
+    background:linear-gradient(135deg,#168de2,#673ab7);
     color:white;
     padding:22px 10px;
+    border-radius:0 0 25px 25px;
+}
+
+header h1{
+    margin:5px;
+    font-size:27px;
+}
+
+header p{
+    margin:8px 0 0;
 }
 
 .container{
     width:95%;
-    max-width:750px;
+    max-width:800px;
     margin:20px auto;
 }
 
 .box{
     background:white;
-    padding:20px 12px;
-    border-radius:18px;
+    padding:20px 13px;
+    border-radius:20px;
     margin:15px 0;
-    box-shadow:0 3px 10px #ddd;
+    box-shadow:0 4px 14px #00000012;
+}
+
+.info{
+    color:#607080;
+    font-size:15px;
+    line-height:1.8;
+}
+
+.home-options{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:13px;
+    margin:20px 0;
+}
+
+.option{
+    border:0;
+    border-radius:18px;
+    padding:23px 8px;
+    color:white;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+    min-height:125px;
+}
+
+.option span{
+    display:block;
+    font-size:38px;
+    margin-bottom:12px;
+}
+
+.option.mic-option{
+    background:linear-gradient(135deg,#2196f3,#1565c0);
+}
+
+.option.game-option{
+    background:linear-gradient(135deg,#43b581,#168b55);
 }
 
 .levels{
     display:grid;
     grid-template-columns:repeat(2,1fr);
-    gap:12px;
+    gap:11px;
+    margin-top:20px;
 }
 
 .level{
     background:#e3f2fd;
     border:2px solid #90caf9;
-    border-radius:14px;
+    border-radius:15px;
     padding:15px 5px;
+    font-size:15px;
     cursor:pointer;
-    font-size:17px;
+    color:#174c80;
+}
+
+.level strong{
+    display:block;
+    font-size:20px;
+    margin-bottom:8px;
+}
+
+.level.active{
+    background:#d9f7df;
+    border-color:#4caf50;
 }
 
 .level.locked{
     background:#eee;
     border-color:#ccc;
-    color:#888;
+    color:#999;
     cursor:not-allowed;
 }
 
-.level.active{
-    background:#c8e6c9;
-    border-color:#4caf50;
-}
-
-.level strong{
+.level small{
     display:block;
-    font-size:22px;
-    margin-bottom:7px;
+    margin-top:6px;
 }
 
-#lesson{
-    display:none;
+.section-title{
+    color:#2469ae;
+    margin-top:5px;
 }
 
 .word{
-    font-size:52px;
+    font-size:55px;
     font-weight:bold;
     color:#1565c0;
-    margin:30px 0;
-    min-height:75px;
-    direction:rtl;
+    margin:25px 0;
+    min-height:85px;
+    line-height:1.7;
+    overflow-wrap:anywhere;
 }
 
 button{
     border:0;
-    border-radius:12px;
-    padding:13px 18px;
+    border-radius:13px;
+    padding:13px 17px;
     margin:6px;
-    font-size:17px;
+    font-size:16px;
     cursor:pointer;
+    font-family:Arial,sans-serif;
+}
+
+button:disabled{
+    opacity:.55;
+    cursor:not-allowed;
 }
 
 .listen{
@@ -97,12 +166,7 @@ button{
 }
 
 .mic{
-    background:#4caf50;
-    color:white;
-}
-
-.back{
-    background:#607d8b;
+    background:#43a047;
     color:white;
 }
 
@@ -111,16 +175,19 @@ button{
     color:white;
 }
 
-#feedback{
-    min-height:40px;
-    font-size:20px;
-    font-weight:bold;
-    margin:15px 0;
+.back{
+    background:#607d8b;
+    color:white;
+}
+
+.primary{
+    background:#673ab7;
+    color:white;
 }
 
 .progress{
-    background:#eee;
     height:13px;
+    background:#e6e6e6;
     border-radius:20px;
     overflow:hidden;
     margin:15px 0;
@@ -128,35 +195,143 @@ button{
 
 .progress-fill{
     height:100%;
-    width:0%;
+    width:0;
     background:#4caf50;
     transition:.3s;
 }
 
-.info{
-    color:#555;
-    font-size:15px;
+#feedback{
+    font-size:20px;
+    font-weight:bold;
+    min-height:35px;
+    margin:15px 0;
 }
 
-#result{
+#heard{
+    font-size:15px;
+    color:#607080;
+    min-height:25px;
+}
+
+#lesson,#result,#interactive,#interactive-result{
     display:none;
 }
 
 .result-number{
-    font-size:32px;
+    font-size:38px;
     color:#2196f3;
     font-weight:bold;
+    margin:15px;
 }
 
-#heard{
-    color:#555;
-    font-size:17px;
-    min-height:25px;
+.options{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin:20px 0;
 }
 
-@media(max-width:400px){
-    .word{font-size:43px}
-    button{font-size:15px;padding:12px}
+.answer-option{
+    background:#e3f2fd;
+    border:2px solid #90caf9;
+    color:#174c80;
+    font-size:25px;
+    min-height:65px;
+}
+
+.answer-option.correct{
+    background:#c8e6c9;
+    border-color:#4caf50;
+}
+
+.answer-option.wrong{
+    background:#ffcdd2;
+    border-color:#e53935;
+}
+
+.letters-area{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:8px;
+    margin:20px 0;
+}
+
+.letter-button{
+    background:#e3f2fd;
+    color:#1565c0;
+    font-size:25px;
+    min-width:48px;
+}
+
+.letter-button.selected{
+    background:#c8e6c9;
+    border:2px solid #4caf50;
+}
+
+.answer-area{
+    min-height:65px;
+    border:2px dashed #90caf9;
+    border-radius:14px;
+    padding:10px;
+    font-size:28px;
+    margin:15px 0;
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:5px;
+}
+
+.exercise-question{
+    font-size:22px;
+    color:#444;
+    margin:20px 0;
+}
+
+#menu,#levels-screen,#lesson,#result,
+#interactive,#interactive-result{
+    display:none;
+}
+
+#menu{
+    display:block;
+}
+
+.back-home{
+    display:inline-block;
+    background:#607d8b;
+    color:white;
+    text-decoration:none;
+    padding:12px 20px;
+    border-radius:12px;
+    margin-top:15px;
+}
+
+.badge{
+    display:inline-block;
+    background:#fff3cd;
+    color:#8a6500;
+    padding:8px 15px;
+    border-radius:20px;
+    font-size:14px;
+    margin:5px;
+}
+
+@media(max-width:420px){
+
+    .word{
+        font-size:43px;
+    }
+
+    .option{
+        font-size:15px;
+    }
+
+    button{
+        font-size:15px;
+        padding:12px;
+    }
+
 }
 </style>
 </head>
@@ -165,108 +340,220 @@ button{
 
 <header>
     <h1>📖 تعلم القراءة العربية</h1>
-    <p>تعلم الحروف والمقاطع والكلمات والجمل</p>
+    <p>نتعلم ونقرأ ونلعب 🌟</p>
 </header>
 
 <main class="container">
 
-    <section id="menu" class="box">
+<!-- الصفحة الرئيسية -->
 
-        <h2>🌟 اختر مستوى القراءة</h2>
+<section id="menu" class="box">
 
-        <p class="info">
-            أكمل تدريبات كل مستوى لفتح المستوى التالي.
-        </p>
+    <h2>🌟 مرحباً بك في عالم القراءة</h2>
 
-        <div id="levels" class="levels"></div>
+    <p class="info">
+        اختر نوع التدريب الذي تريد القيام به.
+    </p>
 
-        <p id="saved-progress" class="info"></p>
+    <div class="home-options">
 
-        <a href="arabic.html" class="back-button">
-            ↩️ العودة إلى العربية
-        </a>
+        <button class="option mic-option"
+                onclick="openLevels('mic')">
 
-    </section>
+            <span>🎤</span>
+            القراءة بالميكروفون
 
-    <section id="lesson" class="box">
-
-        <h2 id="level-title"></h2>
-
-        <p id="level-description" class="info"></p>
-
-        <div class="progress">
-            <div id="progress-fill" class="progress-fill"></div>
-        </div>
-
-        <p>
-            السؤال <span id="question-number">1</span>
-            من 10
-        </p>
-
-        <div id="word" class="word"></div>
-
-        <button class="listen" onclick="speakWord()">
-            🔊 استمع إلى النطق
         </button>
 
-        <br>
+        <button class="option game-option"
+                onclick="openLevels('game')">
 
-        <button class="mic" id="mic-button" onclick="startListening()">
-            🎤 اقرأ بنفسك
+            <span>🎮</span>
+            التمارين التفاعلية
+
         </button>
 
-        <p id="feedback"></p>
+    </div>
 
-        <p id="heard"></p>
+    <div class="badge" id="progress-info">
+        المستوى الأول مفتوح
+    </div>
 
-        <button class="next" id="next-button"
-                onclick="nextQuestion()" style="display:none">
-            السؤال التالي ➡️
-        </button>
+    <br>
 
-        <br>
+    <a href="arabic.html" class="back-home">
+        ↩️ العودة إلى العربية
+    </a>
 
-        <button class="back" onclick="backToLevels()">
-            ↩️ العودة إلى المستويات
-        </button>
+</section>
 
-        <p class="info">
-            يمكنك الاستماع إلى الكلمة قبل قراءتها.
-        </p>
 
-    </section>
+<!-- اختيار المستويات -->
 
-    <section id="result" class="box">
+<section id="levels-screen" class="box">
 
-        <h2>🎉 انتهى التدريب!</h2>
+    <h2 id="levels-title">📚 اختر المستوى</h2>
 
-        <div class="result-number" id="result-score"></div>
+    <p class="info">
+        أكمل التدريبات لفتح المستويات التالية.
+    </p>
 
-        <p id="result-message"></p>
+    <div id="levels" class="levels"></div>
 
-        <button class="next" onclick="repeatLevel()">
-            🔄 تدريب جديد بكلمات مختلفة
-        </button>
+    <br>
 
-        <button class="listen" onclick="backToLevels()">
-            📚 العودة إلى المستويات
-        </button>
+    <button class="back" onclick="showHome()">
+        ↩️ العودة
+    </button>
 
-    </section>
+</section>
+
+
+<!-- القراءة بالميكروفون -->
+
+<section id="lesson" class="box">
+
+    <h2 id="level-title"></h2>
+
+    <p class="info" id="level-description"></p>
+
+    <div class="progress">
+        <div id="progress-fill" class="progress-fill"></div>
+    </div>
+
+    <p>
+        السؤال <span id="question-number">1</span>
+        من 10
+    </p>
+
+    <div id="word" class="word"></div>
+
+    <button class="listen" onclick="speakWord()">
+        🔊 استمع إلى النطق
+    </button>
+
+    <br>
+
+    <button class="mic" id="mic-button"
+            onclick="startListening()">
+        🎤 اقرأ بنفسك
+    </button>
+
+    <p id="feedback"></p>
+
+    <p id="heard"></p>
+
+    <button class="next" id="retry-button"
+            onclick="startListening()" style="display:none">
+        🔄 حاول مرة أخرى
+    </button>
+
+    <button class="next" id="next-button"
+            onclick="nextQuestion()" style="display:none">
+        السؤال التالي ➡️
+    </button>
+
+    <br>
+
+    <button class="back" onclick="backToLevels()">
+        ↩️ العودة إلى المستويات
+    </button>
+
+</section>
+
+
+<!-- نتيجة الميكروفون -->
+
+<section id="result" class="box">
+
+    <h2>🎉 انتهى التدريب!</h2>
+
+    <div class="result-number" id="result-score"></div>
+
+    <p id="result-message"></p>
+
+    <button class="next" onclick="repeatLevel()">
+        🔄 تدريب جديد
+    </button>
+
+    <button class="listen" onclick="backToLevels()">
+        📚 المستويات
+    </button>
+
+</section>
+
+
+<!-- التمارين التفاعلية -->
+
+<section id="interactive" class="box">
+
+    <h2 id="game-title">🎮 التمارين التفاعلية</h2>
+
+    <p class="info" id="game-description"></p>
+
+    <div class="progress">
+        <div id="game-progress-fill" class="progress-fill"></div>
+    </div>
+
+    <p>
+        السؤال <span id="game-number">1</span>
+        من 10
+    </p>
+
+    <div id="game-question" class="exercise-question"></div>
+
+    <div id="game-content"></div>
+
+    <p id="game-feedback" style="font-size:19px;font-weight:bold"></p>
+
+    <button class="next" id="game-next"
+            onclick="nextGameQuestion()" style="display:none">
+        السؤال التالي ➡️
+    </button>
+
+    <br>
+
+    <button class="back" onclick="backToLevels()">
+        ↩️ العودة إلى المستويات
+    </button>
+
+</section>
+
+
+<!-- نتيجة التمارين -->
+
+<section id="interactive-result" class="box">
+
+    <h2>🏆 انتهت التمارين!</h2>
+
+    <div class="result-number" id="game-result-score"></div>
+
+    <p id="game-result-message"></p>
+
+    <button class="next" onclick="repeatGame()">
+        🔄 تمارين جديدة
+    </button>
+
+    <button class="listen" onclick="backToLevels()">
+        📚 المستويات
+    </button>
+
+</section>
 
 </main>
 
+
 <script>
 
-/* =================================
+/* ======================================
    بيانات المستويات
-================================= */
+====================================== */
 
 const levelsData = [
 
 {
-title:"المستوى الأول: الحركات",
-description:"اقرأ الحرف مع الفتحة والكسرة والضمة.",
+title:"الحروف والحركات",
+description:"اقرأ الحروف بالفتحة والكسرة والضمة.",
 words:[
 "بَ","بِ","بُ","تَ","تِ","تُ","ثَ","ثِ","ثُ",
 "جَ","جِ","جُ","حَ","حِ","حُ","خَ","خِ","خُ",
@@ -281,8 +568,8 @@ words:[
 },
 
 {
-title:"المستوى الثاني: المدود",
-description:"اقرأ المقاطع التي تحتوي على المد بالألف والياء والواو.",
+title:"المدود",
+description:"اقرأ المقاطع بالمد بالألف والياء والواو.",
 words:[
 "بَا","بِي","بُو","تَا","تِي","تُو",
 "ثَا","ثِي","ثُو","جَا","جِي","جُو",
@@ -294,13 +581,13 @@ words:[
 "قَا","قِي","قُو","كَا","كِي","كُو",
 "لَا","لِي","لُو","مَا","مِي","مُو",
 "نَا","نِي","نُو","هَا","هِي","هُو",
-"يَا","بَيْ","بَوْ","تَيْ","سَوْ"
+"يَا","بَيْ","بَوْ","تَيْ","سَوْ","مَيْ"
 ]
 },
 
 {
-title:"المستوى الثالث: المقاطع",
-description:"اقرأ المقاطع المكونة من حرفين وحركات.",
+title:"المقاطع",
+description:"اقرأ المقاطع المكونة من حرفين أو أكثر.",
 words:[
 "بَتَ","بَتِ","بَتُ","تَبَ","تَبِ","تَبُ",
 "كَتَ","كَتِ","كَتُ","كَسَ","كَسِ","كَسُ",
@@ -315,35 +602,36 @@ words:[
 },
 
 {
-title:"المستوى الرابع: الكلمات القصيرة",
-description:"اقرأ الكلمات القصيرة مع التشكيل.",
+title:"الكلمات القصيرة",
+description:"اقرأ الكلمات القصيرة.",
 words:[
-"أَبٌ","أُمٌّ","يَدٌ","فَمٌ","دَمٌ","فِي",
-"مَا","لَا","هُوَ","هِيَ","مِنْ","مَنْ",
-"بَابٌ","نَارٌ","مَاءٌ","بَيْتٌ","قَلْبٌ",
-"رَأْسٌ","عَيْنٌ","أَنْفٌ","فَمُهُ",
-"كَفٌّ","يَدِي","أَبِي","أُمِّي",
-"نُورٌ","قَمَرٌ","شَمْسٌ","بَدْرٌ",
-"وَرْدٌ","نَجْمٌ","سَمَكٌ","طَيْرٌ"
+"أَبٌ","أُمٌّ","يَدٌ","فَمٌ","دَمٌ","مِنْ",
+"مَنْ","هُوَ","هِيَ","مَا","لَا","بَابٌ",
+"نَارٌ","مَاءٌ","بَيْتٌ","قَلْبٌ","رَأْسٌ",
+"عَيْنٌ","أَنْفٌ","كَفٌّ","يَدِي","أَبِي",
+"أُمِّي","نُورٌ","قَمَرٌ","شَمْسٌ","بَدْرٌ",
+"وَرْدٌ","نَجْمٌ","سَمَكٌ","طَيْرٌ","خُبْزٌ",
+"حُبٌّ","فَجْرٌ","لَيْلٌ","نَهَارٌ"
 ]
 },
 
 {
-title:"المستوى الخامس: كلمات من ثلاثة أحرف",
-description:"اقرأ الكلمات المكونة من ثلاثة أحرف أو أكثر قليلاً.",
+title:"كلمات من ثلاثة وأربعة أحرف",
+description:"اقرأ الكلمات مع الانتباه إلى الحركات.",
 words:[
 "قَلَمٌ","وَلَدٌ","سَمَكٌ","جَمَلٌ","أَسَدٌ",
 "قَمَرٌ","شَجَرٌ","عِنَبٌ","تَمْرٌ","بَطَّةٌ",
 "نَمِرٌ","فَرَسٌ","حَجَرٌ","وَرَقٌ","مَطَرٌ",
-"بَحْرٌ","نَهْرٌ","جَبَلٌ","حَبْلٌ","مَسَاءٌ",
-"كَلْبٌ","قِطٌّ","بَقَرٌ","دَجَاجٌ","حَمَامٌ",
-"سَلَامٌ","كِتَابٌ","مِفْتَاحٌ","مَنْزِلٌ","مَكْتَبٌ"
+"بَحْرٌ","نَهْرٌ","جَبَلٌ","حَبْلٌ","كَلْبٌ",
+"قِطٌّ","بَقَرٌ","دَجَاجٌ","حَمَامٌ","سَلَامٌ",
+"كِتَابٌ","مَنْزِلٌ","مَكْتَبٌ","زَهْرَةٌ","حَلِيبٌ",
+"حِصَانٌ","ثَعْلَبٌ","أَرْنَبٌ","مِفْتَاحٌ"
 ]
 },
 
 {
-title:"المستوى السادس: الكلمات الطويلة",
-description:"اقرأ الكلمات الطويلة مع الانتباه إلى الحركات.",
+title:"الكلمات الطويلة",
+description:"اقرأ الكلمات الطويلة.",
 words:[
 "مَدْرَسَةٌ","حَدِيقَةٌ","مُعَلِّمٌ","تِلْمِيذٌ",
 "سَيَّارَةٌ","طَائِرَةٌ","مِمْحَاةٌ","مِسْطَرَةٌ",
@@ -352,14 +640,15 @@ words:[
 "دَرَّاجَةٌ","مُسَاعَدَةٌ","مُسَابَقَةٌ",
 "مُجْتَهِدٌ","مُهَنْدِسٌ","مُزَارِعٌ",
 "مَطْبَخٌ","غُرْفَةٌ","نَافِذَةٌ",
-"مِصْبَاحٌ","مِفْتَاحٌ","سُلَحْفَاةٌ",
-"بُرْتُقَالَةٌ","خِيَارَةٌ","طَمَاطِمُ"
+"مِصْبَاحٌ","سُلَحْفَاةٌ","بُرْتُقَالَةٌ",
+"خِيَارَةٌ","طَمَاطِمُ","مُسْلِمَةٌ",
+"مَحَطَّةٌ","مَلْعَبٌ","مِكْنَسَةٌ"
 ]
 },
 
 {
-title:"المستوى السابع: السكون والشدة والتنوين",
-description:"انتبه إلى السكون والشدة والتنوين أثناء القراءة.",
+title:"السكون والشدة والتنوين",
+description:"انتبه إلى السكون والشدة والتنوين.",
 words:[
 "شَمْسٌ","قِطَّةٌ","سَمَّكَةٌ","مُعَلِّمٌ",
 "مَدْرَسَةٌ","كِتَابٌ","بَابٌ","دَرْسٌ",
@@ -368,13 +657,14 @@ words:[
 "رَبٌّ","حَقٌّ","مَرَّ","شَدَّ",
 "ثُمَّ","أَنَّ","إِنَّ","مِنْهُ",
 "عِنْدَ","شَمْسِيَّةٌ","قِطٌّ","حُرِّيَّةٌ",
-"مُدَرِّسَةٌ","مُجْتَهِدٌ"
+"مُدَرِّسَةٌ","مُجْتَهِدٌ","مُتَفَوِّقٌ",
+"جَدِيدٌ","مُحِبٌّ","مُعَلِّمَةٌ"
 ]
 },
 
 {
-title:"المستوى الثامن: قراءة الجمل",
-description:"اقرأ الجمل كاملة مع احترام الحركات.",
+title:"قراءة الجمل",
+description:"اقرأ الجمل كاملة.",
 words:[
 "هَذَا بَيْتٌ جَمِيلٌ.",
 "ذَهَبَ الوَلَدُ إِلَى المَدْرَسَةِ.",
@@ -391,457 +681,1038 @@ words:[
 "يَغْسِلُ الوَلَدُ يَدَيْهِ.",
 "نَذْهَبُ إِلَى الحَدِيقَةِ.",
 "المُعَلِّمُ يَشْرَحُ الدَّرْسَ.",
-"أَقْرَأُ كُلَّ يَوْمٍ قِصَّةً."
+"أَقْرَأُ كُلَّ يَوْمٍ قِصَّةً.",
+"تُحِبُّ سَلْمَى اللَّعِبَ.",
+"يَشْرَبُ الطِّفْلُ المَاءَ.",
+"فِي الحَدِيقَةِ أَزْهَارٌ جَمِيلَةٌ.",
+"يَذْهَبُ أَبِي إِلَى العَمَلِ."
 ]
 }
 
 ];
 
 
-/* =================================
-   متغيرات البرنامج
-================================= */
+/* ======================================
+   إعدادات وحفظ التقدم
+====================================== */
 
-const PROGRESS_KEY="arabicReadingProgressV1";
+const PROGRESS_KEY="arabicReadingProgressV2";
 
 let unlockedLevel=1;
 let currentLevel=1;
+let currentMode="mic";
+
 let currentWords=[];
 let currentIndex=0;
 let score=0;
-let isListening=false;
-let recognition=null;
 let questionFinished=false;
 
+let recognition=null;
+let isListening=false;
 
-/* =================================
-   حفظ التقدم
-================================= */
+let gameQuestions=[];
+let gameIndex=0;
+let gameScore=0;
+let gameAnswered=false;
 
 function loadProgress(){
 
-try{
-unlockedLevel=Number(localStorage.getItem(PROGRESS_KEY))||1;
-}catch(e){
-unlockedLevel=1;
-}
+    try{
+        const saved=JSON.parse(localStorage.getItem(PROGRESS_KEY));
 
-unlockedLevel=Math.max(1,Math.min(8,unlockedLevel));
+        if(saved){
+            unlockedLevel=Math.max(
+                1,
+                Math.min(8,Number(saved.unlocked)||1)
+            );
+        }else{
+            unlockedLevel=1;
+        }
+
+    }catch(e){
+        unlockedLevel=1;
+    }
 
 }
 
 function saveProgress(){
 
-try{
-localStorage.setItem(PROGRESS_KEY,unlockedLevel);
-}catch(e){}
+    try{
+        localStorage.setItem(
+            PROGRESS_KEY,
+            JSON.stringify({unlocked:unlockedLevel})
+        );
+    }catch(e){}
+
+}
+
+function unlockNextLevel(){
+
+    if(currentLevel<8 && currentLevel===unlockedLevel){
+        unlockedLevel=currentLevel+1;
+        saveProgress();
+    }
 
 }
 
 
-/* =================================
-   عرض المستويات
-================================= */
+/* ======================================
+   إدارة الشاشات
+====================================== */
 
-function showLevels(){
+function hideAll(){
 
-document.getElementById("menu").style.display="block";
-document.getElementById("lesson").style.display="none";
-document.getElementById("result").style.display="none";
+    [
+        "menu",
+        "levels-screen",
+        "lesson",
+        "result",
+        "interactive",
+        "interactive-result"
+    ].forEach(id=>{
+        document.getElementById(id).style.display="none";
+    });
 
-const box=document.getElementById("levels");
-box.innerHTML="";
+}
 
-levelsData.forEach((level,index)=>{
+function showHome(){
 
-const number=index+1;
-const locked=number>unlockedLevel;
+    stopSpeech();
+    hideAll();
 
-const button=document.createElement("button");
+    document.getElementById("menu").style.display="block";
 
-button.className="level";
+    document.getElementById("progress-info").textContent=
+        "المستوى المفتوح حالياً: "+unlockedLevel+" من 8";
 
-if(locked)button.classList.add("locked");
-if(number===unlockedLevel)button.classList.add("active");
+}
 
-button.innerHTML=
-`<strong>${locked?"🔒": "📖"} المستوى ${number}</strong>
-${level.title.split(":")[1]}`;
+function stopSpeech(){
 
-button.disabled=locked;
+    if(isListening && recognition){
+        try{
+            recognition.stop();
+        }catch(e){}
+    }
 
-button.onclick=()=>startLevel(number);
+    isListening=false;
 
-box.appendChild(button);
-
-});
-
-document.getElementById("saved-progress").textContent=
-"المستوى المفتوح حالياً: "+unlockedLevel+" من 8";
+    if("speechSynthesis" in window){
+        speechSynthesis.cancel();
+    }
 
 }
 
 
-/* =================================
-   اختيار كلمات عشوائية
-================================= */
+/* ======================================
+   اختيار نوع التدريب
+====================================== */
 
-function shuffle(array){
+function openLevels(mode){
 
-const copy=[...array];
+    currentMode=mode;
 
-for(let i=copy.length-1;i>0;i--){
+    hideAll();
 
-const j=Math.floor(Math.random()*(i+1));
+    document.getElementById("levels-screen").style.display="block";
 
-[copy[i],copy[j]]=[copy[j],copy[i]];
+    document.getElementById("levels-title").textContent=
+        mode==="mic"?
+        "🎤 مستويات القراءة بالميكروفون":
+        "🎮 مستويات التمارين التفاعلية";
 
-}
-
-return copy;
-
-}
-
-function startLevel(number){
-
-if(number>unlockedLevel)return;
-
-currentLevel=number;
-
-const bank=levelsData[number-1].words;
-
-currentWords=shuffle(bank).slice(0,10);
-
-currentIndex=0;
-score=0;
-
-document.getElementById("menu").style.display="none";
-document.getElementById("lesson").style.display="block";
-document.getElementById("result").style.display="none";
-
-document.getElementById("level-title").textContent=
-levelsData[number-1].title;
-
-document.getElementById("level-description").textContent=
-levelsData[number-1].description;
-
-showQuestion();
+    renderLevels();
 
 }
 
+function renderLevels(){
 
-/* =================================
-   عرض السؤال
-================================= */
+    const box=document.getElementById("levels");
+    box.innerHTML="";
 
-function showQuestion(){
+    levelsData.forEach((level,index)=>{
 
-questionFinished=false;
+        const number=index+1;
+        const locked=number>unlockedLevel;
 
-const word=currentWords[currentIndex];
+        const button=document.createElement("button");
 
-document.getElementById("word").textContent=word;
+        button.className="level";
 
-document.getElementById("question-number").textContent=
-currentIndex+1;
+        if(locked){
+            button.classList.add("locked");
+        }
 
-document.getElementById("progress-fill").style.width=
-(currentIndex/10*100)+"%";
+        if(number===unlockedLevel){
+            button.classList.add("active");
+        }
 
-document.getElementById("feedback").textContent="";
-document.getElementById("heard").textContent="";
+        button.disabled=locked;
 
-document.getElementById("next-button").style.display="none";
+        button.innerHTML=
+            `<strong>${locked?"🔒":"📖"} المستوى ${number}</strong>
+             ${level.title}
+             <small>${locked?"مغلق":"مفتوح"}</small>`;
 
-const mic=document.getElementById("mic-button");
-mic.disabled=false;
-mic.textContent="🎤 اقرأ بنفسك";
+        button.onclick=()=>{
 
-}
+            if(currentMode==="mic"){
+                startLevel(number);
+            }else{
+                startInteractive(number);
+            }
 
+        };
 
-/* =================================
-   النطق الآلي
-================================= */
+        box.appendChild(button);
 
-function speakWord(){
-
-if(!("speechSynthesis" in window)){
-alert("النطق الآلي غير مدعوم في هذا المتصفح.");
-return;
-}
-
-speechSynthesis.cancel();
-
-const speech=new SpeechSynthesisUtterance(
-currentWords[currentIndex]
-);
-
-speech.lang="ar-SA";
-speech.rate=0.65;
-speech.pitch=1;
-
-speechSynthesis.speak(speech);
-
-}
-
-
-/* =================================
-   التعرف على صوت الطفل
-================================= */
-
-function normalizeArabic(text){
-
-return text
-.normalize("NFD")
-.replace(/[\u064B-\u065F\u0670\u0640]/g,"")
-.replace(/[أإآٱ]/g,"ا")
-.replace(/ى/g,"ي")
-.replace(/[.,،!?؟]/g,"")
-.replace(/\s+/g,"")
-.trim();
-
-}
-
-function startListening(){
-
-if(questionFinished)return;
-
-const SpeechRecognition=
-window.SpeechRecognition ||
-window.webkitSpeechRecognition;
-
-if(!SpeechRecognition){
-
-alert(
-"التعرف على الصوت غير متوفر في هذا المتصفح. جرب Google Chrome مع اتصال بالإنترنت."
-);
-
-return;
-
-}
-
-if(isListening)return;
-
-recognition=new SpeechRecognition();
-
-recognition.lang="ar-SA";
-recognition.continuous=false;
-recognition.interimResults=false;
-recognition.maxAlternatives=3;
-
-isListening=true;
-
-const mic=document.getElementById("mic-button");
-
-mic.disabled=true;
-mic.textContent="🎙️ أستمع إليك...";
-
-document.getElementById("feedback").textContent=
-"تفضل، اقرأ الكلمة بصوت واضح.";
-
-recognition.onresult=function(event){
-
-const alternatives=[];
-
-for(let i=0;i<event.results[0].length;i++){
-alternatives.push(event.results[0][i].transcript);
-}
-
-checkPronunciation(alternatives);
-
-};
-
-recognition.onerror=function(event){
-
-isListening=false;
-mic.disabled=false;
-mic.textContent="🎤 حاول القراءة مجدداً";
-
-document.getElementById("feedback").textContent=
-event.error==="not-allowed"?
-"يرجى السماح باستخدام الميكروفون.":
-"لم أتمكن من سماعك. حاول مرة أخرى.";
-
-};
-
-recognition.onend=function(){
-
-isListening=false;
-
-if(!questionFinished){
-mic.disabled=false;
-mic.textContent="🎤 اقرأ بنفسك";
-}
-
-};
-
-try{
-recognition.start();
-}catch(e){
-isListening=false;
-mic.disabled=false;
-mic.textContent="🎤 اقرأ بنفسك";
-}
-
-}
-
-
-/* =================================
-   تقييم القراءة
-================================= */
-
-function checkPronunciation(alternatives){
-
-const target=normalizeArabic(
-currentWords[currentIndex]
-);
-
-let correct=false;
-
-for(const spoken of alternatives){
-
-const normalized=normalizeArabic(spoken);
-
-if(normalized===target){
-correct=true;
-break;
-}
-
-}
-
-const feedback=document.getElementById("feedback");
-
-document.getElementById("heard").textContent=
-"سمعت: "+alternatives.join(" / ");
-
-if(correct){
-
-score++;
-
-questionFinished=true;
-
-feedback.textContent="🌟 أحسنت! قراءة صحيحة";
-
-feedback.style.color="green";
-
-document.getElementById("next-button").style.display="inline-block";
-
-document.getElementById("mic-button").disabled=true;
-
-}else{
-
-feedback.textContent="❌ لم نتعرف على الكلمة بشكل صحيح. استمع وحاول مجدداً.";
-
-feedback.style.color="#d32f2f";
-
-document.getElementById("mic-button").disabled=false;
-document.getElementById("mic-button").textContent="🎤 حاول مرة أخرى";
-
-}
-
-}
-
-
-/* =================================
-   السؤال التالي
-================================= */
-
-function nextQuestion(){
-
-if(!questionFinished)return;
-
-currentIndex++;
-
-if(currentIndex>=10){
-
-showResult();
-
-}else{
-
-showQuestion();
-
-}
-
-}
-
-
-/* =================================
-   النتيجة وفتح المستوى التالي
-================================= */
-
-function showResult(){
-
-document.getElementById("lesson").style.display="none";
-document.getElementById("result").style.display="block";
-
-document.getElementById("progress-fill").style.width="100%";
-
-document.getElementById("result-score").textContent=
-score+" / 10";
-
-let message="";
-
-if(score===10){
-
-message="🏆 ممتاز! لقد أتقنت المستوى.";
-
-if(currentLevel<8){
-
-unlockedLevel=Math.max(unlockedLevel,currentLevel+1);
-saveProgress();
-
-message+=" تم فتح المستوى التالي 🎉";
-
-}else{
-
-message+=" لقد أكملت جميع مستويات القراءة!";
-
-}
-
-}else if(score>=7){
-
-message="👏 جيد جداً! يمكنك إعادة التدريب لتحسين نتيجتك.";
-
-}else{
-
-message="💪 حاول مرة أخرى، ستنجح بالتدريب.";
-
-}
-
-document.getElementById("result-message").textContent=message;
-
-}
-
-function repeatLevel(){
-
-startLevel(currentLevel);
+    });
 
 }
 
 function backToLevels(){
 
-if(isListening && recognition){
-try{recognition.stop();}catch(e){}
-}
+    stopSpeech();
+    hideAll();
 
-if("speechSynthesis" in window){
-speechSynthesis.cancel();
-}
+    document.getElementById("levels-screen").style.display="block";
 
-isListening=false;
-
-showLevels();
+    renderLevels();
 
 }
 
 
-/* =================================
-   تشغيل البرنامج
-================================= */
+/* ======================================
+   خلط الكلمات
+====================================== */
+
+function shuffle(array){
+
+    const copy=[...array];
+
+    for(let i=copy.length-1;i>0;i--){
+
+        const j=Math.floor(Math.random()*(i+1));
+
+        [copy[i],copy[j]]=[copy[j],copy[i]];
+
+    }
+
+    return copy;
+
+}
+
+
+/* ======================================
+   القراءة بالميكروفون
+====================================== */
+
+function startLevel(number){
+
+    stopSpeech();
+
+    if(number>unlockedLevel)return;
+
+    currentLevel=number;
+
+    const bank=levelsData[number-1].words;
+
+    currentWords=shuffle(bank).slice(0,10);
+
+    currentIndex=0;
+    score=0;
+
+    hideAll();
+
+    document.getElementById("lesson").style.display="block";
+
+    document.getElementById("level-title").textContent=
+        "المستوى "+number+": "+levelsData[number-1].title;
+
+    document.getElementById("level-description").textContent=
+        levelsData[number-1].description;
+
+    showQuestion();
+
+}
+
+function showQuestion(){
+
+    questionFinished=false;
+
+    document.getElementById("word").textContent=
+        currentWords[currentIndex];
+
+    document.getElementById("question-number").textContent=
+        currentIndex+1;
+
+    document.getElementById("progress-fill").style.width=
+        (currentIndex/10*100)+"%";
+
+    document.getElementById("feedback").textContent="";
+    document.getElementById("heard").textContent="";
+
+    document.getElementById("next-button").style.display="none";
+    document.getElementById("retry-button").style.display="none";
+
+    const mic=document.getElementById("mic-button");
+
+    mic.disabled=false;
+    mic.style.display="inline-block";
+    mic.textContent="🎤 اقرأ بنفسك";
+
+}
+
+function speakWord(){
+
+    if(!("speechSynthesis" in window)){
+        alert("النطق الآلي غير مدعوم في هذا المتصفح.");
+        return;
+    }
+
+    speechSynthesis.cancel();
+
+    const speech=new SpeechSynthesisUtterance(
+        currentWords[currentIndex]
+    );
+
+    speech.lang="ar-SA";
+    speech.rate=0.7;
+    speech.pitch=1;
+
+    speechSynthesis.speak(speech);
+
+}
+
+
+/* ======================================
+   معالجة النص العربي
+====================================== */
+
+function normalizeArabic(text){
+
+    return String(text)
+        .normalize("NFD")
+        .replace(/[\u064B-\u065F\u0670\u0640]/g,"")
+        .replace(/[أإآٱ]/g,"ا")
+        .replace(/ى/g,"ي")
+        .replace(/[.,،!?؟؛:]/g,"")
+        .replace(/\s+/g,"")
+        .trim();
+
+}
+
+function levenshtein(a,b){
+
+    const matrix=[];
+
+    for(let i=0;i<=b.length;i++){
+        matrix[i]=[i];
+    }
+
+    for(let j=0;j<=a.length;j++){
+        matrix[0][j]=j;
+    }
+
+    for(let i=1;i<=b.length;i++){
+
+        for(let j=1;j<=a.length;j++){
+
+            matrix[i][j]=Math.min(
+
+                matrix[i-1][j]+1,
+
+                matrix[i][j-1]+1,
+
+                matrix[i-1][j-1]+
+                (b[i-1]===a[j-1]?0:1)
+
+            );
+
+        }
+
+    }
+
+    return matrix[b.length][a.length];
+
+}
+
+function isSimilar(target,spoken){
+
+    const a=normalizeArabic(target);
+    const b=normalizeArabic(spoken);
+
+    if(a===b)return true;
+
+    if(a.length<3 || b.length<3)return false;
+
+    const distance=levenshtein(a,b);
+
+    const similarity=1-distance/Math.max(a.length,b.length);
+
+    return similarity>=0.78;
+
+}
+
+
+/* ======================================
+   تشغيل الميكروفون
+====================================== */
+
+function startListening(){
+
+    if(questionFinished || isListening)return;
+
+    const SpeechRecognition=
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
+
+    if(!SpeechRecognition){
+
+        alert(
+            "التعرف على الصوت غير متوفر هنا. جرب Google Chrome مع اتصال بالإنترنت."
+        );
+
+        return;
+
+    }
+
+    recognition=new SpeechRecognition();
+
+    recognition.lang="ar-SA";
+    recognition.continuous=false;
+    recognition.interimResults=false;
+    recognition.maxAlternatives=5;
+
+    isListening=true;
+
+    const mic=document.getElementById("mic-button");
+
+    mic.disabled=true;
+    mic.textContent="🎙️ أستمع إليك...";
+
+    document.getElementById("feedback").textContent=
+        "تفضل، اقرأ بصوت واضح 🌟";
+
+    recognition.onresult=function(event){
+
+        const alternatives=[];
+
+        for(let i=0;i<event.results[0].length;i++){
+
+            alternatives.push(
+                event.results[0][i].transcript
+            );
+
+        }
+
+        checkPronunciation(alternatives);
+
+    };
+
+    recognition.onerror=function(event){
+
+        isListening=false;
+
+        mic.disabled=false;
+        mic.textContent="🎤 حاول مرة أخرى";
+
+        document.getElementById("feedback").textContent=
+            event.error==="not-allowed"?
+            "⚠️ اسمح باستخدام الميكروفون.":
+            "لم أتمكن من سماعك، حاول مجدداً.";
+
+    };
+
+    recognition.onend=function(){
+
+        isListening=false;
+
+        if(!questionFinished){
+            mic.disabled=false;
+            mic.textContent="🎤 اقرأ بنفسك";
+        }
+
+    };
+
+    try{
+
+        recognition.start();
+
+    }catch(e){
+
+        isListening=false;
+        mic.disabled=false;
+        mic.textContent="🎤 اقرأ بنفسك";
+
+    }
+
+}
+
+
+/* ======================================
+   تقييم النطق
+====================================== */
+
+function checkPronunciation(alternatives){
+
+    const target=currentWords[currentIndex];
+
+    const correct=alternatives.some(
+        spoken=>isSimilar(target,spoken)
+    );
+
+    document.getElementById("heard").textContent=
+        "سمعت: "+alternatives.join(" / ");
+
+    const feedback=document.getElementById("feedback");
+
+    if(correct){
+
+        score++;
+        questionFinished=true;
+
+        feedback.textContent="🌟 أحسنت! قراءة رائعة!";
+        feedback.style.color="green";
+
+        document.getElementById("mic-button").style.display="none";
+
+        document.getElementById("retry-button").style.display="none";
+
+        document.getElementById("next-button").style.display="inline-block";
+
+    }else{
+
+        feedback.textContent=
+            "حاول مرة أخرى. استمع إلى النطق ثم اقرأ.";
+
+        feedback.style.color="#d32f2f";
+
+        document.getElementById("retry-button").style.display="inline-block";
+
+        document.getElementById("mic-button").style.display="none";
+
+    }
+
+}
+
+
+/* ======================================
+   الانتقال إلى السؤال التالي
+====================================== */
+
+function nextQuestion(){
+
+    if(!questionFinished)return;
+
+    currentIndex++;
+
+    if(currentIndex>=10){
+
+        showMicResult();
+
+    }else{
+
+        showQuestion();
+
+    }
+
+}
+
+function showMicResult(){
+
+    stopSpeech();
+    hideAll();
+
+    document.getElementById("result").style.display="block";
+
+    document.getElementById("result-score").textContent=
+        score+" / 10";
+
+    let message="";
+
+    if(score>=8){
+
+        message="🏆 ممتاز! لقد نجحت في هذا المستوى.";
+
+        unlockNextLevel();
+
+        if(currentLevel<8){
+            message+=" تم فتح المستوى التالي 🎉";
+        }else{
+            message+=" لقد أكملت جميع مستويات القراءة!";
+        }
+
+    }else{
+
+        message="💪 أحسنت المحاولة! تدرب مجدداً لتحسين نتيجتك.";
+
+    }
+
+    document.getElementById("result-message").textContent=message;
+
+}
+
+function repeatLevel(){
+
+    startLevel(currentLevel);
+
+}
+
+
+/* ======================================
+   التمارين التفاعلية
+====================================== */
+
+function startInteractive(number){
+
+    if(number>unlockedLevel)return;
+
+    currentLevel=number;
+
+    gameQuestions=shuffle(
+        levelsData[number-1].words
+    ).slice(0,10);
+
+    gameIndex=0;
+    gameScore=0;
+
+    hideAll();
+
+    document.getElementById("interactive").style.display="block";
+
+    document.getElementById("game-title").textContent=
+        "🎮 المستوى "+number+": "+levelsData[number-1].title;
+
+    document.getElementById("game-description").textContent=
+        "أنجز التمارين واختر الإجابة الصحيحة.";
+
+    showGameQuestion();
+
+}
+
+
+/* ======================================
+   توليد أنواع الأسئلة
+====================================== */
+
+function makeOptions(correct,bank){
+
+    const alternatives=shuffle(
+        bank.filter(w=>w!==correct)
+    ).slice(0,3);
+
+    return shuffle([correct,...alternatives]);
+
+}
+
+function removeDiacritics(text){
+
+    return text.replace(/[\u064B-\u065F\u0670\u0640]/g,"");
+
+}
+
+function splitLetters(word){
+
+    return Array.from(removeDiacritics(word));
+
+}
+
+function randomMissingIndex(letters){
+
+    if(letters.length<2)return 0;
+
+    return Math.floor(Math.random()*letters.length);
+
+}
+
+function showGameQuestion(){
+
+    gameAnswered=false;
+
+    const word=gameQuestions[gameIndex];
+
+    document.getElementById("game-number").textContent=
+        gameIndex+1;
+
+    document.getElementById("game-progress-fill").style.width=
+        (gameIndex/10*100)+"%";
+
+    document.getElementById("game-feedback").textContent="";
+
+    document.getElementById("game-next").style.display="none";
+
+    const content=document.getElementById("game-content");
+
+    content.innerHTML="";
+
+    /*
+       اختيار عشوائي لنوع التمرين:
+       1- اختيار الكلمة الصحيحة
+       2- الحرف الناقص
+       3- ترتيب الحروف
+    */
+
+    const types=["choose","missing","order"];
+
+    let type=types[Math.floor(Math.random()*types.length)];
+
+    /*
+       في الحروف والمقاطع القصيرة نفضل الاختيار
+       لتجنب صعوبة ترتيب حرف واحد.
+    */
+
+    const letters=splitLetters(word);
+
+    if(letters.length<2){
+        type="choose";
+    }
+
+    if(type==="choose"){
+
+        gameChoose(word,content);
+
+    }else if(type==="missing"){
+
+        gameMissing(word,content);
+
+    }else{
+
+        gameOrder(word,content);
+
+    }
+
+}
+
+
+/* ======================================
+   النوع الأول: اختر الكلمة الصحيحة
+====================================== */
+
+function gameChoose(word,content){
+
+    document.getElementById("game-question").textContent=
+        "اختر الكلمة التي تظهر أمامك:";
+
+    const title=document.createElement("div");
+
+    title.className="word";
+    title.style.fontSize="40px";
+    title.textContent=word;
+
+    content.appendChild(title);
+
+    const options=document.createElement("div");
+    options.className="options";
+
+    const choices=makeOptions(
+        word,
+        levelsData[currentLevel-1].words
+    );
+
+    choices.forEach(choice=>{
+
+        const button=document.createElement("button");
+
+        button.className="answer-option";
+        button.textContent=choice;
+
+        button.onclick=()=>{
+
+            checkGameAnswer(choice===word,button,options,word);
+
+        };
+
+        options.appendChild(button);
+
+    });
+
+    content.appendChild(options);
+
+}
+
+
+/* ======================================
+   النوع الثاني: أكمل الحرف الناقص
+====================================== */
+
+function gameMissing(word,content){
+
+    document.getElementById("game-question").textContent=
+        "ما الحرف الناقص في الكلمة؟";
+
+    const letters=splitLetters(word);
+
+    const index=randomMissingIndex(letters);
+
+    const correct=letters[index];
+
+    const display=letters.map((letter,i)=>
+        i===index?"＿":letter
+    ).join(" ");
+
+    const title=document.createElement("div");
+
+    title.className="word";
+    title.style.fontSize="38px";
+    title.textContent=display;
+
+    content.appendChild(title);
+
+    const options=document.createElement("div");
+    options.className="options";
+
+    const alternatives=shuffle([
+        correct,
+        "ب","ت","م","س","ك","ل","ن","ر","ف"
+    ].filter((v,i,a)=>a.indexOf(v)===i))
+    .slice(0,4);
+
+    if(!alternatives.includes(correct)){
+        alternatives[0]=correct;
+    }
+
+    shuffle(alternatives).forEach(letter=>{
+
+        const button=document.createElement("button");
+
+        button.className="answer-option";
+        button.textContent=letter;
+
+        button.onclick=()=>{
+
+            checkGameAnswer(
+                letter===correct,
+                button,
+                options,
+                word
+            );
+
+        };
+
+        options.appendChild(button);
+
+    });
+
+    content.appendChild(options);
+
+}
+
+
+/* ======================================
+   النوع الثالث: رتب الحروف
+====================================== */
+
+function gameOrder(word,content){
+
+    document.getElementById("game-question").textContent=
+        "اضغط الحروف بالترتيب لتكوين الكلمة:";
+
+    const letters=splitLetters(word);
+
+    let selected=[];
+
+    const answer=document.createElement("div");
+
+    answer.className="answer-area";
+    answer.textContent="اختر الحروف";
+
+    content.appendChild(answer);
+
+    const area=document.createElement("div");
+
+    area.className="letters-area";
+
+    const shuffled=shuffle(letters);
+
+    shuffled.forEach((letter,index)=>{
+
+        const button=document.createElement("button");
+
+        button.className="letter-button";
+        button.textContent=letter;
+
+        button.onclick=()=>{
+
+            if(gameAnswered || button.disabled)return;
+
+            selected.push({letter,index});
+
+            button.disabled=true;
+            button.classList.add("selected");
+
+            answer.textContent=
+                selected.map(x=>x.letter).join("");
+
+            if(selected.length===letters.length){
+
+                const result=selected.map(x=>x.letter).join("");
+
+                checkGameAnswer(
+                    result===letters.join(""),
+                    null,
+                    null,
+                    word
+                );
+
+            }
+
+        };
+
+        area.appendChild(button);
+
+    });
+
+    content.appendChild(area);
+
+    const reset=document.createElement("button");
+
+    reset.className="back";
+    reset.textContent="إعادة ترتيب";
+
+    reset.onclick=()=>{
+
+        if(gameAnswered)return;
+
+        selected=[];
+
+        answer.textContent="اختر الحروف";
+
+        area.querySelectorAll("button").forEach(button=>{
+            button.disabled=false;
+            button.classList.remove("selected");
+        });
+
+    };
+
+    content.appendChild(reset);
+
+}
+
+
+/* ======================================
+   تصحيح التمرين
+====================================== */
+
+function checkGameAnswer(correct,button,options,word){
+
+    if(gameAnswered)return;
+
+    gameAnswered=true;
+
+    const feedback=document.getElementById("game-feedback");
+
+    if(correct){
+
+        gameScore++;
+
+        feedback.textContent="🌟 إجابة صحيحة! أحسنت.";
+
+        feedback.style.color="green";
+
+        if(button){
+            button.classList.add("correct");
+        }
+
+    }else{
+
+        feedback.textContent=
+            "❌ حاول مرة أخرى في التدريب القادم. الإجابة: "+word;
+
+        feedback.style.color="#d32f2f";
+
+        if(button){
+            button.classList.add("wrong");
+        }
+
+    }
+
+    if(options){
+
+        options.querySelectorAll("button").forEach(b=>{
+            b.disabled=true;
+        });
+
+    }
+
+    document.getElementById("game-next").style.display="inline-block";
+
+}
+
+
+/* ======================================
+   السؤال التفاعلي التالي
+====================================== */
+
+function nextGameQuestion(){
+
+    if(!gameAnswered)return;
+
+    gameIndex++;
+
+    if(gameIndex>=10){
+
+        showGameResult();
+
+    }else{
+
+        showGameQuestion();
+
+    }
+
+}
+
+
+/* ======================================
+   نتيجة التمارين
+====================================== */
+
+function showGameResult(){
+
+    hideAll();
+
+    document.getElementById("interactive-result").style.display="block";
+
+    document.getElementById("game-result-score").textContent=
+        gameScore+" / 10";
+
+    let message="";
+
+    if(gameScore>=8){
+
+        message="🏆 ممتاز! لقد أتقنت التمارين.";
+
+        unlockNextLevel();
+
+        if(currentLevel<8){
+            message+=" تم فتح المستوى التالي 🎉";
+        }else{
+            message+=" أكملت جميع المستويات!";
+        }
+
+    }else{
+
+        message="👏 أحسنت المحاولة. يمكنك التدريب مرة أخرى.";
+
+    }
+
+    document.getElementById("game-result-message").textContent=message;
+
+}
+
+function repeatGame(){
+
+    startInteractive(currentLevel);
+
+}
+
+
+/* ======================================
+   تشغيل الصفحة
+====================================== */
 
 loadProgress();
-showLevels();
+showHome();
 
 </script>
 
