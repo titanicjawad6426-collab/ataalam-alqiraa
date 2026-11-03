@@ -1,4 +1,4 @@
-const CACHE_NAME = "ataalam-alqiraa-v30.2";
+const CACHE_NAME = "ataalam-alqiraa-v30.3";
 
 const APP_FILES = [
     "./",
